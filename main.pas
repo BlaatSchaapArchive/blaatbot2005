@@ -17,11 +17,15 @@ type
     Memo1: TMemo;
     test: TTimer;
     procedure Button1Click(Sender: TObject);
+
     procedure testTimer(Sender: TObject);
+  end;
+  type
+  TReceive = class(TThread)
   private
     { Private declarations }
-  public
-    { Public declarations }
+  protected
+    procedure Execute; override;
   end;
 
 var
@@ -31,6 +35,7 @@ implementation
 
 {$R *.dfm}
 
+
 procedure TForm1.Button1Click(Sender: TObject);
 begin
 tcpclient.RemoteHost := edit1.Text;
@@ -39,19 +44,23 @@ if tcpclient.Connect then
 tcpclient.Sendln('USER Host Server * :Name');
 tcpclient.Sendln('NICK TEST');
 tcpclient.Sendln('JOIN '+ edit2.Text);
-tcpclient.Sendln('PRIVMSG '+edit2.Text+' test');
-
+//tcpclient.Sendln('PRIVMSG '+edit2.Text+' test');
+test.Enabled := true;
 
 end;
 
+procedure TReceive.Execute;
+begin
+if form1.TcpClient.Connected and form1.TcpClient.WaitForData() then
+form1.memo1.Text := form1.memo1.Text  + form1.tcpclient.Receiveln()  ;
+
+end;
+
+
+
 procedure TForm1.testTimer(Sender: TObject);
 begin
-
-memo1.Text := memo1.Text + tcpclient.Receiveln()   ;
-
-
-
-
+treceive.Create(false);
 end;
 
 end.
