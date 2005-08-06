@@ -1,8 +1,8 @@
 object Form1: TForm1
   Left = 254
   Top = 249
-  Width = 696
-  Height = 480
+  Width = 410
+  Height = 197
   Caption = 'dCG IRC BOT'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,23 +17,81 @@ object Form1: TForm1
   object Label1: TLabel
     Left = 256
     Top = 8
-    Width = 32
+    Width = 3
     Height = 13
-    Caption = 'Label1'
+    Caption = ' '
+    Visible = False
   end
   object Label2: TLabel
     Left = 256
     Top = 24
-    Width = 32
+    Width = 3
     Height = 13
-    Caption = 'Label2'
+    Caption = ' '
+    Visible = False
   end
   object Label3: TLabel
     Left = 256
     Top = 40
-    Width = 32
+    Width = 3
     Height = 13
-    Caption = 'Label3'
+    Caption = ' '
+  end
+  object Label4: TLabel
+    Left = 49
+    Top = 8
+    Width = 46
+    Height = 20
+    Alignment = taRightJustify
+    Caption = 'Server'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Label5: TLabel
+    Left = 62
+    Top = 32
+    Width = 29
+    Height = 20
+    Alignment = taRightJustify
+    Caption = 'Port'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Label6: TLabel
+    Left = 36
+    Top = 56
+    Width = 59
+    Height = 20
+    Alignment = taRightJustify
+    Caption = 'Channel'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Label7: TLabel
+    Left = 64
+    Top = 80
+    Width = 30
+    Height = 20
+    Alignment = taRightJustify
+    Caption = 'Nick'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
   end
   object Button1: TButton
     Left = 104
@@ -70,14 +128,15 @@ object Form1: TForm1
     Text = '6667'
   end
   object Memo1: TMemo
-    Left = 16
-    Top = 168
-    Width = 649
-    Height = 265
+    Left = 8
+    Top = 72
+    Width = 25
+    Height = 25
     Lines.Strings = (
       '')
     ScrollBars = ssVertical
     TabOrder = 4
+    Visible = False
   end
   object Nick: TEdit
     Left = 104
@@ -97,24 +156,15 @@ object Form1: TForm1
     TabOrder = 6
     OnClick = Button2Click
   end
-  object Button4: TButton
-    Left = 336
-    Top = 136
-    Width = 75
-    Height = 25
-    Caption = 'Button4'
-    TabOrder = 7
-    OnClick = Button4Click
-  end
   object TcpClient: TTcpClient
     Left = 8
-    Top = 8
+    Top = 104
   end
   object ping: TTimer
     Enabled = False
     Interval = 10000
     OnTimer = pingTimer
     Left = 8
-    Top = 40
+    Top = 136
   end
 end

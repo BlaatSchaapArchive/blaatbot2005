@@ -6,10 +6,13 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, Sockets;
 
-    procedure contains(data,what: string);
+    procedure dice();
+//    procedure contains(data,what: string);
+    function contains (data,what: string) : boolean;
+
     procedure readdata(data: string);
     procedure Say(msg: string);
-    procedure dice();
+    procedure SayPriv(msg,user: string);
     procedure Announce(msg: string);
     procedure Action(msg: string);
     procedure dosomething(user, data: string; inchannel : boolean);
@@ -28,7 +31,10 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Button4: TButton;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure pingTimer(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -49,14 +55,13 @@ type
 var
   Form1: TForm1;
 
-
-// this are all values a procedure should return
-// but don;t know how, so make it global
-
   receiveddata : string  ;
+
+// converting procedures into functions
+
   receivednick : string  ;
   receivedchan : string  ;
-  temp_contains: boolean ;
+//  temp_contains: boolean ;
 
 
 implementation
@@ -76,6 +81,11 @@ tcpclient.Sendln('NICK '+ nick.Text);
 tcpclient.Sendln('JOIN '+ channel.Text);
 treceive.Create(false);
 ping.Enabled := true;
+
+server.Enabled := false;
+port.Enabled := false;
+nick.Enabled := false;
+channel.Enabled := false;
 
 end;
 
@@ -98,7 +108,9 @@ temp :=  (temp + temp2);
 say(temp);
 end;
 
-procedure contains(data,what: string);
+// procedure contains(data,what: string);
+function contains (data,what: string):boolean;
+
 var
 counter    : integer;
 wordlenght : integer;
@@ -142,7 +154,7 @@ tempstring := '';
 counter2 := 0;
   repeat
     counter2 := counter2 + 1;
-    temp := (counter2 + counter3);
+
     // it seems it is now allowed to do tempchat[counter2+counter3]
     tempchar := data[counter2 + counter3 - 1];
     tempstring := tempstring + tempchar;
@@ -150,7 +162,8 @@ counter2 := 0;
 
       //  sleep (1000); // to see what it does
 until (counter3 = datalenght - wordlenght) or (tempstring = what);
-if (tempstring = what) then temp_contains := true else temp_contains := false;
+//if (tempstring = what) then temp_contains := true else temp_contains := false;
+if (tempstring = what) then Result := true else Result := false;
 
 
 end; // end of check for datalenght > whatlenght
@@ -164,20 +177,19 @@ begin
 if inchannel = false then
 begin
 //say(user + ' is having a private "chatter" with me')
-
 end;
 
-// no need for else here
-//if inchannel = true then
-//say(user + ', stop talking, you are driving me nuts!');
-//if (user = 'nuky') and (data = 'kill andre') then action('rapes andre to death. nasty stuff, eh?');
+// example how to use the new contains function
+if contains(data,'gek') then action('is gek ');
 
-//say ('D E B U G : '+ data); //debug
 
-{ contains(data,'!dice');}
+
 if data = '!dice' then dice;
 if data = '!test' then announce('blah blah blah blah');
 if data = '!test2'then action('blah blah blah');
+
+
+
 end;
 
 
@@ -318,6 +330,15 @@ end; //enf of user message , could now add the PONG command
 end; //end of valid data
 end;
 
+procedure SayPriv(msg,user: string);
+begin
+
+form1.TcpClient.Sendln('PRIVMSG ' + user + ' :'+ msg);
+end;
+
+
+
+
 
 
 procedure Say(msg: string);
@@ -370,6 +391,11 @@ end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
+server.Enabled := true;
+port.Enabled := true;
+nick.Enabled := true;
+channel.Enabled := true;
+
 Button1.Enabled := true;
 Button2.Enabled := false;
 tcpclient.Disconnect;
