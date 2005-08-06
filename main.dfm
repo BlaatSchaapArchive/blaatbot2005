@@ -1,6 +1,6 @@
 object Form1: TForm1
   Left = 192
-  Top = 137
+  Top = 109
   Width = 696
   Height = 480
   Caption = 'Form1'
@@ -11,36 +11,59 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
+  object Label1: TLabel
+    Left = 256
+    Top = 8
+    Width = 32
+    Height = 13
+    Caption = 'Label1'
+  end
+  object Label2: TLabel
+    Left = 256
+    Top = 24
+    Width = 32
+    Height = 13
+    Caption = 'Label2'
+  end
+  object Label3: TLabel
+    Left = 256
+    Top = 40
+    Width = 32
+    Height = 13
+    Caption = 'Label3'
+  end
   object Button1: TButton
     Left = 104
-    Top = 120
+    Top = 104
     Width = 121
     Height = 25
     Caption = 'Go'
     TabOrder = 0
     OnClick = Button1Click
   end
-  object Edit1: TEdit
+  object server: TEdit
     Left = 104
-    Top = 48
+    Top = 8
     Width = 121
     Height = 21
+    CharCase = ecLowerCase
     TabOrder = 1
     Text = 'alphaserv.mine.nu'
   end
-  object Edit2: TEdit
+  object channel: TEdit
     Left = 104
-    Top = 96
+    Top = 56
     Width = 121
     Height = 21
     TabOrder = 2
     Text = '#degekkenclub'
   end
-  object Edit3: TEdit
+  object port: TEdit
     Left = 104
-    Top = 72
+    Top = 32
     Width = 121
     Height = 21
     TabOrder = 3
@@ -52,9 +75,44 @@ object Form1: TForm1
     Width = 649
     Height = 265
     Lines.Strings = (
-      'Memo1')
+      '')
     ScrollBars = ssVertical
     TabOrder = 4
+  end
+  object Nick: TEdit
+    Left = 104
+    Top = 80
+    Width = 121
+    Height = 21
+    TabOrder = 5
+    Text = 'Nick'
+  end
+  object RadioButton1: TRadioButton
+    Left = 576
+    Top = 144
+    Width = 81
+    Height = 17
+    Caption = 'Connected'
+    Enabled = False
+    TabOrder = 6
+  end
+  object Button2: TButton
+    Left = 104
+    Top = 136
+    Width = 121
+    Height = 25
+    Caption = 'Stop'
+    TabOrder = 7
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    Left = 336
+    Top = 64
+    Width = 75
+    Height = 25
+    Caption = 'Button3'
+    TabOrder = 8
+    OnClick = Button3Click
   end
   object TcpClient: TTcpClient
     Left = 8
@@ -63,14 +121,13 @@ object Form1: TForm1
   object ping: TTimer
     Enabled = False
     Interval = 10000
+    OnTimer = pingTimer
     Left = 8
     Top = 40
   end
-  object test: TTimer
-    Enabled = False
+  object Timer1: TTimer
     Interval = 1
-    OnTimer = testTimer
     Left = 8
-    Top = 72
+    Top = 96
   end
 end
