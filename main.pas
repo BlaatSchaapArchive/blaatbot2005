@@ -28,18 +28,11 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Edit1: TEdit;
-    Edit2: TEdit;
-    RadioButton1: TRadioButton;
-    Button3: TButton;
-    comparing: TLabel;
-    lenght1: TLabel;
-    lenght2: TLabel;
     Button4: TButton;
     procedure Button1Click(Sender: TObject);
     procedure pingTimer(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
+
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button4Click(Sender: TObject);
 
@@ -131,7 +124,7 @@ tempchar := what[counter];
 until  (tempchar = '');
 wordlenght := counter-1; // we know now the lenght of the word
     convert := wordlenght;
-    form1.lenght1.Caption := convert;
+
 
 counter := 0;
 repeat
@@ -140,7 +133,7 @@ tempchar := data[counter];
 until (tempchar='');
 datalenght := counter; // we know now the lenght of the data
     convert := datalenght-1;
-    form1.lenght2.Caption := convert;
+
 
 if datalenght > wordlenght then begin
 repeat
@@ -154,7 +147,7 @@ counter2 := 0;
     tempchar := data[counter2 + counter3 - 1];
     tempstring := tempstring + tempchar;
   until counter2 = wordlenght;
-        form1.comparing.Caption:= tempstring;
+
       //  sleep (1000); // to see what it does
 until (counter3 = datalenght - wordlenght) or (tempstring = what);
 if (tempstring = what) then temp_contains := true else temp_contains := false;
@@ -162,7 +155,7 @@ if (tempstring = what) then temp_contains := true else temp_contains := false;
 
 end; // end of check for datalenght > whatlenght
 end; // end check for valid data
-form1.radiobutton1.Checked:= temp_contains; // debug
+
 
 end;
 
@@ -183,8 +176,8 @@ end;
 
 { contains(data,'!dice');}
 if data = '!dice' then dice;
-temp_contains := false;
-
+if data = '!test' then announce('blah blah blah blah');
+if data = '!test2'then action('blah blah blah');
 end;
 
 
@@ -330,17 +323,17 @@ end;
 procedure Say(msg: string);
 begin
 
-form1.TcpClient.Sendln('PRIVMSG ' + form1.channel.Text + ' '+ msg);
+form1.TcpClient.Sendln('PRIVMSG ' + form1.channel.Text + ' :'+ msg);
 end;
 
 procedure Announce(msg: string);
 begin
-
+ form1.TcpClient.Sendln('NOTICE ' + form1.channel.Text + ' :'+ msg);
 end;
 
 procedure Action(msg: string);
 begin
-
+form1.TcpClient.Sendln('PRIVMSG ' + form1.channel.Text + CHR($20)+ CHR($3a)+ CHR($2d) + CHR($01) + 'ACTION '+ msg);
 end;
 
 
@@ -382,10 +375,6 @@ Button2.Enabled := false;
 tcpclient.Disconnect;
 end;
 
-procedure TForm1.Button3Click(Sender: TObject);
-begin
-contains(edit2.Text,edit1.Text);
-end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
