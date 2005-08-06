@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 109
   Width = 696
   Height = 480
-  Caption = 'Form1'
+  Caption = 'dCG IRC BOT'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -41,7 +41,7 @@ object Form1: TForm1
     Width = 121
     Height = 25
     Caption = 'Go'
-    TabOrder = 0
+    TabOrder = 5
     OnClick = Button1Click
   end
   object server: TEdit
@@ -50,7 +50,7 @@ object Form1: TForm1
     Width = 121
     Height = 21
     CharCase = ecLowerCase
-    TabOrder = 1
+    TabOrder = 0
     Text = 'alphaserv.mine.nu'
   end
   object channel: TEdit
@@ -66,7 +66,7 @@ object Form1: TForm1
     Top = 32
     Width = 121
     Height = 21
-    TabOrder = 3
+    TabOrder = 1
     Text = '6667'
   end
   object Memo1: TMemo
@@ -84,17 +84,8 @@ object Form1: TForm1
     Top = 80
     Width = 121
     Height = 21
-    TabOrder = 5
+    TabOrder = 3
     Text = 'Nick'
-  end
-  object RadioButton1: TRadioButton
-    Left = 576
-    Top = 144
-    Width = 81
-    Height = 17
-    Caption = 'Connected'
-    Enabled = False
-    TabOrder = 6
   end
   object Button2: TButton
     Left = 104
@@ -102,17 +93,8 @@ object Form1: TForm1
     Width = 121
     Height = 25
     Caption = 'Stop'
-    TabOrder = 7
+    TabOrder = 6
     OnClick = Button2Click
-  end
-  object Button3: TButton
-    Left = 336
-    Top = 64
-    Width = 75
-    Height = 25
-    Caption = 'Button3'
-    TabOrder = 8
-    OnClick = Button3Click
   end
   object TcpClient: TTcpClient
     Left = 8
@@ -124,10 +106,5 @@ object Form1: TForm1
     OnTimer = pingTimer
     Left = 8
     Top = 40
-  end
-  object Timer1: TTimer
-    Interval = 1
-    Left = 8
-    Top = 96
   end
 end

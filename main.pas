@@ -22,10 +22,7 @@ type
     port: TEdit;
     Memo1: TMemo;
     Nick: TEdit;
-    RadioButton1: TRadioButton;
-    Timer1: TTimer;
     Button2: TButton;
-    Button3: TButton;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -34,6 +31,8 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+
+      
   end;
   type
   TReceive = class(TThread)
@@ -226,18 +225,19 @@ end;
 
 procedure TReceive.Execute;
 begin
+
 repeat
+
+sleep (100); // sleep for 100 ms to keep the cpu usage low
 if  form1.TcpClient.WaitForData() then
 begin
 receiveddata := form1.tcpclient.Receiveln();
 form1.memo1.Text := form1.memo1.Text  + receiveddata  ;
-sleep (10);
-end;
-
  readdata(receiveddata);
 // and now read the received data
  receiveddata :='';
 // and get rid of it
+end;
 
 until (form1.TcpClient.Connected = false);
 
@@ -266,5 +266,7 @@ procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
 tcpclient.Disconnect;
 end;
+
+
 
 end.
