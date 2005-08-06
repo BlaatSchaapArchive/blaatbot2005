@@ -333,7 +333,7 @@ end;
 
 procedure Action(msg: string);
 begin
-form1.TcpClient.Sendln('PRIVMSG ' + form1.channel.Text + CHR($20)+ CHR($3a)+ CHR($2d) + CHR($01) + 'ACTION '+ msg);
+form1.TcpClient.Sendln('PRIVMSG ' + form1.channel.Text + ' :'+ CHR($01) + 'ACTION '+ msg+ CHR($01));
 end;
 
 
