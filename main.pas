@@ -61,6 +61,7 @@ var
 
   receivednick : string  ;
   receivedchan : string  ;
+  receivingdata : boolean;
 //  temp_contains: boolean ;
 
 
@@ -76,12 +77,26 @@ Button2.Enabled := true;
 tcpclient.RemoteHost := server.Text;
 tcpclient.RemotePort := port.Text;
 if tcpclient.Connect then
-tcpclient.Sendln('USER Host Server * : dGC BOT');
-tcpclient.Sendln('NICK '+ nick.Text);
-tcpclient.Sendln('JOIN '+ channel.Text);
 treceive.Create(false);
-ping.Enabled := true;
+tcpclient.Sendln('NICK '+ nick.Text);
+tcpclient.Sendln('USER dcgbot dgchost '+ server.Text + ' :dGC BOT');
+//sniffed
+//USER andre_winxp 786at1600 irc.chat4all.org :Andre van Schoubroeck
 
+
+
+// for irc.chat4all.org compatibility
+
+repeat
+repeat
+sleep (100);
+until receivingdata = false;
+sleep (1000);
+until receivingdata = false;
+
+
+tcpclient.Sendln('JOIN '+ channel.Text);
+ping.Enabled := true;
 server.Enabled := false;
 port.Enabled := false;
 nick.Enabled := false;
@@ -219,6 +234,7 @@ scount  : integer;
 mData   : string;
 mCount  : integer;
 mestemp : string;
+pinger : string;
 ok : boolean;
 begin
 
@@ -343,7 +359,7 @@ mCount := mCount + 1;
 temp := Message[mCount];
 mData := mData + temp;
 until mcount = dcount;
-end; // read the data 
+end; // read the data
 
 
  end else mCommand := mCommandTemp ;
@@ -375,7 +391,26 @@ end; // end of private message
 
 end; //end of PRIVMSG
 
+
+
+
+
 end; //enf of user message , could now add the PONG command
+
+if contains(data,'PING') then
+  begin
+pinger :='';
+counter :=5;
+  repeat
+counter := counter + 1;
+temp := data[counter];
+pinger := pinger + temp ;
+until temp = '';
+form1.TcpClient.Sendln('PONG '+ pinger) ;
+
+
+  end;
+
 end; //end of valid data
 end;
 
@@ -417,15 +452,18 @@ repeat
 sleep (25); // sleep for 100 ms to keep the cpu usage low
 if  form1.TcpClient.WaitForData() then
 begin
+receivingdata := true;
 receiveddata := form1.tcpclient.Receiveln();
 form1.memo1.Text := form1.memo1.Text  + receiveddata  ;
  readdata(receiveddata);
 // and now read the received data
  receiveddata :='';
 // and get rid of it
+receivingdata := false;
 end;
 
 until (form1.TcpClient.Connected = false);
+
 
 end;
 
