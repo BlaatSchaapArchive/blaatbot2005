@@ -178,7 +178,7 @@ begin
 
 if inchannel = false then
 begin
-//say(user + ' is having a private "chatter" with me')
+saypriv('I am '+ form1.Nick.Text, user);
 end;
 
 // example how to use the new contains function
@@ -209,6 +209,7 @@ usertemp: string;
 command : string;
 target  : string;
 message : string;
+inchannel : boolean;
 namelen : integer;
 counter2: integer;
 Dcount  : integer;
@@ -218,6 +219,7 @@ scount  : integer;
 mData   : string;
 mCount  : integer;
 mestemp : string;
+ok : boolean;
 begin
 
 counter := 0;
@@ -278,6 +280,19 @@ form1.Label2.Caption := target; // debug the target
 if target = (form1.channel.Text + ' ') then
 // message in the channel
 begin
+ok := true;
+inchannel := true;
+end;
+
+if target = (form1.nick.Text + ' ') then
+//message in private
+begin
+ok := true;
+inchannel := false;
+end;
+
+if ok = true then
+begin
 counter := counter + 1;
 temp := data[counter];
 // ignore the ':' ?
@@ -308,7 +323,10 @@ mCommandTemp := mCommandTemp + temp;
 //Temp ..
 until (temp = ' ') or (mcount = dcount);
 
-if temp = ' ' then begin
+//try this
+if not (mcount = 1) then begin
+if (temp = ' ') then begin
+
 
  repeat
  sCount := sCount + 1;
@@ -317,23 +335,26 @@ if temp = ' ' then begin
  until scount = mcount - 1;
  //remove the ' '
 
+
+if not (mcount = dcount) then begin //no space at the end
+
 repeat
 mCount := mCount + 1;
 temp := Message[mCount];
 mData := mData + temp;
 until mcount = dcount;
-
+end; // read the data 
 
 
  end else mCommand := mCommandTemp ;
-
+end; // begins with a space
 
 
 // end;// end of separating commands
 
 
 
-dosomething (username, message,mCommand,mData, true);
+dosomething (username, message,mCommand,mData, inchannel);
 
 // and now comes the action
 // write some stuff here
