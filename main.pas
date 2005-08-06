@@ -6,8 +6,10 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, Sockets;
 
+    procedure contains(data,what: string);
     procedure readdata(data: string);
     procedure Say(msg: string);
+    procedure dice();
     procedure Announce(msg: string);
     procedure Action(msg: string);
     procedure dosomething(user, data: string; inchannel : boolean);
@@ -26,13 +28,22 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    RadioButton1: TRadioButton;
+    Button3: TButton;
+    comparing: TLabel;
+    lenght1: TLabel;
+    lenght2: TLabel;
+    Button4: TButton;
     procedure Button1Click(Sender: TObject);
     procedure pingTimer(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Button4Click(Sender: TObject);
 
-      
+
   end;
   type
   TReceive = class(TThread)
@@ -44,9 +55,15 @@ type
 
 var
   Form1: TForm1;
+
+
+// this are all values a procedure should return
+// but don;t know how, so make it global
+
   receiveddata : string  ;
   receivednick : string  ;
   receivedchan : string  ;
+  temp_contains: boolean ;
 
 
 implementation
@@ -69,17 +86,106 @@ ping.Enabled := true;
 
 end;
 
+procedure dice();
+var
+die1, die2 : integer;
+temp, temp2: string;
+convert : variant;
+begin
+randomize;
+die1 := random(6) + 1;
+die2 := random(6) + 1;
+convert := die1;
+temp := convert;
+convert := die1;
+temp := (temp + ' &  ');
+convert := die2;
+temp2 := convert;
+temp :=  (temp + temp2);
+say(temp);
+end;
+
+procedure contains(data,what: string);
+var
+counter    : integer;
+wordlenght : integer;
+datalenght : integer;
+tempstring : string;
+tempchar   : char;
+counter2   : integer;
+counter3   : integer;
+temp       : integer;
+convert    : variant;
+begin
+
+if NOT ( data = '') then if NOT( what = '') then begin;
+// check if there is data
+counter := 0;
+counter2 := 0;
+counter3 := 0;
+
+
+repeat
+counter := counter + 1;
+tempchar := what[counter];
+until  (tempchar = '');
+wordlenght := counter-1; // we know now the lenght of the word
+    convert := wordlenght;
+    form1.lenght1.Caption := convert;
+
+counter := 0;
+repeat
+counter := counter + 1;
+tempchar := data[counter];
+until (tempchar='');
+datalenght := counter; // we know now the lenght of the data
+    convert := datalenght-1;
+    form1.lenght2.Caption := convert;
+
+if datalenght > wordlenght then begin
+repeat
+counter3 := counter3 + 1;
+tempstring := '';
+counter2 := 0;
+  repeat
+    counter2 := counter2 + 1;
+    temp := (counter2 + counter3);
+    // it seems it is now allowed to do tempchat[counter2+counter3]
+    tempchar := data[counter2 + counter3 - 1];
+    tempstring := tempstring + tempchar;
+  until counter2 = wordlenght;
+        form1.comparing.Caption:= tempstring;
+      //  sleep (1000); // to see what it does
+until (counter3 = datalenght - wordlenght) or (tempstring = what);
+if (tempstring = what) then temp_contains := true else temp_contains := false;
+
+
+end; // end of check for datalenght > whatlenght
+end; // end check for valid data
+form1.radiobutton1.Checked:= temp_contains; // debug
+
+end;
+
 procedure dosomething(user, data: string; inchannel : boolean);
 begin
 if inchannel = false then
 begin
-say(user + ' is having a private "chatter" with me')
-end
-else if inchannel = true then
-say(user + ', stop talking, you are driving me nuts!');
-if (user = 'nuky') and (data = 'kill andre') then action('rapes andre to death. nasty stuff, eh?');
+//say(user + ' is having a private "chatter" with me')
+
 end;
 
+// no need for else here
+//if inchannel = true then
+//say(user + ', stop talking, you are driving me nuts!');
+//if (user = 'nuky') and (data = 'kill andre') then action('rapes andre to death. nasty stuff, eh?');
+
+//say ('D E B U G : '+ data); //debug
+
+{ contains(data,'!dice');}
+if data = '!dice' then dice;
+temp_contains := false;
+
+end;
 
 
 
@@ -95,6 +201,8 @@ target  : string;
 message : string;
 namelen : integer;
 counter2: integer;
+mcount  : integer;
+mestemp : string;
 begin
 
 counter := 0;
@@ -157,11 +265,23 @@ begin
 counter := counter + 1;
 temp := data[counter];
 // ignore the ':' ?
+mcount := 0;
 repeat
 counter := counter + 1;
+mcount := mcount + 1;
 temp := data[counter];
-message := message + temp;
+mestemp := mestemp + temp;
 until temp = '';    // end of data
+
+counter := 0;
+mcount := mcount - 1;
+repeat
+counter := counter + 1;
+temp := mestemp[counter];
+message := message + temp;
+until counter = mcount;
+//remove the '' from the end;
+
 form1.Label3.Caption := message; // debug the command
 
 dosomething (username, message, true);
@@ -264,7 +384,7 @@ end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 begin
-say('test');
+contains(edit2.Text,edit1.Text);
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -273,5 +393,10 @@ tcpclient.Disconnect;
 end;
 
 
+
+procedure TForm1.Button4Click(Sender: TObject);
+begin
+dice;
+end;
 
 end.
