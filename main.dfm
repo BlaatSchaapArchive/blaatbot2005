@@ -59,7 +59,7 @@ object Form1: TForm1
     Width = 121
     Height = 21
     TabOrder = 2
-    Text = '#degekkenclub'
+    Text = '#skyos_offtopic'
   end
   object port: TEdit
     Left = 104
@@ -85,7 +85,7 @@ object Form1: TForm1
     Width = 121
     Height = 21
     TabOrder = 3
-    Text = 'Nick'
+    Text = 'Hentai'
   end
   object Button2: TButton
     Left = 104
@@ -93,6 +93,7 @@ object Form1: TForm1
     Width = 121
     Height = 25
     Caption = 'Stop'
+    Enabled = False
     TabOrder = 6
     OnClick = Button2Click
   end

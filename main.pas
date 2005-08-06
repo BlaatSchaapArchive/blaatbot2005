@@ -57,6 +57,7 @@ implementation
 procedure TForm1.Button1Click(Sender: TObject);
 begin
 button1.Enabled := false;
+Button2.Enabled := true;
 tcpclient.RemoteHost := server.Text;
 tcpclient.RemotePort := port.Text;
 if tcpclient.Connect then
@@ -72,9 +73,11 @@ procedure dosomething(user, data: string; inchannel : boolean);
 begin
 if inchannel = false then
 begin
-say(user + ' is talking to the bot in private ');
-end;
-
+say(user + ' is having a private "chatter" with me')
+end
+else if inchannel = true then
+say(user + ', stop talking, you are driving me nuts!');
+if (user = 'nuky') and (data = 'kill andre') then action('rapes andre to death. nasty stuff, eh?');
 end;
 
 
@@ -228,7 +231,7 @@ begin
 
 repeat
 
-sleep (100); // sleep for 100 ms to keep the cpu usage low
+sleep (25); // sleep for 100 ms to keep the cpu usage low
 if  form1.TcpClient.WaitForData() then
 begin
 receiveddata := form1.tcpclient.Receiveln();
@@ -254,6 +257,8 @@ end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
+Button1.Enabled := true;
+Button2.Enabled := false;
 tcpclient.Disconnect;
 end;
 
