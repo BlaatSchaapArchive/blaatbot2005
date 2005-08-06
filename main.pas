@@ -15,7 +15,7 @@ uses
     procedure SayPriv(msg,user: string);
     procedure Announce(msg: string);
     procedure Action(msg: string);
-    procedure dosomething(user, data: string; inchannel : boolean);
+procedure dosomething(user, line, command, data: string; inchannel : boolean);
 
 type
   TForm1 = class(TForm)
@@ -172,21 +172,26 @@ end; // end check for valid data
 
 end;
 
-procedure dosomething(user, data: string; inchannel : boolean);
+procedure dosomething(user, line, command, data: string; inchannel : boolean);
 begin
+
+
 if inchannel = false then
 begin
 //say(user + ' is having a private "chatter" with me')
 end;
 
 // example how to use the new contains function
-if contains(data,'gek') then action('is gek ');
+if contains(line,'gek') then action('is gek ');
 
+// line is the full line,
+//command is the first word,
+//data is the rest
 
-
-if data = '!dice' then dice;
-if data = '!test' then announce('blah blah blah blah');
-if data = '!test2'then action('blah blah blah');
+if command = '!kill' then action('kills '+data); 
+if command = '!dice' then dice;
+if command = '!test' then announce('blah blah blah blah');
+if command = '!test2'then action('blah blah blah');
 
 
 
@@ -206,13 +211,19 @@ target  : string;
 message : string;
 namelen : integer;
 counter2: integer;
-mcount  : integer;
+Dcount  : integer;
+mCommand: string;
+mCommandtemp : string;
+scount  : integer;
+mData   : string;
+mCount  : integer;
 mestemp : string;
 begin
 
 counter := 0;
 counter2 := 0;
-
+mcommand :='';
+mdata := '';
 
 if NOT (data = '') then // check if there is data
 begin
@@ -287,9 +298,42 @@ message := message + temp;
 until counter = mcount;
 //remove the '' from the end;
 
+dcount := mcount;
 form1.Label3.Caption := message; // debug the command
+mCount:=0;
+repeat
+mCount := mCount + 1;
+temp := Message[mCount];
+mCommandTemp := mCommandTemp + temp;
+//Temp ..
+until (temp = ' ') or (mcount = dcount);
 
-dosomething (username, message, true);
+if temp = ' ' then begin
+
+ repeat
+ sCount := sCount + 1;
+ temp := mCommandTemp[sCount];
+ mCommand := mCommand + temp;
+ until scount = mcount - 1;
+ //remove the ' '
+
+repeat
+mCount := mCount + 1;
+temp := Message[mCount];
+mData := mData + temp;
+until mcount = dcount;
+
+
+
+ end else mCommand := mCommandTemp ;
+
+
+
+// end;// end of separating commands
+
+
+
+dosomething (username, message,mCommand,mData, true);
 
 // and now comes the action
 // write some stuff here
@@ -302,25 +346,9 @@ dosomething (username, message, true);
 end; // end of channel message
 
 if target = (form1.Nick.Text + ' ') then
-// private message
+// message in the channel
 begin
-counter := counter + 1;
-temp := data[counter];
-// ignore the ':' ?
-repeat
-counter := counter + 1;
-temp := data[counter];
-message := message + temp;
-until temp = '';    // end of data
-form1.Label3.Caption := message; // debug the command
-
-dosomething (username, message, false);
-// and now comes the action
-// write some stuff here
-// or better, put it
-// in a new procedure
-
-
+// remove some stuff, it is euqual to the in channel
 
 end; // end of private message
 
