@@ -572,7 +572,7 @@ begin
 
 repeat
 
-sleep (10); // sleep for 10 ms to keep the cpu usage low
+sleep (1); // sleep for 1 ms to keep the cpu usage low
 if  form1.TcpClient.WaitForData() then
 begin
 receivingdata := true;
