@@ -470,19 +470,63 @@ until temp = ' ';
 
 
 
+//if (data[1] = 'P') and (usertemp ='ING ') then // we removed the first character
+//  begin
+//pinger :='';
+//counter :=5;
+//  repeat
+//counter := counter + 1;
+//temp := data[counter];
+//pinger := pinger + temp ;
+//until temp = '';
+//form1.TcpClient.Sendln('PONG '+ pinger) ;
+
+
+//  end else begin
 if (data[1] = 'P') and (usertemp ='ING ') then // we removed the first character
+
+
   begin
 pinger :='';
 counter :=5;
-  repeat
+repeat
 counter := counter + 1;
 temp := data[counter];
 pinger := pinger + temp ;
-until temp = '';
+until (temp = '') or (temp =CHR($01));
+// replaced above with the pasted
+// try to paste the f*cking code here
+// since it REFUSES to work in a METHOD !!!
+// pasted code here cause the remove method
+// is fucked up and i can't see what is wrong
+// with the fucking code.
+
+////bebug
+// seems to work now ?!?!?
+//form1.Label3.Caption := remove(pinger);
+//form1.tcpclient.Sendln( 'PONG '+ form1.Label3.Caption);
+////
+    mcount := counter;
+    counter := 0;
+    mcount := mcount - 1;
+    repeat
+   counter := counter + 1;
+    temp := pinger[counter];
+    message := message + temp;
+    until counter = mcount-5;
+    pinger := message;
+// pased till here ..
+
+// remove in method;
+//form1.TcpClient.Sendln('PONG '+ REMOVE(pinger)) ;
+
+// test remove method again
 form1.TcpClient.Sendln('PONG '+ pinger) ;
 
+//wtf ? remove code adds some chr($0) ?!?!?!
 
   end else begin
+
 
 
 
