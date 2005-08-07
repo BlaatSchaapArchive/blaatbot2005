@@ -69,7 +69,7 @@ var
   receivednick : string  ;
   receivedchan : string  ;
   receivingdata : boolean;
-//  temp_contains: boolean ;
+  convert       : variant; 
 
 
 implementation
@@ -113,7 +113,7 @@ procedure dice();
 var
 die1, die2 : integer;
 temp, temp2: string;
-convert : variant;
+
 begin
 randomize;
 die1 := random(6) + 1;
@@ -197,7 +197,7 @@ procedure dosomething(user, line, command, data: string; inchannel : boolean);
 var
 number     : integer;                  
 begin
-// say in private to rejoin the channel, irc.chat4all.org troubles
+// say in private to rejoin the channel, ( when it is kicked ? )
 if (inchannel = false) and contains(line,'rejoin') then form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
 
 if (inchannel = false) and contains(line,'bot') then say('I am  '+form1.nick.Text);
@@ -211,21 +211,23 @@ end;
 
 if (inchannel = false) and (line = ( CHR(1) +'VERSION' + CHR(1))) then
 //received a CTCP version
-form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ CHR($01) + 'VERSION dCGbot CVS ' + CHR($01))
+form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ CHR($01) + 'VERSION dCGbot bèta ' + CHR($01))
 else
 if inchannel = false then
 begin
 randomize;
-number := random(4);
+number := random(6);
 if ( number = 0 ) then saypriv('I am '+ form1.Nick.Text, user);
 if ( number = 1 ) then saypriv(user, user);
 if ( number = 2 ) then saypriv('You must be bored', user);
 if ( number = 3 ) then saypriv('www.deGekkenClub.tk', user);
+if ( number = 4 ) then saypriv('Wat moet je ? ', user);
+if ( number = 5 ) then saypriv('I am only a bot....', user);
 end;
 
 // example how to use the new contains function
 if contains(line,'gek') then action('is gek ');
-
+if contains(line,'bot') then say('I am a bot');
 // line is the full line,
 //command is the first word,
 //data is the rest
@@ -320,14 +322,14 @@ until temp = ' ';
 
 form1.Label2.Caption := target; // debug the target
 
-if target = (form1.channel.Text + ' ') then
+if AnsiLowerCase(target) = (form1.channel.Text + ' ') then
 // message in the channel
 begin
 ok := true;
 inchannel := true;
 end;
 
-if target = (form1.nick.Text + ' ') then
+if AnsiLowerCase(target) = (form1.nick.Text + ' ') then
 //message in private
 begin
 ok := true;
@@ -409,26 +411,50 @@ dosomething (username, message,mCommand,mData, inchannel);
 
 end; // end of channel message
 
-if target = (form1.Nick.Text + ' ') then
-// message in the channel
-begin
-// remove some stuff, it is euqual to the in channel
-
-end; // end of private message
 
 end; //end of PRIVMSG
 
 
+//
+//repeat
+//counter := counter + 1;
+//temp := data[counter];
+//command := command + temp;
+//until temp = ' ';
+//
 
 
 
-end; //enf of user message , could now add the PONG command
+//
+
+//
+
+end else begin //end of user message , could now add the PONG command
+
 
 repeat
 counter := counter + 1;
 temp := data[counter];
 command := command + temp;
 until temp = ' ';
+
+
+if (data[1] = 'P') and (usertemp ='ING ') then // we removed the first character
+  begin
+pinger :='';
+counter :=5;
+  repeat
+counter := counter + 1;
+temp := data[counter];
+pinger := pinger + temp ;
+until temp = '';
+form1.TcpClient.Sendln('PONG '+ pinger) ;
+
+
+  end else begin
+
+
+
 
 
 // test dit
@@ -460,30 +486,22 @@ until counter = mcount;
 //remove the '' from the end;
 end;
 // tot hier
-
+end;
 form1.Label8.Caption := target;
 
 
-
-
-if command='376 ' then form1.tcpclient.Sendln('JOIN '+ form1.channel.Text);
+if command='376 ' then
 // ready to log in
-
-if (data[1] = 'P') and (usertemp ='ING ') then // we removed the first character
-  begin
-pinger :='';
-counter :=5;
-  repeat
-counter := counter + 1;
-temp := data[counter];
-pinger := pinger + temp ;
-until temp = '';
-form1.TcpClient.Sendln('PONG '+ pinger) ;
+begin
+form1.tcpclient.Sendln('JOIN '+ form1.channel.Text);
+form1.Label3.Caption := 'joining channel';
+end;
 
 
-  end;
 
+end; // end of server message
 end; //end of valid data
+
 end;
 
 procedure SayPriv(msg,user: string);
