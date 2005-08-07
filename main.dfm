@@ -156,6 +156,13 @@ object Form1: TForm1
     TabOrder = 6
     OnClick = Button2Click
   end
+  object Panel1: TPanel
+    Left = 344
+    Top = 16
+    Width = 25
+    Height = 25
+    TabOrder = 7
+  end
   object TcpClient: TTcpClient
     Left = 8
     Top = 104
@@ -166,5 +173,11 @@ object Form1: TForm1
     OnTimer = pingTimer
     Left = 8
     Top = 136
+  end
+  object Timer1: TTimer
+    Interval = 1
+    OnTimer = Timer1Timer
+    Left = 360
+    Top = 128
   end
 end

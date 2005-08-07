@@ -35,12 +35,17 @@ type
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
+    Panel1: TPanel;
+    Timer1: TTimer;
     procedure Button1Click(Sender: TObject);
     procedure pingTimer(Sender: TObject);
     procedure Button2Click(Sender: TObject);
 
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button4Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure joinerTimer(Sender: TObject);
 
 
   end;
@@ -56,6 +61,7 @@ var
   Form1: TForm1;
 
   receiveddata : string  ;
+  loginsleep : integer;
 
 // converting procedures into functions
 
@@ -71,6 +77,9 @@ implementation
 
 
 procedure TForm1.Button1Click(Sender: TObject);
+var
+loginnow : boolean;
+loginsleep : integer;
 begin
 button1.Enabled := false;
 Button2.Enabled := true;
@@ -83,24 +92,16 @@ tcpclient.Sendln('USER dcgbot dgchost '+ server.Text + ' :dGC BOT');
 //sniffed
 //USER andre_winxp 786at1600 irc.chat4all.org :Andre van Schoubroeck
 
-
-
-// for irc.chat4all.org compatibility
-
-repeat
-repeat
-sleep (100);
-until receivingdata = false;
-sleep (1000);
-until receivingdata = false;
-
-
-tcpclient.Sendln('JOIN '+ channel.Text);
-ping.Enabled := true;
 server.Enabled := false;
 port.Enabled := false;
 nick.Enabled := false;
 channel.Enabled := false;
+
+if server.Text = 'irc.chat4all.org' then sleep (10000);
+
+tcpclient.Sendln('JOIN '+ channel.Text);
+ping.Enabled := true;
+
 
 end;
 
@@ -189,8 +190,21 @@ end;
 
 procedure dosomething(user, line, command, data: string; inchannel : boolean);
 begin
+// say in private to rejoin the channel, irc.chat4all.org troubles
+if (inchannel = false) and contains(line,'rejoin') then form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
+
+if (inchannel = false) and (command = 'channel') then
+begin
+form1.TcpClient.Sendln('PART '+ form1.channel.Text);
+form1.channel.Text := data;
+form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
+end;
 
 
+if (inchannel = false) and (line = ( CHR(1) +'VERSION' + CHR(1))) then
+//received a CTCP version
+form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ CHR($01) + 'VERSION dCGbot CVS ' + CHR($01))
+else
 if inchannel = false then
 begin
 saypriv('I am '+ form1.Nick.Text, user);
@@ -203,7 +217,7 @@ if contains(line,'gek') then action('is gek ');
 //command is the first word,
 //data is the rest
 
-if command = '!kill' then action('kills '+data); 
+if command = '!kill' then action('kills '+data);
 if command = '!dice' then dice;
 if command = '!test' then announce('blah blah blah blah');
 if command = '!test2'then action('blah blah blah');
@@ -459,8 +473,9 @@ form1.memo1.Text := form1.memo1.Text  + receiveddata  ;
 // and now read the received data
  receiveddata :='';
 // and get rid of it
-receivingdata := false;
-end;
+// for irc.chat4all.org compatibility
+sleep (100);
+end else receivingdata := false;;
 
 until (form1.TcpClient.Connected = false);
 
@@ -499,6 +514,22 @@ end;
 procedure TForm1.Button4Click(Sender: TObject);
 begin
 dice;
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+tcpclient.Sendln('JOIN '+ channel.Text);
+end;
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+begin
+if receivingdata = true then panel1.Color := clgreen;
+if receivingdata = false then panel1.Color := clgray;
+end;
+
+procedure TForm1.joinerTimer(Sender: TObject);
+begin
+tcpclient.Sendln('JOIN '+ channel.Text)  ;
 end;
 
 end.
