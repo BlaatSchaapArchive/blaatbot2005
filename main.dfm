@@ -1,8 +1,8 @@
 object Form1: TForm1
   Left = 255
   Top = 250
-  AutoScroll = False
-  BorderStyle = bsSizeToolWin
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
   Caption = 'dCG IRC BOT'
   ClientHeight = 175
   ClientWidth = 250
@@ -19,7 +19,7 @@ object Form1: TForm1
   object Label1: TLabel
     Left = 233
     Top = 8
-    Width = 10
+    Width = 3
     Height = 13
     Caption = ' '
     Visible = False
@@ -27,7 +27,7 @@ object Form1: TForm1
   object Label2: TLabel
     Left = 233
     Top = 24
-    Width = 10
+    Width = 3
     Height = 13
     Caption = ' '
     Visible = False
@@ -35,7 +35,7 @@ object Form1: TForm1
   object Label3: TLabel
     Left = 233
     Top = 40
-    Width = 10
+    Width = 3
     Height = 13
     Caption = ' '
     Visible = False
@@ -99,7 +99,7 @@ object Form1: TForm1
   object Label8: TLabel
     Left = 233
     Top = 56
-    Width = 10
+    Width = 3
     Height = 13
     Caption = ' '
     Visible = False
