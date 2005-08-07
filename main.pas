@@ -37,6 +37,7 @@ type
     Label7: TLabel;
     Panel1: TPanel;
     Timer1: TTimer;
+    Label8: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure pingTimer(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -81,11 +82,13 @@ var
 loginnow : boolean;
 loginsleep : integer;
 begin
+label3.Caption:='connecting....';
 button1.Enabled := false;
 Button2.Enabled := true;
 tcpclient.RemoteHost := server.Text;
 tcpclient.RemotePort := port.Text;
 if tcpclient.Connect then
+begin
 treceive.Create(false);
 tcpclient.Sendln('NICK '+ nick.Text);
 tcpclient.Sendln('USER dcgbot dgchost '+ server.Text + ' :dGC BOT');
@@ -97,12 +100,13 @@ port.Enabled := false;
 nick.Enabled := false;
 channel.Enabled := false;
 
-if server.Text = 'irc.chat4all.org' then sleep (10000);
+// if server.Text = 'irc.chat4all.org' then sleep (10000);
+// found the code to detect when the server is ready
+// moving login code to readdata
 
-tcpclient.Sendln('JOIN '+ channel.Text);
 ping.Enabled := true;
 
-
+end else label3.caption :='server down';
 end;
 
 procedure dice();
@@ -137,6 +141,7 @@ counter2   : integer;
 counter3   : integer;
 temp       : integer;
 convert    : variant;
+
 begin
 
 if NOT ( data = '') then if NOT( what = '') then begin;
@@ -189,9 +194,13 @@ end; // end check for valid data
 end;
 
 procedure dosomething(user, line, command, data: string; inchannel : boolean);
+var
+number     : integer;                  
 begin
 // say in private to rejoin the channel, irc.chat4all.org troubles
 if (inchannel = false) and contains(line,'rejoin') then form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
+
+if (inchannel = false) and contains(line,'bot') then say('I am  '+form1.nick.Text);
 
 if (inchannel = false) and (command = 'channel') then
 begin
@@ -200,14 +209,18 @@ form1.channel.Text := data;
 form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
 end;
 
-
 if (inchannel = false) and (line = ( CHR(1) +'VERSION' + CHR(1))) then
 //received a CTCP version
 form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ CHR($01) + 'VERSION dCGbot CVS ' + CHR($01))
 else
 if inchannel = false then
 begin
-saypriv('I am '+ form1.Nick.Text, user);
+randomize;
+number := random(4);
+if ( number = 0 ) then saypriv('I am '+ form1.Nick.Text, user);
+if ( number = 1 ) then saypriv(user, user);
+if ( number = 2 ) then saypriv('You must be bored', user);
+if ( number = 3 ) then saypriv('www.deGekkenClub.tk', user);
 end;
 
 // example how to use the new contains function
@@ -260,7 +273,7 @@ mdata := '';
 if NOT (data = '') then // check if there is data
 begin
 //form1.Label4.Caption := '' ;
-counter := counter + 1;
+counter := counter + 1; // ignoring the first letter :
 repeat
 counter := counter + 1;
 namelen := namelen + 1;
@@ -411,7 +424,52 @@ end; //end of PRIVMSG
 
 end; //enf of user message , could now add the PONG command
 
-if contains(data,'PING') then
+repeat
+counter := counter + 1;
+temp := data[counter];
+command := command + temp;
+until temp = ' ';
+
+
+// test dit
+repeat
+counter := counter + 1;
+temp := data[counter];
+target := target + temp;
+until temp = ' ';
+
+begin
+counter := counter + 1;
+temp := data[counter];
+// ignore the ':' ?
+mcount := 0;
+repeat
+counter := counter + 1;
+mcount := mcount + 1;
+temp := data[counter];
+mestemp := mestemp + temp;
+until temp = '';    // end of data
+
+counter := 0;
+mcount := mcount - 1;
+repeat
+counter := counter + 1;
+temp := mestemp[counter];
+message := message + temp;
+until counter = mcount;
+//remove the '' from the end;
+end;
+// tot hier
+
+form1.Label8.Caption := target;
+
+
+
+
+if command='376 ' then form1.tcpclient.Sendln('JOIN '+ form1.channel.Text);
+// ready to log in
+
+if (data[1] = 'P') and (usertemp ='ING ') then // we removed the first character
   begin
 pinger :='';
 counter :=5;
@@ -473,8 +531,7 @@ form1.memo1.Text := form1.memo1.Text  + receiveddata  ;
 // and now read the received data
  receiveddata :='';
 // and get rid of it
-// for irc.chat4all.org compatibility
-sleep (100);
+
 end else receivingdata := false;;
 
 until (form1.TcpClient.Connected = false);
@@ -497,7 +554,7 @@ server.Enabled := true;
 port.Enabled := true;
 nick.Enabled := true;
 channel.Enabled := true;
-
+label3.Caption :='diconnected';
 Button1.Enabled := true;
 Button2.Enabled := false;
 tcpclient.Disconnect;

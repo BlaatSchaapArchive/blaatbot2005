@@ -1,8 +1,8 @@
 object Form1: TForm1
-  Left = 254
-  Top = 249
-  Width = 410
-  Height = 197
+  Left = 255
+  Top = 250
+  Width = 408
+  Height = 195
   Caption = 'dCG IRC BOT'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,6 @@ object Form1: TForm1
     Width = 3
     Height = 13
     Caption = ' '
-    Visible = False
   end
   object Label2: TLabel
     Left = 256
@@ -28,7 +27,6 @@ object Form1: TForm1
     Width = 3
     Height = 13
     Caption = ' '
-    Visible = False
   end
   object Label3: TLabel
     Left = 256
@@ -92,6 +90,13 @@ object Form1: TForm1
     Font.Name = 'MS Sans Serif'
     Font.Style = []
     ParentFont = False
+  end
+  object Label8: TLabel
+    Left = 248
+    Top = 136
+    Width = 32
+    Height = 13
+    Caption = 'Label8'
   end
   object Button1: TButton
     Left = 104
@@ -157,8 +162,8 @@ object Form1: TForm1
     OnClick = Button2Click
   end
   object Panel1: TPanel
-    Left = 344
-    Top = 16
+    Left = 8
+    Top = 8
     Width = 25
     Height = 25
     TabOrder = 7
