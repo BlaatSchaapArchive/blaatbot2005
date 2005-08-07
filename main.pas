@@ -65,7 +65,7 @@ var
   Form1: TForm1;
 
   receiveddata : string  ;
-  loginsleep : integer;
+//  loginsleep : integer;
 
 // converting procedures into functions
 
@@ -81,9 +81,7 @@ implementation
 
 
 procedure TForm1.Button1Click(Sender: TObject);
-var
-loginnow : boolean;
-loginsleep : integer;
+
 begin
 label3.Caption:='connecting....';
 button1.Enabled := false;
@@ -103,11 +101,10 @@ port.Enabled := false;
 nick.Enabled := false;
 channel.Enabled := false;
 
-// if server.Text = 'irc.chat4all.org' then sleep (10000);
 // found the code to detect when the server is ready
 // moving login code to readdata
 
-ping.Enabled := true;
+
 
 end else label3.caption :='server down';
 end;
@@ -203,7 +200,7 @@ counter2 := 0;
     tempstring := tempstring + tempchar;
   until counter2 = wordlenght;
 
-      //  sleep (1000); // to see what it does
+
 until (counter3 = datalenght - wordlenght) or (tempstring = what);
 //if (tempstring = what) then temp_contains := true else temp_contains := false;
 if (tempstring = what) then Result := true else Result := false;
@@ -362,7 +359,7 @@ ok := true;
 inchannel := true;
 end;
 
-if AnsiLowerCase(target) = (form1.nick.Text + ' ') then
+if AnsiLowerCase(target) = AnsiLowerCase((form1.nick.Text + ' ')) then
 //message in private
 begin
 ok := true;
@@ -472,6 +469,7 @@ command := command + temp;
 until temp = ' ';
 
 
+
 if (data[1] = 'P') and (usertemp ='ING ') then // we removed the first character
   begin
 pinger :='';
@@ -526,8 +524,10 @@ form1.Label8.Caption := target;
 if command='376 ' then
 // ready to log in
 begin
+
 form1.tcpclient.Sendln('JOIN '+ form1.channel.Text);
 form1.Label3.Caption := 'joining channel';
+form1.ping.Enabled := true;
 end;
 
 
@@ -572,7 +572,7 @@ begin
 
 repeat
 
-sleep (25); // sleep for 100 ms to keep the cpu usage low
+sleep (10); // sleep for 10 ms to keep the cpu usage low
 if  form1.TcpClient.WaitForData() then
 begin
 receivingdata := true;
@@ -586,6 +586,8 @@ form1.memo1.Text := form1.memo1.Text  + receiveddata  ;
 end else receivingdata := false;;
 
 until (form1.TcpClient.Connected = false);
+form1.Panel1.Color := clred;
+form1.Label3.Caption := 'Server dropped';
 
 
 end;
