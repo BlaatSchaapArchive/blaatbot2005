@@ -214,8 +214,10 @@ end;
 
 procedure dosomething(user, line, command, data: string; inchannel : boolean);
 var
-number     : integer;                  
+number     : integer;
 begin
+if not (contains(user,'serv')) then begin
+// to prevent reacting on  *serv
 // say in private to rejoin the channel, ( when it is kicked ? )
 if (inchannel = false) and contains(line,'rejoin') then form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
 
@@ -269,6 +271,7 @@ if command = '!voice'    then mode(data,'v',true);
 if command = '!devoice'  then mode(data,'v',false);
 
 
+end; // end of *serv detection
 end;
 
 
