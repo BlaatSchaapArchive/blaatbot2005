@@ -12,6 +12,9 @@ uses
 
     procedure readdata(data: string);
     procedure Say(msg: string);
+    procedure Kick(who: string);
+    procedure Mode (who: string; mode : char; enable : boolean);
+
     procedure SayPriv(msg,user: string);
     procedure Announce(msg: string);
     procedure Action(msg: string);
@@ -69,7 +72,7 @@ var
   receivednick : string  ;
   receivedchan : string  ;
   receivingdata : boolean;
-  convert       : variant; 
+  convert       : variant;
 
 
 implementation
@@ -108,6 +111,25 @@ ping.Enabled := true;
 
 end else label3.caption :='server down';
 end;
+
+
+procedure Kick(who: string);
+begin
+form1.TcpClient.Sendln('KICK ' + form1.channel.Text + ' ' + who);
+end;
+
+procedure Mode (who: string; mode : char; enable : boolean);
+begin
+if enable = true then
+form1.TcpClient.Sendln('MODE '+ form1.channel.Text +' +'+mode+' '+who);
+if enable = false then
+form1.TcpClient.Sendln('MODE '+ form1.channel.Text +' -'+mode+' '+who);
+end;
+
+
+
+
+
 
 procedure dice();
 var
@@ -237,6 +259,17 @@ if command = '!dice' then dice;
 if command = '!test' then announce('blah blah blah blah');
 if command = '!test2'then action('blah blah blah');
 
+//administrative stuff , needs to add protection
+//else everyone can start banning
+if command = '!kick'     then kick(data);
+if command = '!ban'      then mode(data,'b',true);
+if command = '!unban'    then mode(data,'b',false);
+if command = '!op'       then mode(data,'o',true);
+if command = '!deop'     then mode(data,'o',false);
+if command = '!hop'      then mode(data,'h',true);
+if command = '!dehop'    then mode(data,'h',false);
+if command = '!voice'    then mode(data,'v',true);
+if command = '!devoice'  then mode(data,'v',false);
 
 
 end;
