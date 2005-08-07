@@ -1,9 +1,11 @@
 object Form1: TForm1
   Left = 255
   Top = 250
-  Width = 408
-  Height = 195
+  AutoScroll = False
+  BorderStyle = bsSizeToolWin
   Caption = 'dCG IRC BOT'
+  ClientHeight = 175
+  ClientWidth = 250
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,25 +17,28 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 256
+    Left = 233
     Top = 8
-    Width = 3
+    Width = 10
     Height = 13
     Caption = ' '
+    Visible = False
   end
   object Label2: TLabel
-    Left = 256
+    Left = 233
     Top = 24
-    Width = 3
+    Width = 10
     Height = 13
     Caption = ' '
+    Visible = False
   end
   object Label3: TLabel
-    Left = 256
+    Left = 233
     Top = 40
-    Width = 3
+    Width = 10
     Height = 13
     Caption = ' '
+    Visible = False
   end
   object Label4: TLabel
     Left = 49
@@ -92,11 +97,12 @@ object Form1: TForm1
     ParentFont = False
   end
   object Label8: TLabel
-    Left = 248
-    Top = 136
-    Width = 32
+    Left = 233
+    Top = 56
+    Width = 10
     Height = 13
-    Caption = 'Label8'
+    Caption = ' '
+    Visible = False
   end
   object Button1: TButton
     Left = 104
@@ -114,7 +120,7 @@ object Form1: TForm1
     Height = 21
     CharCase = ecLowerCase
     TabOrder = 0
-    Text = 'irc.freenode.net'
+    Text = 'alphaserv.mine.nu'
   end
   object channel: TEdit
     Left = 104
@@ -122,7 +128,7 @@ object Form1: TForm1
     Width = 121
     Height = 21
     TabOrder = 2
-    Text = '#test'
+    Text = '#skyos_offtopic'
   end
   object port: TEdit
     Left = 104
@@ -162,10 +168,10 @@ object Form1: TForm1
     OnClick = Button2Click
   end
   object Panel1: TPanel
-    Left = 8
-    Top = 8
-    Width = 25
-    Height = 25
+    Left = 40
+    Top = 104
+    Width = 57
+    Height = 57
     TabOrder = 7
   end
   object TcpClient: TTcpClient
@@ -180,8 +186,9 @@ object Form1: TForm1
     Top = 136
   end
   object Timer1: TTimer
+    Interval = 1
     OnTimer = Timer1Timer
-    Left = 360
-    Top = 128
+    Left = 8
+    Top = 40
   end
 end

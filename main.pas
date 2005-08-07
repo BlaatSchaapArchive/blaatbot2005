@@ -260,6 +260,9 @@ if command = '!test2'then action('blah blah blah');
 
 //administrative stuff , needs to add protection
 //else everyone can start banning
+if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'nuky') then
+// temporairy security code 
+begin
 if command = '!kick'     then kick(data);
 if command = '!ban'      then mode(data,'b',true);
 if command = '!unban'    then mode(data,'b',false);
@@ -269,7 +272,7 @@ if command = '!hop'      then mode(data,'h',true);
 if command = '!dehop'    then mode(data,'h',false);
 if command = '!voice'    then mode(data,'v',true);
 if command = '!devoice'  then mode(data,'v',false);
-
+end;
 
 end; // end of *serv detection
 end;
