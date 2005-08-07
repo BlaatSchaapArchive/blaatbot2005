@@ -305,6 +305,7 @@ counter2 := 0;
 mcommand :='';
 mdata := '';
 
+if  (contains(data,'MODE')) and (contains(data,'+i'))  then form1.TcpClient.Sendln('USERHOST '+form1.Nick.Text);
 if NOT (data = '') then // check if there is data
 begin
 //form1.Label4.Caption := '' ;
@@ -487,6 +488,9 @@ until temp = ' ';
 
 //  end else begin
 if (data[1] = 'P') and (usertemp ='ING ') then // we removed the first character
+//fuck chatnet ... if that is true ... then i need to rewrite all the shit
+// or leave support for that specific server
+// or write a compatibility proxy
 
 
   begin
@@ -624,7 +628,8 @@ if  form1.TcpClient.WaitForData() then
 begin
 receivingdata := true;
 receiveddata := form1.tcpclient.Receiveln();
-form1.memo1.Text := form1.memo1.Text  + receiveddata  ;
+//bebug, should start log a file ?
+//form1.memo1.Text := form1.memo1.Text  + receiveddata  ;
  readdata(receiveddata);
 // and now read the received data
  receiveddata :='';
@@ -680,7 +685,8 @@ end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
-if receivingdata = true then panel1.Color := clgreen;
+if form1.tcpclient.Connected = false then panel1.Color := clred else
+if receivingdata = true then panel1.Color := clgreen else
 if receivingdata = false then panel1.Color := clgray;
 end;
 

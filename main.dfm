@@ -180,7 +180,6 @@ object Form1: TForm1
     Top = 136
   end
   object Timer1: TTimer
-    Interval = 1
     OnTimer = Timer1Timer
     Left = 360
     Top = 128
