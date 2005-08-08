@@ -162,6 +162,8 @@ temp       : integer;
 convert    : variant;
 
 begin
+data := AnsiLowerCase(data);
+what := AnsiLowerCase(what);
 
 if NOT ( data = '') then if NOT( what = '') then begin;
 // check if there is data
@@ -230,6 +232,7 @@ form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ CHR($01) + 'VERSION dCGbot bèta 
 else
 if inchannel = false then
 begin
+
 randomize;
 number := 7;//disable
 //number := random(6);
@@ -243,7 +246,7 @@ end;
 
 // example how to use the new contains function
 if contains(line,'gek') then action('is gek ');
-//if contains(line,'bot') then say('I am a bot');
+if contains(line,form1.Nick.text) then say('Typ !help '+ form1.Nick.text);
 // line is the full line,
 //command is the first word,
 //data is the rest
@@ -295,6 +298,8 @@ form1.channel.Text := data;
 form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
 end;
 // commands in the channel
+if NOT(contains(data,form1.Nick.Text)) then
+begin
 if command = '!kick'     then kick(data);
 if command = '!ban'      then mode(data,'b',true);
 if command = '!unban'    then mode(data,'b',false);
@@ -304,6 +309,7 @@ if command = '!hop'      then mode(data,'h',true);
 if command = '!dehop'    then mode(data,'h',false);
 if command = '!voice'    then mode(data,'v',true);
 if command = '!devoice'  then mode(data,'v',false);
+end; // don't do that to itself
 end;
 
 end; // end of *serv detection
@@ -381,7 +387,7 @@ until temp = ' ';
 form1.Label1.Caption := command; // debug command
 
 
-if command = 'PRIVMSG ' then
+// try moving it if command = 'PRIVMSG ' then
 begin
 repeat
 counter := counter + 1;
@@ -427,6 +433,7 @@ message := message + temp;
 until counter = mcount;
 //remove the '' from the end;
 
+
 dcount := mcount;
 form1.Label3.Caption := message; // debug the command
 mCount:=0;
@@ -463,10 +470,12 @@ end; // read the data
  end else mCommand := mCommandTemp ;
 end; // begins with a space
 
+// mot deze weg
+ end;// end of separating commands
 
-// end;// end of separating commands
 
-
+// i think this is where the separation should be
+if command = 'PRIVMSG ' then begin
 
 dosomething (username, message,mCommand,mData, inchannel);
 
@@ -482,6 +491,17 @@ end; // end of channel message
 
 
 end; //end of PRIVMSG
+
+
+if command = 'KICK ' then
+// someone got kicked !
+// check if it is us
+if (contains(data,form1.Nick.Text)) and (NOT (username=form1.Nick.text)) then
+begin
+form1.TcpClient.Sendln('JOIN '+ form1.channel.text);
+say('Ouch .... '+username+', stop kicking me, it hurts.' );
+end;
+
 
 
 //
@@ -674,7 +694,7 @@ end else receivingdata := false;;
 
 until (form1.TcpClient.Connected = false);
 form1.Panel1.Color := clred;
-form1.Label3.Caption := 'Server dropped';
+//form1.Label3.Caption := 'Server dropped';
 
 
 end;
