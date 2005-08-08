@@ -9,6 +9,7 @@ uses
     procedure dice();
 //    procedure contains(data,what: string);
     function contains (data,what: string) : boolean;
+    function isadmin  (name: string) : boolean;
 
     procedure readdata(data: string);
     procedure Say(msg: string);
@@ -81,6 +82,31 @@ var
 implementation
 
 {$R *.dfm}
+
+    function isadmin  (name: string) : boolean;
+    var
+    adminfile : textfile;
+    temp      : char;
+    admin     : string;
+
+    begin
+    // try the comma separated text file
+    // like the one i used in the quiz project
+    assign(adminfile, 'admins');
+    reset (adminfile);
+    admin := '';
+    while not eof(adminfile) do
+      begin
+      admin :='';
+        repeat
+        read (adminfile, temp);
+        if not (temp = ',') then admin := admin + temp
+        until temp = ',';
+      if AnsiLowerCase(name) = AnsiLowerCase(admin) then result := true;
+      end;
+      closefile(adminfile);
+
+    end;
 
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -220,9 +246,14 @@ end;
 procedure dosomething(user, line, command, data: string; inchannel : boolean);
 var
 number     : integer;
+<<<<<<< main.pas
+//IsAdmin    : boolean;
+//Counter    : integer;
+=======
 IsAdmin    : boolean;
 Counter    : integer;
 
+>>>>>>> 1.26
 begin
 if not (contains(user,'serv')) then begin
 // to prevent reacting on  *serv
@@ -330,8 +361,13 @@ counter:=0;
 
 
 // temporairy security code
+<<<<<<< main.pas
+//if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'a-v-s')or (AnsiLowerCase(user) = 'nuky') then
+if isadmin(user) then
+=======
 //if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'a-v-s')or (AnsiLowerCase(user) = 'nuky') then
 
+>>>>>>> 1.26
 
 //begin
 // command to the bots
