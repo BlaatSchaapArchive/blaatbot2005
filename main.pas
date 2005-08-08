@@ -92,7 +92,7 @@ if tcpclient.Connect then
 begin
 treceive.Create(false);
 tcpclient.Sendln('NICK '+ nick.Text);
-tcpclient.Sendln('USER dcgbot dgchost '+ server.Text + ' :dGC BOT');
+tcpclient.Sendln('USER dgcbot dgchost '+ server.Text + ' :dGCbot www.deGekkenClub.tk');
 //sniffed
 //USER andre_winxp 786at1600 irc.chat4all.org :Andre van Schoubroeck
 
@@ -221,14 +221,8 @@ if not (contains(user,'serv')) then begin
 // say in private to rejoin the channel, ( when it is kicked ? )
 if (inchannel = false) and contains(line,'rejoin') then form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
 
-if (inchannel = false) and contains(line,'bot') then say('I am  '+form1.nick.Text);
+//if (inchannel = false) and contains(line,form1.Nick.edit) then say('I am  '+form1.nick.Text);
 
-if (inchannel = false) and (command = 'channel') then
-begin
-form1.TcpClient.Sendln('PART '+ form1.channel.Text);
-form1.channel.Text := data;
-form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
-end;
 
 if (inchannel = false) and (line = ( CHR(1) +'VERSION' + CHR(1))) then
 //received a CTCP version
@@ -237,7 +231,8 @@ else
 if inchannel = false then
 begin
 randomize;
-number := random(6);
+number := 7;//disable
+//number := random(6);
 if ( number = 0 ) then saypriv('I am '+ form1.Nick.Text, user);
 if ( number = 1 ) then saypriv(user, user);
 if ( number = 2 ) then saypriv('You must be bored', user);
@@ -248,21 +243,58 @@ end;
 
 // example how to use the new contains function
 if contains(line,'gek') then action('is gek ');
-if contains(line,'bot') then say('I am a bot');
+//if contains(line,'bot') then say('I am a bot');
 // line is the full line,
 //command is the first word,
 //data is the rest
+
 
 if command = '!kill' then action('kills '+data);
 if command = '!dice' then dice;
 if command = '!test' then announce('blah blah blah blah');
 if command = '!test2'then action('blah blah blah');
 
+
+if (inchannel = true ) and ( command = '!info' )and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) then
+begin
+say('I am '+ form1.Nick.Text);
+say('I am running dGCbot');
+say('My Source Code is avaiable');
+say('Check http://www.deGekkenClub.tk for more info');
+end;
+
+if (inchannel = true ) and ( command = '!help' )and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) then
+begin
+
+say(' ');
+say(' Current supported user commandos are:');
+say('   !info    <botnick>     !help    <botnick>');
+say('   !kill    <username>    !dice');
+say(' ');
+say(' Current supported admin commandos are:');
+say('   !op      <username>    !deop    <username>');
+say('   !hop     <username>    !dehop   <username>');
+say('   !voice   <username>    !devoice <username>');
+say('   !ban     <username>    !unban   <username>');
+say('   !nick    <newbotnick>  !join    <channel>');
+say(' ');
+end;
+
 //administrative stuff , needs to add protection
 //else everyone can start banning
-if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'nuky') then
-// temporairy security code 
+if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'a-v-s')or (AnsiLowerCase(user) = 'nuky') then
+// temporairy security code
 begin
+// command to the bots
+if command = '!nick' then begin form1.Nick.text:=data; form1.tcpclient.Sendln('NICK '+form1.nick.text);end;
+
+if command = '!join' then
+begin
+form1.TcpClient.Sendln('PART '+ form1.channel.Text);
+form1.channel.Text := data;
+form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
+end;
+// commands in the channel
 if command = '!kick'     then kick(data);
 if command = '!ban'      then mode(data,'b',true);
 if command = '!unban'    then mode(data,'b',false);
