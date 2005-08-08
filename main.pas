@@ -74,7 +74,9 @@ var
   receivingdata : boolean;
   convert       : variant;
 
-
+  Adminsfile    : TextFile;
+  AdminCounter  : Integer;
+  Admins : array [1..10]of String; // try it
 implementation
 
 {$R *.dfm}
@@ -140,7 +142,7 @@ die2 := random(6) + 1;
 convert := die1;
 temp := convert;
 convert := die1;
-temp := (temp + ' &  ');
+temp := (temp + '  &  ');
 convert := die2;
 temp2 := convert;
 temp :=  (temp + temp2);
@@ -217,6 +219,8 @@ end;
 procedure dosomething(user, line, command, data: string; inchannel : boolean);
 var
 number     : integer;
+IsAdmin    : boolean;
+Counter    : integer;
 begin
 if not (contains(user,'serv')) then begin
 // to prevent reacting on  *serv
@@ -246,7 +250,7 @@ end;
 
 // example how to use the new contains function
 if contains(line,'gek') then action('is gek ');
-if contains(line,form1.Nick.text) then say('Typ !help '+ form1.Nick.text);
+//if contains(line,form1.Nick.text) then say('Typ !help '+ form1.Nick.text);
 // line is the full line,
 //command is the first word,
 //data is the rest
@@ -285,8 +289,31 @@ end;
 
 //administrative stuff , needs to add protection
 //else everyone can start banning
-if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'a-v-s')or (AnsiLowerCase(user) = 'nuky') then
+
+//  this is the acces violating code
+
+//    try to implent admins in a file
+//    AssignFile(Adminsfile, 'admins');
+//    Reset(Adminsfile);
+//
+//    while not eof(adminsfile) do
+//    begin
+//    admincounter := admincounter + 1;
+//    readln ( adminsfile , admins[admincounter] )
+//    end;
+//    Close(Adminsfile);
+//    repeat
+//    counter := counter + 1 ;
+//    if (AnsiLowerCase(user) = admins[counter]) then IsAdmin := true;
+//    until counter = admincounter;
+//if isadmin then
+
+
+
 // temporairy security code
+if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'a-v-s')or (AnsiLowerCase(user) = 'nuky') then
+
+
 begin
 // command to the bots
 if command = '!nick' then begin form1.Nick.text:=data; form1.tcpclient.Sendln('NICK '+form1.nick.text);end;
@@ -346,11 +373,16 @@ counter2 := 0;
 mcommand :='';
 mdata := '';
 
+// not sure what this does, but that is how xchat reacted
 if  (contains(data,'MODE')) and (contains(data,'+i'))  then form1.TcpClient.Sendln('USERHOST '+form1.Nick.Text);
+
+
 if NOT (data = '') then // check if there is data
 begin
 //form1.Label4.Caption := '' ;
-counter := counter + 1; // ignoring the first letter :
+if NOT (data[1] = 'P') then counter := counter + 1; // ignoring the first letter :
+// leave the P of PING
+
 repeat
 counter := counter + 1;
 namelen := namelen + 1;
@@ -413,9 +445,12 @@ end;
 
 if ok = true then
 begin
-counter := counter + 1;
-temp := data[counter];
-// ignore the ':' ?
+
+  if command = 'PRIVMSG ' then  counter := counter + 1;   // ignore the ':'
+  temp := data[counter];
+
+
+
 mcount := 0;
 repeat
 counter := counter + 1;
@@ -496,13 +531,16 @@ end; //end of PRIVMSG
 if command = 'KICK ' then
 // someone got kicked !
 // check if it is us
-if (contains(data,form1.Nick.Text)) and (NOT (username=form1.Nick.text)) then
+//if (contains(data,form1.Nick.Text)) and (NOT (username=form1.Nick.text)) then
+if mCommand = form1.Nick.Text  then
 begin
 form1.TcpClient.Sendln('JOIN '+ form1.channel.text);
 say('Ouch .... '+username+', stop kicking me, it hurts.' );
 end;
-
-
+if (command = 'JOIN ' )and (not (username = form1.Nick.Text)) then
+begin
+say('Heey, ' +  username + ', welcome to ' + form1.channel.Text);
+end;
 
 //
 //repeat
@@ -542,11 +580,13 @@ until temp = ' ';
 
 
 //  end else begin
-if (data[1] = 'P') and (usertemp ='ING ') then // we removed the first character
+//if (data[1] = 'P') and (usertemp ='ING ') then // we removed the first character
 //fuck chatnet ... if that is true ... then i need to rewrite all the shit
 // or leave support for that specific server
 // or write a compatibility proxy
-
+// need to rewrite that too,
+if usertemp = 'PING ' then
+//  the fix worked
 
   begin
 pinger :='';
