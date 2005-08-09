@@ -10,6 +10,8 @@ uses
 //    procedure contains(data,what: string);
     function contains (data,what: string) : boolean;
     function isadmin  (name: string) : boolean;
+    procedure restoresettings();
+    procedure savesettings();
     procedure readdata(data: string);
     procedure Say(msg: string);
     procedure Kick(who: string);
@@ -28,7 +30,6 @@ type
     server: TEdit;
     channel: TEdit;
     port: TEdit;
-    Memo1: TMemo;
     Nick: TEdit;
     Button2: TButton;
     Label1: TLabel;
@@ -41,6 +42,9 @@ type
     Panel1: TPanel;
     Timer1: TTimer;
     Label8: TLabel;
+    ChanPass: TEdit;
+    ChanServID: TCheckBox;
+    Label9: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure pingTimer(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -48,8 +52,15 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
+    procedure status_uodater(Sender: TObject);
     procedure joinerTimer(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure serverChange(Sender: TObject);
+    procedure portChange(Sender: TObject);
+    procedure channelChange(Sender: TObject);
+    procedure NickChange(Sender: TObject);
+    procedure ChanPassChange(Sender: TObject);
+    procedure ChanServIDClick(Sender: TObject);
 
 
   end;
@@ -74,12 +85,110 @@ var
   receivingdata : boolean;
   convert       : variant;
 
-  Adminsfile    : TextFile;
-  AdminCounter  : Integer;
-  Admins : array [1..10]of String; // try it
+// from the crash code
+//  Adminsfile    : TextFile;
+//  AdminCounter  : Integer;
+//  Admins : array [1..10]of String; // try it
+
+
+  ready : boolean ;
 implementation
 
 {$R *.dfm}
+
+
+procedure savesettings();
+  var
+  settingfile : textfile;
+    begin
+    assign(settingfile, 'settings');
+    rewrite (settingfile);
+    write (settingfile, form1.server.text);
+    write (settingfile, ',');
+    write (settingfile, form1.port.text);
+    write (settingfile, ',');
+    write (settingfile, form1.channel.text);
+    write (settingfile, ',');
+    write (settingfile, form1.nick.text);
+    write (settingfile, ',');
+    write (settingfile, form1.ChanservID.checked);
+    write (settingfile, ',');
+    write (settingfile, form1.ChanPass.text);
+    write (settingfile, ',');
+    closefile(settingfile);
+    end;
+
+
+
+
+procedure restoresettings();
+  var
+  settingfile : textfile;
+  temp         : char;
+  data         : string;
+
+    begin
+    assign(settingfile, 'settings');
+    reset (settingfile);
+        data :='';
+        repeat
+        read (settingfile, temp);
+        if not (temp = ',') then data := data + temp
+        until temp = ',';
+        form1.server.text := data;
+        data :='';
+        repeat
+        read (settingfile, temp);
+        if not (temp = ',') then data := data + temp
+        until temp = ',';
+        form1.port.text := data ;
+        data :='';
+        repeat
+        read (settingfile, temp);
+        if not (temp = ',') then data := data + temp
+        until temp = ',';
+        form1.channel.text := data;
+        data :='';
+        repeat
+        read (settingfile, temp);
+        if not (temp = ',') then data := data + temp
+        until temp = ',';
+        form1.nick.text := data;
+        data :='';
+
+        repeat
+        read (settingfile, temp);
+        if not (temp = ',') then data := data + temp
+        until temp = ',';
+        convert := data;
+        form1.ChanServID.checked := convert;
+        data :='';
+
+
+        repeat
+        read (settingfile, temp);
+        if not (temp = ',') then data := data + temp
+        until temp = ',';
+        form1.ChanPass.text := data;
+        data :='';
+
+
+        closefile(settingfile);
+        ready := true; //
+        //    preventing the change to activate the
+        //    savesettings
+
+
+
+    end;
+
+
+
+
+
+
+
+
 
 function isadmin  (name: string) : boolean;
     var
@@ -90,7 +199,6 @@ function isadmin  (name: string) : boolean;
     begin
     // try the comma separated text file
     // like the one i used in the quiz project
-    result := false;
     assign(adminfile, 'admins');
     reset (adminfile);
     admin := '';
@@ -102,7 +210,7 @@ function isadmin  (name: string) : boolean;
         if not (temp = ',') then admin := admin + temp
         until temp = ',';
       if AnsiLowerCase(name) = AnsiLowerCase(admin) then result := true;
-        end;
+      end;
       closefile(adminfile);
 
     end;
@@ -341,7 +449,6 @@ end;
 //if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'a-v-s')or (AnsiLowerCase(user) = 'nuky') then
 
 if isadmin(user) then
-
 begin
 // command to the bots
 if command = '!nick' then begin form1.Nick.text:=data; form1.tcpclient.Sendln('NICK '+form1.nick.text);end;
@@ -803,10 +910,10 @@ end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 begin
-tcpclient.Sendln('JOIN '+ channel.Text);
+restoresettings();
 end;
 
-procedure TForm1.Timer1Timer(Sender: TObject);
+procedure TForm1.status_uodater(Sender: TObject);
 begin
 if form1.tcpclient.Connected = false then panel1.Color := clred else
 if receivingdata = true then panel1.Color := clgreen else
@@ -816,6 +923,41 @@ end;
 procedure TForm1.joinerTimer(Sender: TObject);
 begin
 tcpclient.Sendln('JOIN '+ channel.Text)  ;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+restoresettings()
+end;
+
+procedure TForm1.serverChange(Sender: TObject);
+begin
+if ready then savesettings()
+end;
+
+procedure TForm1.portChange(Sender: TObject);
+begin
+if ready then savesettings()
+end;
+
+procedure TForm1.channelChange(Sender: TObject);
+begin
+if ready then savesettings()
+end;
+
+procedure TForm1.NickChange(Sender: TObject);
+begin
+if ready then savesettings()
+end;
+
+procedure TForm1.ChanPassChange(Sender: TObject);
+begin
+if ready then savesettings()
+end;
+
+procedure TForm1.ChanServIDClick(Sender: TObject);
+begin
+if ready then savesettings()
 end;
 
 end.

@@ -4,8 +4,8 @@ object Form1: TForm1
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'dCG IRC BOT'
-  ClientHeight = 175
-  ClientWidth = 240
+  ClientHeight = 250
+  ClientWidth = 250
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,6 +14,7 @@ object Form1: TForm1
   Font.Style = []
   OldCreateOrder = False
   OnClose = FormClose
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -104,13 +105,27 @@ object Form1: TForm1
     Caption = ' '
     Visible = False
   end
+  object Label9: TLabel
+    Left = 25
+    Top = 128
+    Width = 69
+    Height = 20
+    Alignment = taRightJustify
+    Caption = 'Password'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+  end
   object Button1: TButton
     Left = 104
-    Top = 104
+    Top = 184
     Width = 121
     Height = 25
     Caption = 'Go'
-    TabOrder = 5
+    TabOrder = 4
     OnClick = Button1Click
   end
   object server: TEdit
@@ -120,7 +135,7 @@ object Form1: TForm1
     Height = 21
     CharCase = ecLowerCase
     TabOrder = 0
-    Text = 'alphaserv.mine.nu'
+    OnChange = serverChange
   end
   object channel: TEdit
     Left = 104
@@ -128,7 +143,7 @@ object Form1: TForm1
     Width = 121
     Height = 21
     TabOrder = 2
-    Text = '#skyos_offtopic'
+    OnChange = channelChange
   end
   object port: TEdit
     Left = 104
@@ -136,18 +151,7 @@ object Form1: TForm1
     Width = 121
     Height = 21
     TabOrder = 1
-    Text = '6667'
-  end
-  object Memo1: TMemo
-    Left = 8
-    Top = 72
-    Width = 25
-    Height = 25
-    Lines.Strings = (
-      '')
-    ScrollBars = ssVertical
-    TabOrder = 4
-    Visible = False
+    OnChange = portChange
   end
   object Nick: TEdit
     Left = 104
@@ -155,40 +159,63 @@ object Form1: TForm1
     Width = 121
     Height = 21
     TabOrder = 3
-    Text = 'dGCbot'
+    OnChange = NickChange
   end
   object Button2: TButton
     Left = 104
-    Top = 136
+    Top = 216
     Width = 121
     Height = 25
     Caption = 'Stop'
     Enabled = False
-    TabOrder = 6
+    TabOrder = 5
     OnClick = Button2Click
   end
   object Panel1: TPanel
     Left = 40
-    Top = 104
+    Top = 184
     Width = 57
     Height = 57
+    TabOrder = 6
+  end
+  object ChanPass: TEdit
+    Left = 104
+    Top = 128
+    Width = 121
+    Height = 21
     TabOrder = 7
+    OnChange = ChanPassChange
+  end
+  object ChanServID: TCheckBox
+    Left = 8
+    Top = 104
+    Width = 217
+    Height = 17
+    Caption = 'Enable Chanserv Identify'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 8
+    OnClick = ChanServIDClick
   end
   object TcpClient: TTcpClient
     Left = 8
-    Top = 104
+    Top = 40
   end
   object ping: TTimer
     Enabled = False
     Interval = 10000
     OnTimer = pingTimer
     Left = 8
-    Top = 136
+    Top = 72
   end
   object Timer1: TTimer
     Interval = 1
-    OnTimer = Timer1Timer
+    OnTimer = status_uodater
     Left = 8
-    Top = 40
+    Top = 8
   end
 end
