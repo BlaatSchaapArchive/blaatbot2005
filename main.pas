@@ -592,7 +592,7 @@ begin
 if NOT ((ReadParams(data,1,false)) = '') then
 begin
 AddAdmin(ReadParams(data,1,false));
-say('you tried to add '+ (ReadParams(data,1,false)) + ' to the admin list')
+say('you added '+ (ReadParams(data,1,false)) + ' to the admin list')
 end else say('who?');
 end;
 if (command = '!admin') and (ReadParams(data,0,false)= 'remove') then
@@ -600,7 +600,7 @@ begin
 if NOT ((ReadParams(data,1,false)) = '') then
 begin
 RemoveAdmin(ReadParams(data,1,false));
-say('you tried to remove '+ (ReadParams(data,1,false)) + ' from the admin list')
+say('you removed '+ (ReadParams(data,1,false)) + ' from the admin list')
 end else say('who?');
 end;
 
