@@ -90,6 +90,7 @@ function isadmin  (name: string) : boolean;
     begin
     // try the comma separated text file
     // like the one i used in the quiz project
+    result := false;
     assign(adminfile, 'admins');
     reset (adminfile);
     admin := '';
@@ -101,7 +102,7 @@ function isadmin  (name: string) : boolean;
         if not (temp = ',') then admin := admin + temp
         until temp = ',';
       if AnsiLowerCase(name) = AnsiLowerCase(admin) then result := true;
-      end;
+        end;
       closefile(adminfile);
 
     end;
@@ -339,7 +340,8 @@ end;
 // temporairy security code
 //if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'a-v-s')or (AnsiLowerCase(user) = 'nuky') then
 
-if isadmin(user) then;
+if isadmin(user) then
+
 begin
 // command to the bots
 if command = '!nick' then begin form1.Nick.text:=data; form1.tcpclient.Sendln('NICK '+form1.nick.text);end;

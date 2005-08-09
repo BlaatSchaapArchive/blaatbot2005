@@ -5,7 +5,7 @@ object Form1: TForm1
   BorderStyle = bsSingle
   Caption = 'dCG IRC BOT'
   ClientHeight = 175
-  ClientWidth = 250
+  ClientWidth = 240
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
