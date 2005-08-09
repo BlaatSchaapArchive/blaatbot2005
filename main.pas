@@ -7,6 +7,7 @@ uses
   Dialogs, StdCtrls, ExtCtrls, Sockets;
 
     procedure dice();
+    function ReadParams(data : string; number : integer; space : boolean):string;
 //    procedure contains(data,what: string);
     function contains (data,what: string) : boolean;
     function isadmin  (name: string) : boolean;
@@ -26,28 +27,25 @@ type
   TForm1 = class(TForm)
     TcpClient: TTcpClient;
     ping: TTimer;
-    Button1: TButton;
+    Go: TButton;
     server: TEdit;
     channel: TEdit;
     port: TEdit;
     Nick: TEdit;
-    Button2: TButton;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
+    Stop: TButton;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
     Panel1: TPanel;
-    Timer1: TTimer;
-    Label8: TLabel;
+    Updater: TTimer;
     ChanPass: TEdit;
     ChanServID: TCheckBox;
     Label9: TLabel;
-    procedure Button1Click(Sender: TObject);
+    status: TLabel;
+    procedure GoClick(Sender: TObject);
     procedure pingTimer(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
+    procedure StopClick(Sender: TObject);
 
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button4Click(Sender: TObject);
@@ -217,33 +215,40 @@ function isadmin  (name: string) : boolean;
 
 
 
-procedure TForm1.Button1Click(Sender: TObject);
+procedure TForm1.GoClick(Sender: TObject);
 
 begin
-label3.Caption:='connecting....';
-button1.Enabled := false;
-Button2.Enabled := true;
+status.Caption:='Connecting....';
+status.Repaint; // force repaint else not when server down
+go.Enabled := false;
+stop.Enabled := true;
 tcpclient.RemoteHost := server.Text;
 tcpclient.RemotePort := port.Text;
 if tcpclient.Connect then
 begin
+status.Caption:='Connected...';
 treceive.Create(false);
 tcpclient.Sendln('NICK '+ nick.Text);
 tcpclient.Sendln('USER dgcbot dgchost '+ server.Text + ' :dGCbot www.deGekkenClub.tk');
 //sniffed
 //USER andre_winxp 786at1600 irc.chat4all.org :Andre van Schoubroeck
-
 server.Enabled := false;
 port.Enabled := false;
 nick.Enabled := false;
 channel.Enabled := false;
-
+ChanservID.Enabled:=false;
+ChanPass.Enabled := false;
+status.Caption:='Waiting for server...';
 // found the code to detect when the server is ready
 // moving login code to readdata
 
 
 
-end else label3.caption :='server down';
+end else
+begin
+stop.Click;
+status.Caption:='Server Down or Misspelled Adress';
+end;
 end;
 
 
@@ -451,6 +456,27 @@ end;
 if isadmin(user) then
 begin
 // command to the bots
+if (command = '!admin') and (ReadParams(data,0,false)= 'list')  then
+begin
+say('listing admins not supported yet');
+end;
+if (command = '!admin') and (ReadParams(data,0,false)= 'add') then
+begin
+say('adding admins not supported yet');
+if NOT ((ReadParams(data,1,false)) = '') then
+say('you tried to add '+ (ReadParams(data,1,false)) + ' to the admin list')
+else say('who?');
+end;
+if (command = '!admin') and (ReadParams(data,0,false)= 'remove') then
+begin
+say('removing admins not supported yet');
+if NOT ((ReadParams(data,1,false)) = '') then
+say('you tried to remove '+ (ReadParams(data,1,false)) + ' from the admin list')
+else say('who?');
+end;
+
+
+
 if command = '!nick' then begin form1.Nick.text:=data; form1.tcpclient.Sendln('NICK '+form1.nick.text);end;
 
 if command = '!join' then
@@ -477,7 +503,55 @@ end;
 end; // end of *serv detection
 end;
 
+function ReadParams(data : string; number : integer; space : boolean):string;
+var
+datalen,counter : integer;
+datas : integer;
+temp : char;
+datatemp , params : string;
+currentnumber : integer;
+begin
+if not( data = '') then begin
+datas := 0;
+counter := 0;
+datalen := 0;
+currentnumber :=0;
+if number > 0 then begin
+  repeat
+  currentnumber := currentnumber + 1;
+  repeat
+	datas := datas + 1;
+	temp := data[datas];
+  until (temp = ' ');
+  until (currentnumber = number) or (temp = '');
+  //datas := datas ;
+end;
 
+//  if NOT (temp = '')  then begin
+//  if temp = ' ' then begin
+begin
+
+
+	repeat
+	datalen := datalen + 1;
+	temp := data[datas + datalen];
+	datatemp := datatemp + temp ;
+	until (temp = '')or ((space=false) and (temp = ' '));
+
+//  if NOT (data = '') then begin
+//  if data = ' ' then begin
+//  say ('tweede spatie gevonden');
+if datalen > 1  then
+	repeat
+	counter := counter + 1;
+	params := params + data[datas + counter];
+	until counter = datalen -1;
+//  end;
+  result:=params;
+  end;// else result :='invalid data (end of data)';
+
+end else result :='no data'; //data
+end;
 
 
 procedure readdata(data: string);
@@ -551,7 +625,7 @@ temp := data[counter];
 command := command + temp;
 until temp = ' ';
 
-form1.Label1.Caption := command; // debug command
+//form1.Label1.Caption := command; // debug command
 
 
 // try moving it if command = 'PRIVMSG ' then
@@ -562,7 +636,7 @@ temp := data[counter];
 target := target + temp;
 until temp = ' ';
 
-form1.Label2.Caption := target; // debug the target
+//form1.Label2.Caption := target; // debug the target
 
 if AnsiLowerCase(target) = (form1.channel.Text + ' ') then
 // message in the channel
@@ -605,7 +679,7 @@ until counter = mcount;
 
 
 dcount := mcount;
-form1.Label3.Caption := message; // debug the command
+//form1.Label3.Caption := message; // debug the command
 mCount:=0;
 repeat
 mCount := mCount + 1;
@@ -799,16 +873,16 @@ until counter = mcount;
 end;
 // tot hier
 end;
-form1.Label8.Caption := target;
+//form1.Label8.Caption := target;
 
 
 if command='376 ' then
 // ready to log in
 begin
-
+form1.status.Caption:='Server Ready...';
 form1.tcpclient.Sendln('JOIN '+ form1.channel.Text);
-form1.Label3.Caption := 'joining channel';
 form1.ping.Enabled := true;
+if form1.ChanServID.checked then saypriv('identify '+form1.ChanPass.Text,'NickServ');
 end;
 
 
@@ -869,7 +943,7 @@ end else receivingdata := false;;
 
 until (form1.TcpClient.Connected = false);
 form1.Panel1.Color := clred;
-//form1.Label3.Caption := 'Server dropped';
+form1.Stop.click;
 
 
 end;
@@ -883,15 +957,18 @@ begin
 tcpclient.Sendln('PING : TEST')  ;
 end;
 
-procedure TForm1.Button2Click(Sender: TObject);
+procedure TForm1.StopClick(Sender: TObject);
 begin
+ping.Enabled := false;
+status.Caption:='Disconnected';
+ChanservID.Enabled:=true;
+ChanPass.Enabled := true;
 server.Enabled := true;
 port.Enabled := true;
 nick.Enabled := true;
 channel.Enabled := true;
-label3.Caption :='diconnected';
-Button1.Enabled := true;
-Button2.Enabled := false;
+go.Enabled := true;
+stop.Enabled := false;
 tcpclient.Disconnect;
 end;
 
@@ -918,6 +995,7 @@ begin
 if form1.tcpclient.Connected = false then panel1.Color := clred else
 if receivingdata = true then panel1.Color := clgreen else
 if receivingdata = false then panel1.Color := clgray;
+if ( form1.TcpClient.Connected = false ) AND (form1.ping.Enabled = true) then  form1.Status.Caption := 'Server dropped connection'
 end;
 
 procedure TForm1.joinerTimer(Sender: TObject);

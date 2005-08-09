@@ -17,30 +17,6 @@ object Form1: TForm1
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
-    Left = 233
-    Top = 8
-    Width = 3
-    Height = 13
-    Caption = ' '
-    Visible = False
-  end
-  object Label2: TLabel
-    Left = 233
-    Top = 24
-    Width = 3
-    Height = 13
-    Caption = ' '
-    Visible = False
-  end
-  object Label3: TLabel
-    Left = 233
-    Top = 40
-    Width = 3
-    Height = 13
-    Caption = ' '
-    Visible = False
-  end
   object Label4: TLabel
     Left = 49
     Top = 8
@@ -97,14 +73,6 @@ object Form1: TForm1
     Font.Style = []
     ParentFont = False
   end
-  object Label8: TLabel
-    Left = 233
-    Top = 56
-    Width = 3
-    Height = 13
-    Caption = ' '
-    Visible = False
-  end
   object Label9: TLabel
     Left = 25
     Top = 128
@@ -119,14 +87,27 @@ object Form1: TForm1
     Font.Style = []
     ParentFont = False
   end
-  object Button1: TButton
+  object status: TLabel
+    Left = 8
+    Top = 152
+    Width = 146
+    Height = 20
+    Caption = 'Click [Go] to connect'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Go: TButton
     Left = 104
     Top = 184
     Width = 121
     Height = 25
     Caption = 'Go'
     TabOrder = 4
-    OnClick = Button1Click
+    OnClick = GoClick
   end
   object server: TEdit
     Left = 104
@@ -161,7 +142,7 @@ object Form1: TForm1
     TabOrder = 3
     OnChange = NickChange
   end
-  object Button2: TButton
+  object Stop: TButton
     Left = 104
     Top = 216
     Width = 121
@@ -169,7 +150,7 @@ object Form1: TForm1
     Caption = 'Stop'
     Enabled = False
     TabOrder = 5
-    OnClick = Button2Click
+    OnClick = StopClick
   end
   object Panel1: TPanel
     Left = 40
@@ -212,7 +193,7 @@ object Form1: TForm1
     Left = 8
     Top = 72
   end
-  object Timer1: TTimer
+  object Updater: TTimer
     Interval = 1
     OnTimer = status_uodater
     Left = 8
