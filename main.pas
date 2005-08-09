@@ -10,7 +10,6 @@ uses
 //    procedure contains(data,what: string);
     function contains (data,what: string) : boolean;
     function isadmin  (name: string) : boolean;
-
     procedure readdata(data: string);
     procedure Say(msg: string);
     procedure Kick(who: string);
@@ -51,7 +50,6 @@ type
     procedure Button3Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure joinerTimer(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
 
 
   end;
@@ -65,7 +63,7 @@ type
 
 var
   Form1: TForm1;
-  adminlist:tmemo;
+
   receiveddata : string  ;
 //  loginsleep : integer;
 
@@ -83,7 +81,7 @@ implementation
 
 {$R *.dfm}
 
-    function isadmin  (name: string) : boolean;
+function isadmin  (name: string) : boolean;
     var
     adminfile : textfile;
     temp      : char;
@@ -107,6 +105,7 @@ implementation
       closefile(adminfile);
 
     end;
+
 
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -246,14 +245,8 @@ end;
 procedure dosomething(user, line, command, data: string; inchannel : boolean);
 var
 number     : integer;
-<<<<<<< main.pas
 //IsAdmin    : boolean;
 //Counter    : integer;
-=======
-IsAdmin    : boolean;
-Counter    : integer;
-
->>>>>>> 1.26
 begin
 if not (contains(user,'serv')) then begin
 // to prevent reacting on  *serv
@@ -326,50 +319,28 @@ end;
 //  this is the acces violating code
 
 //    try to implent admins in a file
-{    AssignFile(Adminsfile, extractfilepath(application.exename)+'\admins');
-    Reset(Adminsfile);
+//    AssignFile(Adminsfile, 'admins');
+//    Reset(Adminsfile);
 //
-    while not eof(adminsfile) do
-    begin
-    admincounter := admincounter + 1;
-    readln ( adminsfile , admins[admincounter] )
-    end;
-    Close(Adminsfile);
-    repeat
-    counter := counter + 1 ;
-    if (AnsiLowerCase(user) = admins[counter]) then IsAdmin := true;
-    until counter >= admincounter;
-    form1.Caption:=admins[1]+':'+admins[2]+':'+admins[3];
-//if isadmin then say('woot.. teh great admin..');
-    counter:=0;
-    admincounter:=0; }
-//egmos invisible memo version
-adminlist.Visible:=false;
-adminlist.Lines.LoadFromFile(extractfilepath(application.exename)+'\admins');
-counter:=0;
-admincounter:=0;
-for counter:=0 to adminlist.Lines.Count do
-begin
-admins[counter+1]:=adminlist.Lines.Strings[counter];
-if (AnsiLowerCase(user) = admins[counter+1]) then IsAdmin := true;
-end;
- admincounter:=0;
-counter:=0;
-
-
+//    while not eof(adminsfile) do
+//    begin
+//    admincounter := admincounter + 1;
+//    readln ( adminsfile , admins[admincounter] )
+//    end;
+//    Close(Adminsfile);
+//    repeat
+//    counter := counter + 1 ;
+//    if (AnsiLowerCase(user) = admins[counter]) then IsAdmin := true;
+//    until counter = admincounter;
+//if isadmin then
 
 
 
 // temporairy security code
-<<<<<<< main.pas
-//if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'a-v-s')or (AnsiLowerCase(user) = 'nuky') then
-if isadmin(user) then
-=======
 //if (AnsiLowerCase(user) = 'andre') or (AnsiLowerCase(user) = 'a-v-s')or (AnsiLowerCase(user) = 'nuky') then
 
->>>>>>> 1.26
-
-//begin
+if isadmin(user) then;
+begin
 // command to the bots
 if command = '!nick' then begin form1.Nick.text:=data; form1.tcpclient.Sendln('NICK '+form1.nick.text);end;
 
@@ -392,7 +363,7 @@ if command = '!dehop'    then mode(data,'h',false);
 if command = '!voice'    then mode(data,'v',true);
 if command = '!devoice'  then mode(data,'v',false);
 end; // don't do that to itself
-//end;
+end;
 
 end; // end of *serv detection
 end;
@@ -843,13 +814,6 @@ end;
 procedure TForm1.joinerTimer(Sender: TObject);
 begin
 tcpclient.Sendln('JOIN '+ channel.Text)  ;
-end;
-
-procedure TForm1.FormCreate(Sender: TObject);
-begin
-adminlist:=tmemo.Create(self);
-adminlist.Parent:=self;
-adminlist.visible:=falsE;
 end;
 
 end.
