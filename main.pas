@@ -10,18 +10,25 @@ uses
     function ReadParams(data : string; number : integer; space : boolean):string;
 //    procedure contains(data,what: string);
     function contains (data,what: string) : boolean;
-    function isadmin  (name: string) : boolean;
     procedure restoresettings();
     procedure savesettings();
-    procedure readdata(data: string);
-    procedure Say(msg: string);
-    procedure Kick(who: string);
-    procedure Mode (who: string; mode : char; enable : boolean);
 
+    procedure readdata(data: string);
+
+
+    procedure listadmin();
+    function isadmin  (name: string) : boolean;
+    procedure AddAdmin(name:string);
+    procedure RemoveAdmin(name:string);
+
+    procedure Say(msg: string);
     procedure SayPriv(msg,user: string);
     procedure Announce(msg: string);
     procedure Action(msg: string);
-procedure dosomething(user, line, command, data: string; inchannel : boolean);
+    procedure Kick(who: string);
+    procedure Mode (who: string; mode : char; enable : boolean);
+
+    procedure dosomething(user, line, command, data: string; inchannel : boolean);
 
 type
   TForm1 = class(TForm)
@@ -181,6 +188,127 @@ procedure restoresettings();
     end;
 
 
+
+procedure AddAdmin(name:string);
+    var
+    adminfile : textfile;
+    tempfile  : textfile;
+    temp      : char;
+    admin     : string;
+
+    begin
+   assign(tempfile, 'temp');
+   rewrite (tempfile);
+   assign(adminfile, 'admins');
+   reset (adminfile);
+
+      while not eof(adminfile) do
+      begin
+      read (adminfile, temp);
+      write (tempfile, temp);
+      end;
+      closefile(adminfile);
+      closefile(tempfile);
+
+   assign(tempfile, 'temp');
+   reset (tempfile);
+   assign(adminfile, 'admins');
+   rewrite (adminfile);
+
+      while not eof(tempfile) do
+      begin
+      read (tempfile, temp);
+      write (adminfile, temp);
+      end;
+   closefile(tempfile);
+   write (adminfile, AnsiLowerCase(name));
+   write (adminfile, ',');
+   closefile(adminfile);
+   end;
+
+
+
+procedure RemoveAdmin(name:string);
+    var
+    adminfile : textfile;
+    tempfile  : textfile;
+    temp      : char;
+    admin     : string;
+
+    begin
+   assign(tempfile, 'temp');
+   rewrite (tempfile);
+   assign(adminfile, 'admins');
+   reset (adminfile);
+
+    while not eof(adminfile) do
+      begin
+      admin :='';
+        repeat
+        read (adminfile, temp);
+        if not (temp = ',') then admin := admin + temp
+        until temp = ',';
+        if NOT (admin = name) then
+        begin
+        write (tempfile, admin);
+        write (tempfile,',');
+        end;
+      end;
+
+//      while not eof(adminfile) do
+//      begin
+//      read (adminfile, temp);
+//      write (tempfile, temp);
+//      end;
+      closefile(adminfile);
+      closefile(tempfile);
+
+   assign(tempfile, 'temp');
+   reset (tempfile);
+   assign(adminfile, 'admins');
+   rewrite (adminfile);
+
+      while not eof(tempfile) do
+      begin
+      read (tempfile, temp);
+      write (adminfile, temp);
+      end;
+   closefile(tempfile);
+   closefile(adminfile);
+   end;
+
+
+
+
+
+
+
+procedure listadmin();
+    var
+    adminfile : textfile;
+    temp      : char;
+    admin     : string;
+
+    begin
+     say('The Admin list: ');
+     say(' ');
+    // try the comma separated text file
+    // like the one i used in the quiz project
+    assign(adminfile, 'admins');
+    reset (adminfile);
+    admin := '';
+    while not eof(adminfile) do
+      begin
+      admin :='';
+        repeat
+        read (adminfile, temp);
+        if not (temp = ',') then admin := admin + temp
+        until temp = ',';
+        say (admin);
+      end;
+      closefile(adminfile);
+
+    end;
 
 
 
@@ -457,22 +585,23 @@ if isadmin(user) then
 begin
 // command to the bots
 if (command = '!admin') and (ReadParams(data,0,false)= 'list')  then
-begin
-say('listing admins not supported yet');
-end;
+listadmin();
+
 if (command = '!admin') and (ReadParams(data,0,false)= 'add') then
 begin
-say('adding admins not supported yet');
 if NOT ((ReadParams(data,1,false)) = '') then
+begin
+AddAdmin(ReadParams(data,1,false));
 say('you tried to add '+ (ReadParams(data,1,false)) + ' to the admin list')
-else say('who?');
+end else say('who?');
 end;
 if (command = '!admin') and (ReadParams(data,0,false)= 'remove') then
 begin
-say('removing admins not supported yet');
 if NOT ((ReadParams(data,1,false)) = '') then
+begin
+RemoveAdmin(ReadParams(data,1,false));
 say('you tried to remove '+ (ReadParams(data,1,false)) + ' from the admin list')
-else say('who?');
+end else say('who?');
 end;
 
 
