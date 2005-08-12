@@ -50,6 +50,11 @@ type
     ChanServID: TCheckBox;
     Label9: TLabel;
     status: TLabel;
+    reconnect: TTimer;
+    reconnect2: TTimer;
+    wait1: TTimer;
+    wait2: TTimer;
+    TimeoutTimer: TTimer;
     procedure GoClick(Sender: TObject);
     procedure pingTimer(Sender: TObject);
     procedure StopClick(Sender: TObject);
@@ -66,6 +71,11 @@ type
     procedure NickChange(Sender: TObject);
     procedure ChanPassChange(Sender: TObject);
     procedure ChanServIDClick(Sender: TObject);
+    procedure reconnectTimer(Sender: TObject);
+    procedure reconnect2Timer(Sender: TObject);
+    procedure wait1Timer(Sender: TObject);
+    procedure wait2Timer(Sender: TObject);
+    procedure TimeoutTimerTimer(Sender: TObject);
 
 
   end;
@@ -80,6 +90,9 @@ type
 var
   Form1: TForm1;
 
+  logfile : textfile; //debug
+  timeout      : boolean;
+
   receiveddata : string  ;
 //  loginsleep : integer;
 
@@ -88,6 +101,8 @@ var
   receivednick : string  ;
   receivedchan : string  ;
   receivingdata : boolean;
+  pingcount     : integer;
+  pongcount     : integer;
   convert       : variant;
 
 // from the crash code
@@ -133,6 +148,12 @@ procedure restoresettings();
   data         : string;
 
     begin
+    // put the file thing in here, doesn;t want to
+    // work in a form1.something
+    // first parameter not a file then or something 
+    assign(logfile, 'log'); // for debugging
+    rewrite (logfile);     //
+
     assign(settingfile, 'settings');
     reset (settingfile);
         data :='';
@@ -346,6 +367,8 @@ function isadmin  (name: string) : boolean;
 procedure TForm1.GoClick(Sender: TObject);
 
 begin
+timeout := false;
+TimeoutTimer.Enabled:=true;
 status.Caption:='Connecting....';
 status.Repaint; // force repaint else not when server down
 go.Enabled := false;
@@ -374,8 +397,9 @@ status.Caption:='Waiting for server...';
 
 end else
 begin
-stop.Click;
-status.Caption:='Server Down or Misspelled Adress';
+status.Caption:='Server did not respond';
+if (reconnect2.Enabled= true) then
+wait1.Enabled:= true else wait2.Enabled:= true;
 end;
 end;
 
@@ -711,6 +735,23 @@ counter2 := 0;
 mcommand :='';
 mdata := '';
 
+// now we have the ReadParams ,
+// a lot of this code could be replaced
+//
+// the code could be like this then
+if ReadParams(data,1,false) = 'PONG' then
+begin
+convert := ReadParams(data,4,false);
+//form1.status.caption := convert;
+pongcount := convert;
+write (logfile,'PONG ');
+write (logfile,pingcount);
+write (logfile, chr(13));
+end;
+
+
+
+
 // not sure what this does, but that is how xchat reacted
 if  (contains(data,'MODE')) and (contains(data,'+i'))  then form1.TcpClient.Sendln('USERHOST '+form1.Nick.Text);
 
@@ -1008,7 +1049,8 @@ end;
 if command='376 ' then
 // ready to log in
 begin
-form1.status.Caption:='Server Ready...';
+form1.TimeoutTimer.Enabled:=false;
+form1.status.Caption:='dGCbot Ready...';
 form1.tcpclient.Sendln('JOIN '+ form1.channel.Text);
 form1.ping.Enabled := true;
 if form1.ChanServID.checked then saypriv('identify '+form1.ChanPass.Text,'NickServ');
@@ -1072,8 +1114,8 @@ end else receivingdata := false;;
 
 until (form1.TcpClient.Connected = false);
 form1.Panel1.Color := clred;
-form1.Stop.click;
-
+//form1.Stop.click;
+form1.TcpClient.Disconnect;
 
 end;
 
@@ -1082,8 +1124,33 @@ end;
 
 
 procedure TForm1.pingTimer(Sender: TObject);
+var
+tempstring : string;
 begin
-tcpclient.Sendln('PING : TEST')  ;
+write (logfile,'PING ');
+write (logfile,pingcount);
+write (logfile, chr(13));
+if NOT (pingcount = pongcount) then
+// PING TIMEOUT //
+begin
+status.Caption := 'PING TIMEOUT : Reconnect';
+reconnect.Enabled := true;
+write (logfile,'PING TIMEOUT: PING ');
+write (logfile,pingcount);
+write (logfile,'  PONG ');
+write (logfile,pongcount);
+write (logfile, chr(13));
+end;
+
+//if not (pingcount = 2147483647 )then
+// this will never overflow ...
+// 2147483647 * 15 sec = 1021 years
+// i don;t think it will ever run that long :P 
+pingcount := pingcount + 1
+else pingcount := 1;
+convert := pingcount;
+tempstring := convert;
+tcpclient.Sendln('PING : '+tempstring)  ;
 end;
 
 procedure TForm1.StopClick(Sender: TObject);
@@ -1105,6 +1172,7 @@ end;
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
 tcpclient.Disconnect;
+closefile(logfile);
 end;
 
 
@@ -1121,6 +1189,23 @@ end;
 
 procedure TForm1.status_uodater(Sender: TObject);
 begin
+if timeout then
+  begin
+  timeout :=false;
+  write (logfile,'Login Timeout' + chr(13) );
+  //stop.Click;
+  tcpclient.Disconnect;
+  status.Caption := 'Connected, but to answer';
+     if  (not wait2.Enabled ) or
+         (not reconnect.Enabled ) or
+         (not reconnect2.enabled) then wait1.enabled := true
+else if  (not wait1.Enabled ) or
+         (not reconnect.Enabled ) or
+         (not reconnect2.enabled) then wait2.enabled := true
+else status.Caption := 'timeout / reconnect bug';
+
+  end;
+
 if form1.tcpclient.Connected = false then panel1.Color := clred else
 if receivingdata = true then panel1.Color := clgreen else
 if receivingdata = false then panel1.Color := clgray;
@@ -1130,11 +1215,13 @@ end;
 procedure TForm1.joinerTimer(Sender: TObject);
 begin
 tcpclient.Sendln('JOIN '+ channel.Text)  ;
+
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-restoresettings()
+restoresettings();
+//pongcount := 1; // begin value
 end;
 
 procedure TForm1.serverChange(Sender: TObject);
@@ -1165,6 +1252,58 @@ end;
 procedure TForm1.ChanServIDClick(Sender: TObject);
 begin
 if ready then savesettings()
+end;
+
+procedure TForm1.reconnectTimer(Sender: TObject);
+begin
+write (logfile, 'Reconnecting.....' + chr(13));
+status.Caption:='Reconnecting.....';
+//stop.Click;
+tcpclient.Disconnect;
+go.click;
+reconnect.Enabled:=false;
+end;
+
+procedure TForm1.reconnect2Timer(Sender: TObject);
+begin
+reconnect.Enabled:=false;
+write (logfile, 'Reconnecting.....' + chr(13));
+status.Caption:='Reconnecting.....';
+//stop.Click;
+tcpclient.Disconnect;
+go.click;
+reconnect2.Enabled:=false;
+end;
+
+procedure TForm1.wait1Timer(Sender: TObject);
+begin
+if wait2.Enabled = true then
+begin
+// this may not happen
+status.Caption := 'Reconnect timer bug';
+write(logfile,'Reconnect timer bug : 1 nog actief' + chr(13));
+end;
+
+reconnect.Enabled:=true;
+wait1.Enabled := false;
+end;
+
+procedure TForm1.wait2Timer(Sender: TObject);
+begin
+if wait1.Enabled = true then
+begin
+// this may not happen
+status.Caption := 'Reconnect timer bug';
+write(logfile,'Reconnect timer bug : 1 nog actief' + chr(13));
+end;
+
+reconnect2.Enabled:=true;
+wait2.Enabled := false;
+end;
+
+procedure TForm1.TimeoutTimerTimer(Sender: TObject);
+begin
+timeout := true;
 end;
 
 end.

@@ -184,19 +184,52 @@ object Form1: TForm1
   end
   object TcpClient: TTcpClient
     Left = 8
-    Top = 40
+    Top = 8
   end
   object ping: TTimer
     Enabled = False
-    Interval = 10000
+    Interval = 15000
     OnTimer = pingTimer
-    Left = 8
-    Top = 72
+    Left = 72
+    Top = 8
   end
   object Updater: TTimer
     Interval = 1
     OnTimer = status_uodater
-    Left = 8
+    Left = 40
     Top = 8
+  end
+  object reconnect: TTimer
+    Enabled = False
+    Interval = 5000
+    OnTimer = reconnectTimer
+    Left = 8
+    Top = 40
+  end
+  object reconnect2: TTimer
+    Enabled = False
+    Interval = 5000
+    OnTimer = reconnect2Timer
+    Left = 40
+    Top = 40
+  end
+  object wait1: TTimer
+    Enabled = False
+    OnTimer = wait1Timer
+    Left = 72
+    Top = 40
+  end
+  object wait2: TTimer
+    Enabled = False
+    OnTimer = wait2Timer
+    Left = 8
+    Top = 72
+  end
+  object TimeoutTimer: TTimer
+    Enabled = False
+    Interval = 10000
+    OnTimer = TimeoutTimerTimer
+    Left = 40
+    Top = 72
   end
 end
