@@ -104,6 +104,7 @@ var
   pingcount     : integer;
   pongcount     : integer;
   convert       : variant;
+  lastjoined    : string;
 
 // from the crash code
 //  Adminsfile    : TextFile;
@@ -744,9 +745,9 @@ begin
 convert := ReadParams(data,4,false);
 //form1.status.caption := convert;
 pongcount := convert;
-write (logfile,'PONG ');
-write (logfile,pingcount);
-write (logfile, chr(13));
+//write (logfile,'PONG ');
+//write (logfile,pingcount);
+//write (logfile, chr(13));
 end;
 
 
@@ -916,8 +917,9 @@ begin
 form1.TcpClient.Sendln('JOIN '+ form1.channel.text);
 say('Ouch .... '+username+', stop kicking me, it hurts.' );
 end;
-if (command = 'JOIN ' )and (not (username = form1.Nick.Text)) then
+if (command = 'JOIN ' )and (not (username = form1.Nick.Text)) and (not (username = lastjoined)) then
 begin
+lastjoined := username;
 say('Heey, ' +  username + ', welcome to ' + form1.channel.Text);
 end;
 
@@ -1127,9 +1129,9 @@ procedure TForm1.pingTimer(Sender: TObject);
 var
 tempstring : string;
 begin
-write (logfile,'PING ');
-write (logfile,pingcount);
-write (logfile, chr(13));
+//write (logfile,'PING ');
+//write (logfile,pingcount);
+//write (logfile, chr(13));
 if NOT (pingcount = pongcount) then
 // PING TIMEOUT //
 begin
@@ -1146,8 +1148,8 @@ end;
 // this will never overflow ...
 // 2147483647 * 15 sec = 1021 years
 // i don;t think it will ever run that long :P 
-pingcount := pingcount + 1
-else pingcount := 1;
+pingcount := pingcount + 1;
+//else pingcount := 1;
 convert := pingcount;
 tempstring := convert;
 tcpclient.Sendln('PING : '+tempstring)  ;
@@ -1155,7 +1157,14 @@ end;
 
 procedure TForm1.StopClick(Sender: TObject);
 begin
+
+reconnect.enabled := false;
+reconnect2.enabled:=false;
+wait1.enabled := false;
+wait2.enabled := false;
+timeouttimer.enabled:=false;
 ping.Enabled := false;
+
 status.Caption:='Disconnected';
 ChanservID.Enabled:=true;
 ChanPass.Enabled := true;
