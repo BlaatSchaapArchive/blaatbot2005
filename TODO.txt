@@ -28,5 +28,10 @@
 			little cleanup, since the function ReadParams is added
 			a lot of the code could be replaced by using the ReadParams
 			
+*		ADD Support for ChatNet server style,
+
+			the server sends more lines in a packet or something
+			slitter code needs to be added
+			
 									
 			
