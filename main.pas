@@ -24,6 +24,7 @@ uses
     procedure Say(msg: string);
     procedure SayPriv(msg,user: string);
     procedure Announce(msg: string);
+    procedure AnnouncePriv(msg,user: string);
     procedure Action(msg: string);
     procedure Kick(who: string);
     procedure Mode (who: string; mode : char; enable : boolean);
@@ -529,10 +530,9 @@ form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ CHR($01) + 'VERSION dCGbot bèta 
 else
 if inchannel = false then
 begin
-
 randomize;
-number := 7;//disable
-//number := random(6);
+//number := 7;//disable
+number := random(6);
 if ( number = 0 ) then saypriv('I am '+ form1.Nick.Text, user);
 if ( number = 1 ) then saypriv(user, user);
 if ( number = 2 ) then saypriv('You must be bored', user);
@@ -551,8 +551,8 @@ if contains(line,'gek') then action('is gek ');
 
 if command = '!kill' then action('kills '+data);
 if command = '!dice' then dice;
-if command = '!test' then announce('blah blah blah blah');
-if command = '!test2'then action('blah blah blah');
+//if command = '!test' then announce('blah blah blah blah');
+//if command = '!test2'then action('blah blah blah');
 
 
 if (inchannel = true ) and ( command = '!info' )and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) then
@@ -566,18 +566,20 @@ end;
 if (inchannel = true ) and ( command = '!help' )and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) then
 begin
 
-say(' ');
-say(' Current supported user commandos are:');
-say('   !info    <botnick>     !help    <botnick>');
-say('   !kill    <username>    !dice');
-say(' ');
-say(' Current supported admin commandos are:');
-say('   !op      <username>    !deop    <username>');
-say('   !hop     <username>    !dehop   <username>');
-say('   !voice   <username>    !devoice <username>');
-say('   !ban     <username>    !unban   <username>');
-say('   !nick    <newbotnick>  !join    <channel>');
-say(' ');
+// was say, now announcepriv, so it will not be in the channel
+
+announcepriv(' ',user);
+announcepriv(' Current supported user commandos are:',user);
+announcepriv('   !info    <botnick>     !help    <botnick>',user);
+announcepriv('   !kill    <username>    !dice',user);
+announcepriv(' ',user);
+announcepriv(' Current supported admin commandos are:',user);
+announcepriv('   !op      <username>    !deop    <username>',user);
+announcepriv('   !hop     <username>    !dehop   <username>',user);
+announcepriv('   !voice   <username>    !devoice <username>',user);
+announcepriv('   !ban     <username>    !unban   <username>',user);
+announcepriv('   !nick    <newbotnick>  !join    <channel>',user);
+announcepriv(' ',user);
 end;
 
 //administrative stuff , needs to add protection
@@ -1086,6 +1088,13 @@ procedure Announce(msg: string);
 begin
  form1.TcpClient.Sendln('NOTICE ' + form1.channel.Text + ' :'+ msg);
 end;
+
+procedure AnnouncePriv(msg,user: string);
+begin
+ form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ msg);
+end;
+
+
 
 procedure Action(msg: string);
 begin
