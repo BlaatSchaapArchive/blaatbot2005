@@ -20,7 +20,7 @@ uses
     function isadmin  (name: string) : boolean;
     procedure AddAdmin(name:string);
     procedure RemoveAdmin(name:string);
-
+    procedure musicplaying();
     procedure Say(msg: string);
     procedure SayPriv(msg,user: string);
     procedure Announce(msg: string);
@@ -56,7 +56,7 @@ type
     wait1: TTimer;
     wait2: TTimer;
     TimeoutTimer: TTimer;
-    ShoutcastInfo: TTcpClient;
+    ShoutCastInfo: TTcpClient;
     procedure GoClick(Sender: TObject);
     procedure pingTimer(Sender: TObject);
     procedure StopClick(Sender: TObject);
@@ -365,8 +365,8 @@ function isadmin  (name: string) : boolean;
 
     end;
 
-/blaat
-function musicplaying;
+//blaat
+procedure musicplaying();
     var
     musicfile : textfile;
     temp      : char;
@@ -374,38 +374,123 @@ function musicplaying;
     port      : string;
     song      : string;
     station   : string;
+
+    tempchar   : char;
+    tempstring : string;
+    counter : integer;
+    stop : boolean;
+
+
+
     begin
     assign(musicfile, 'music');
     reset (musicfile);
-    admin := '';
+    //say ( 'DEBUG : MUSIC : Reading data file ');
     while not eof(musicfile) do
-      begin
 
+      begin
       station :='';
       repeat
       read (musicfile, temp);
       if not (temp = ',') then station := station + temp
       until temp = ',';
+      //say ( 'DEBUG : STATION NAME IS '+ station );
 
       server :='';
       repeat
       read (musicfile, temp);
       if not (temp = ',') then server := server + temp
       until temp = ',';
-
+      //say ( 'DEBUG : SERVER IS '+ server );
       port :='';
       repeat
       read (musicfile, temp);
       if not (temp = ',') then port := port + temp
       until temp = ',';
+      //say ( 'DEBUG : PORT IS '+ port );
+      // infochecker
 
-      
 
 
-      closefile(musicfile);
+    begin
+    //say ( 'DEBUG : CONNECTING');
+    song := '';
+    stop := false;
+    tempchar := char(0);
+    counter := 0;
+
+    Form1.ShoutCastInfo.RemoteHost := server;
+    FOrm1.ShoutCastINfo.RemotePort := port;
+    if Form1.SHoutcastINfo.Connect then
+        begin
+        FOrm1.ShoutCastInfo.Sendln('GET /7 HTTP/1.0');
+        form1.ShoutCastInfo.Sendln('User-Agent: Mozilla (Compatible, dgcbot)');
+        form1.ShoutCastInfo.Sendln('');
+        tempstring := form1.Shoutcastinfo.Receiveln();
+        tempstring := form1.Shoutcastinfo.Receiveln();
+        tempstring := form1.Shoutcastinfo.Receiveln();
+        tempstring := form1.Shoutcastinfo.Receiveln();
+
+
+        //1
+        repeat
+        counter := counter +1;
+        tempchar := tempstring[counter];
+        until tempchar = ',';
+
+        //2
+        repeat
+        counter := counter +1;
+        tempchar := tempstring[counter];
+        until tempchar = ',';
+
+        //3
+        repeat
+        counter := counter +1;
+        tempchar := tempstring[counter];
+        until tempchar = ',';
+
+        //4
+        repeat
+        counter := counter +1;
+        tempchar := tempstring[counter];
+        until tempchar = ',';
+
+        //5
+        repeat
+        counter := counter +1;
+        tempchar := tempstring[counter];
+        until tempchar = ',';
+
+        //6
+        repeat
+        counter := counter +1;
+        tempchar := tempstring[counter];
+        until tempchar = ',';
+
+        repeat
+        counter := counter +1;
+        tempchar := tempstring[counter];
+        if tempchar = '_' then tempchar := ' ';
+        if tempchar = '<' then begin stop :=true; tempchar:= char(0); end;
+        song := song + tempchar;
+        until stop;
+        say ( 'Current song at ' + station + ' is ' + song);
+        say ( 'http://'+server+':'+port+'/listen.pls');
+        say ( ' ') ;
+        form1.Shoutcastinfo.Disconnect;
+
+
+    end else say ( 'error connecting to ' + station);
+//end infoshecker
+
 
     end;
 // blaat
+end;
+closefile(musicfile);
+end;
+
 procedure TForm1.GoClick(Sender: TObject);
 
 begin
@@ -590,7 +675,8 @@ if contains(line,'gek') then action('is gek ');
 
 if command = '!music' then
   begin
-  //blaat
+  //say ( 'DEBUG : MUSIC' );
+  musicplaying;
   end;
 
 
@@ -602,10 +688,10 @@ if command = '!dice' then dice;
 
 if (inchannel = true ) and ( command = '!info' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) }then
 begin
-announepriv('I am '+ form1.Nick.Text,user);
-announepriv('I am running dGCbot',user);
-announepriv('My Source Code is avaiable',user);
-announepriv('Check http://www.deGekkenClub.tk for more info',user);
+announcepriv('I am '+ form1.Nick.Text,user);
+announcepriv('I am running dGCbot',user);
+announcepriv('My Source Code is avaiable',user);
+announcepriv('Check http://www.deGekkenClub.tk for more info',user);
 end;
 
 if {(inchannel = true ) and} ( command = '!help' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text))} then

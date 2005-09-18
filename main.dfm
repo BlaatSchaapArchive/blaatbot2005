@@ -232,7 +232,7 @@ object Form1: TForm1
     Left = 40
     Top = 72
   end
-  object ShoutcastInfo: TTcpClient
+  object ShoutCastInfo: TTcpClient
     Left = 72
     Top = 72
   end
