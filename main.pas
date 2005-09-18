@@ -56,6 +56,7 @@ type
     wait1: TTimer;
     wait2: TTimer;
     TimeoutTimer: TTimer;
+    ShoutcastInfo: TTcpClient;
     procedure GoClick(Sender: TObject);
     procedure pingTimer(Sender: TObject);
     procedure StopClick(Sender: TObject);
@@ -364,8 +365,47 @@ function isadmin  (name: string) : boolean;
 
     end;
 
+/blaat
+function musicplaying;
+    var
+    musicfile : textfile;
+    temp      : char;
+    server    : string;
+    port      : string;
+    song      : string;
+    station   : string;
+    begin
+    assign(musicfile, 'music');
+    reset (musicfile);
+    admin := '';
+    while not eof(musicfile) do
+      begin
+
+      station :='';
+      repeat
+      read (musicfile, temp);
+      if not (temp = ',') then station := station + temp
+      until temp = ',';
+
+      server :='';
+      repeat
+      read (musicfile, temp);
+      if not (temp = ',') then server := server + temp
+      until temp = ',';
+
+      port :='';
+      repeat
+      read (musicfile, temp);
+      if not (temp = ',') then port := port + temp
+      until temp = ',';
+
+      
 
 
+      closefile(musicfile);
+
+    end;
+// blaat
 procedure TForm1.GoClick(Sender: TObject);
 
 begin
@@ -548,6 +588,11 @@ if contains(line,'gek') then action('is gek ');
 //command is the first word,
 //data is the rest
 
+if command = '!music' then
+  begin
+  //blaat
+  end;
+
 
 if command = '!kill' then action('kills '+data);
 if command = '!dice' then dice;
@@ -555,15 +600,15 @@ if command = '!dice' then dice;
 //if command = '!test2'then action('blah blah blah');
 
 
-if (inchannel = true ) and ( command = '!info' )and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) then
+if (inchannel = true ) and ( command = '!info' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) }then
 begin
-say('I am '+ form1.Nick.Text);
-say('I am running dGCbot');
-say('My Source Code is avaiable');
-say('Check http://www.deGekkenClub.tk for more info');
+announepriv('I am '+ form1.Nick.Text,user);
+announepriv('I am running dGCbot',user);
+announepriv('My Source Code is avaiable',user);
+announepriv('Check http://www.deGekkenClub.tk for more info',user);
 end;
 
-if (inchannel = true ) and ( command = '!help' )and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) then
+if {(inchannel = true ) and} ( command = '!help' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text))} then
 begin
 
 // was say, now announcepriv, so it will not be in the channel
