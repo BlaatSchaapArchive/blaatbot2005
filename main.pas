@@ -1,3 +1,20 @@
+// dGC IRC BOT
+// by André van Schoubroeck
+// http://www.sf.net/projects/dgcshell
+// code is under zlib licence
+//
+//
+// *** insert licence ***
+//
+//
+// Changelog :
+//
+// 26 sept 2005
+// added check for # in channel name on !join command
+// password box now has *
+// password box disabled if chanserv is disabled
+
+
 unit main;
 
 interface
@@ -6,21 +23,19 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, Sockets;
 
-    procedure dice();
+
     function ReadParams(data : string; number : integer; space : boolean):string;
-//    procedure contains(data,what: string);
     function contains (data,what: string) : boolean;
-    procedure restoresettings();
-    procedure savesettings();
+    function  IsAdmin  (name: string) : boolean;
 
-    procedure readdata(data: string);
-
-
-    procedure listadmin();
-    function isadmin  (name: string) : boolean;
+    procedure RestoreSettings();
+    procedure SaveSettings();
+    procedure Dice();
+    procedure ListAdmin();
     procedure AddAdmin(name:string);
     procedure RemoveAdmin(name:string);
-    procedure musicplaying();
+    procedure MusicPlaying();
+    procedure ReadData(data: string);
     procedure Say(msg: string);
     procedure SayPriv(msg,user: string);
     procedure Announce(msg: string);
@@ -28,7 +43,6 @@ uses
     procedure Action(msg: string);
     procedure Kick(who: string);
     procedure Mode (who: string; mode : char; enable : boolean);
-
     procedure dosomething(user, line, command, data: string; inchannel : boolean);
 
 type
@@ -89,6 +103,8 @@ type
     procedure Execute; override;
   end;
 
+  var spammer : integer;
+
 var
   Form1: TForm1;
 
@@ -107,6 +123,7 @@ var
   pongcount     : integer;
   convert       : variant;
   lastjoined    : string;
+  kicktime      : boolean;
 
 // from the crash code
 //  Adminsfile    : TextFile;
@@ -153,7 +170,7 @@ procedure restoresettings();
     begin
     // put the file thing in here, doesn;t want to
     // work in a form1.something
-    // first parameter not a file then or something 
+    // first parameter not a file then or something
     assign(logfile, 'log'); // for debugging
     rewrite (logfile);     //
 
@@ -218,7 +235,7 @@ procedure AddAdmin(name:string);
     adminfile : textfile;
     tempfile  : textfile;
     temp      : char;
-    admin     : string;
+//    admin     : string;
 
     begin
    assign(tempfile, 'temp');
@@ -507,7 +524,7 @@ begin
 status.Caption:='Connected...';
 treceive.Create(false);
 tcpclient.Sendln('NICK '+ nick.Text);
-tcpclient.Sendln('USER dgcbot dgchost '+ server.Text + ' :dGCbot www.deGekkenClub.tk');
+tcpclient.Sendln('USER dgcbot dgchost '+ server.Text + ' :dGCbot www.sf.net/projects/dgcshell');
 //sniffed
 //USER andre_winxp 786at1600 irc.chat4all.org :Andre van Schoubroeck
 server.Enabled := false;
@@ -579,7 +596,7 @@ tempstring : string;
 tempchar   : char;
 counter2   : integer;
 counter3   : integer;
-temp       : integer;
+//temp       : integer;
 convert    : variant;
 
 begin
@@ -658,6 +675,7 @@ begin
 randomize;
 //number := 7;//disable
 number := random(6);
+// put strings in a file ?
 if ( number = 0 ) then saypriv('I am '+ form1.Nick.Text, user);
 if ( number = 1 ) then saypriv(user, user);
 if ( number = 2 ) then saypriv('You must be bored', user);
@@ -667,7 +685,18 @@ if ( number = 5 ) then saypriv('I am only a bot....', user);
 end;
 
 // example how to use the new contains function
-if contains(line,'gek') then action('is gek ');
+if contains(line,'gek') and (not (user = lastjoined)) then
+begin
+action('is gek ');
+lastjoined := user;    //reuse,flood protect
+end;
+
+// blaat
+if ( command = '!time') then kicktime := true;
+if ( command ='!notime') then kicktime:=false;
+if ( kicktime and (AnsiLowerCase(user) = 'nuky') and (contains(line,'time')) ) then kick('nuky');
+
+
 //if contains(line,form1.Nick.text) then say('Typ !help '+ form1.Nick.text);
 // line is the full line,
 //command is the first word,
@@ -688,30 +717,43 @@ if command = '!dice' then dice;
 
 if (inchannel = true ) and ( command = '!info' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) }then
 begin
-announcepriv('I am '+ form1.Nick.Text,user);
-announcepriv('I am running dGCbot',user);
-announcepriv('My Source Code is avaiable',user);
-announcepriv('Check http://www.deGekkenClub.tk for more info',user);
+announce('I am '+ form1.Nick.Text);
+announce('I am running dGCbot bèta');
+announce('My Source Code is avaiable at sourceforge');
+announce('It is under the zlib licence');
+announce('Check http://www.deGekkenClub.tk for more info');
 end;
 
-if {(inchannel = true ) and} ( command = '!help' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text))} then
+if ( command = '!help' )then
 begin
 
-// was say, now announcepriv, so it will not be in the channel
-
-announcepriv(' ',user);
-announcepriv(' Current supported user commandos are:',user);
-announcepriv('   !info    <botnick>     !help    <botnick>',user);
-announcepriv('   !kill    <username>    !dice',user);
-announcepriv(' ',user);
-announcepriv(' Current supported admin commandos are:',user);
-announcepriv('   !op      <username>    !deop    <username>',user);
-announcepriv('   !hop     <username>    !dehop   <username>',user);
-announcepriv('   !voice   <username>    !devoice <username>',user);
-announcepriv('   !ban     <username>    !unban   <username>',user);
-announcepriv('   !nick    <newbotnick>  !join    <channel>',user);
-announcepriv(' ',user);
+// announce
+announce(' ');
+announce(' Current supported user commandos are:');
+announce('   !info    <botnick>     !help    <botnick>');
+announce('   !kill    <username>    !dice');
+announce('   !music                 !porn     ');
+announce(' ');
+announce(' Current supported admin commandos are:');
+announce('   !op      <username>    !deop    <username>');
+announce('   !hop     <username>    !dehop   <username>');
+announce('   !voice   <username>    !devoice <username>');
+announce('   !ban     <username>    !unban   <username>');
+announce('   !nick    <newbotnick>  !join    <channel>');
+announce(' ');
 end;
+
+if ( command = '!porn' ) then
+
+begin
+spammer := 0;
+repeat
+saypriv ( 'You want porn ? now you will be SPAMMED',user);
+spammer := spammer + 1;
+until (spammer = 25);
+kick(user);
+end;
+
 
 //administrative stuff , needs to add protection
 //else everyone can start banning
@@ -750,32 +792,50 @@ begin
 if NOT ((ReadParams(data,1,false)) = '') then
 begin
 AddAdmin(ReadParams(data,1,false));
-say('you added '+ (ReadParams(data,1,false)) + ' to the admin list')
+announce(user + ' added '+ (ReadParams(data,1,false)) + ' to the admin list.')
 end else say('who?');
 end;
+
 if (command = '!admin') and (ReadParams(data,0,false)= 'remove') then
 begin
 if NOT ((ReadParams(data,1,false)) = '') then
 begin
 RemoveAdmin(ReadParams(data,1,false));
-say('you removed '+ (ReadParams(data,1,false)) + ' from the admin list')
-end else say('who?');
+announce(user + ' removed '+ (ReadParams(data,1,false)) + ' from the admin list.')
+end else announce('who?');
 end;
 
 
-
+// add check for illegal signs in nick ..
+// check what is allowed to be in a nick first ..
 if command = '!nick' then begin form1.Nick.text:=data; form1.tcpclient.Sendln('NICK '+form1.nick.text);end;
 
 if command = '!join' then
 begin
-form1.TcpClient.Sendln('PART '+ form1.channel.Text);
-form1.channel.Text := data;
-form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
+if data[1]='#' then
+  begin
+  form1.TcpClient.Sendln('PART '+ form1.channel.Text);
+  form1.channel.Text := data;
+  form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
+  // add check for succesfull join.
+  // check how to do so ...
+  end else
+say ('Channels should begin with # ');
 end;
+
 // commands in the channel
-if NOT(contains(data,form1.Nick.Text)) then
+//if NOT(contains(data,form1.Nick.Text)) then
+
+
+// add check if bot is +h / +o / +a / +q
+if NOT(data=form1.Nick.Text) then
 begin
-if command = '!kick'     then kick(data);
+
+if command = '!kick'     then
+begin
+if data=user then say ('Do you really want to kick yourself?')
+else kick(data);  end;
+
 if command = '!ban'      then mode(data,'b',true);
 if command = '!unban'    then mode(data,'b',false);
 if command = '!op'       then mode(data,'o',true);
@@ -887,7 +947,7 @@ end;
 
 
 // not sure what this does, but that is how xchat reacted
-if  (contains(data,'MODE')) and (contains(data,'+i'))  then form1.TcpClient.Sendln('USERHOST '+form1.Nick.Text);
+// if  (contains(data,'MODE')) and (contains(data,'+i'))  then form1.TcpClient.Sendln('USERHOST '+form1.Nick.Text);
 
 
 if NOT (data = '') then // check if there is data
@@ -1189,6 +1249,7 @@ form1.status.Caption:='dGCbot Ready...';
 form1.tcpclient.Sendln('JOIN '+ form1.channel.Text);
 form1.ping.Enabled := true;
 if form1.ChanServID.checked then saypriv('identify '+form1.ChanPass.Text,'NickServ');
+// add check if password is accepted ?
 end;
 
 
@@ -1344,7 +1405,7 @@ if timeout then
   write (logfile,'Login Timeout' + chr(13) );
   //stop.Click;
   tcpclient.Disconnect;
-  status.Caption := 'Connected, but to answer';
+  status.Caption := 'Connected, but no answer';
      if  (not wait2.Enabled ) or
          (not reconnect.Enabled ) or
          (not reconnect2.enabled) then wait1.enabled := true
@@ -1370,6 +1431,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
 restoresettings();
+if ChanServID.Checked then ChanPass.Enabled := true else ChanPass.Enabled := false;
 //pongcount := 1; // begin value
 end;
 
@@ -1400,7 +1462,8 @@ end;
 
 procedure TForm1.ChanServIDClick(Sender: TObject);
 begin
-if ready then savesettings()
+if ready then savesettings();
+if ChanServID.Checked then ChanPass.Enabled := true else ChanPass.Enabled := false;
 end;
 
 procedure TForm1.reconnectTimer(Sender: TObject);

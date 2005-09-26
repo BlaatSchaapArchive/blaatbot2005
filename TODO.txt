@@ -1,28 +1,29 @@
 				TODO LIST
 
+*		ADD check for illegal sings in nick
+
+*               MOVE Random Text to File
+
+*               Don;t send random text when a command is given
+
+*               Answer in private if command is in private
+
 *		ADD !locate:
 
 			Command that located you with your IP string thingie
-			
+
 			it should do a /who and read the string
-			
+
 			#skyos_offtopic laptop Indre-5D2569A0.adsl-surfen.hetnet.nl Alphaserv.mine.nu Andre Hr :0 Andre van Schoubroeck
-			
+
 			and then store the '5D2569A0.adsl-surfen.hetnet.nl' and link a location to it
 			like !locate add home
-			
+
 			and then !where andre it should reply
 			andre is at home
 			or something like that
-			
 
-*		ADD !music:
 
-			it should do a now playign @ di.fm
-			
-			this is a problem, since di.fm doesn't respond to a /7
-			so we have to tune in and catch the data from the stream
-			
 *		REWRITE stuff
 
 			little cleanup, since the function ReadParams is added

@@ -164,6 +164,7 @@ object Form1: TForm1
     Top = 128
     Width = 121
     Height = 21
+    PasswordChar = '*'
     TabOrder = 7
     OnChange = ChanPassChange
   end
@@ -188,7 +189,7 @@ object Form1: TForm1
   end
   object ping: TTimer
     Enabled = False
-    Interval = 15000
+    Interval = 60000
     OnTimer = pingTimer
     Left = 72
     Top = 8
