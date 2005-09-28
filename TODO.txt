@@ -1,5 +1,7 @@
 				TODO LIST
 
+*		Add/Remove music trough IRC commands
+
 *		ADD check for illegal sings in nick
 
 *               MOVE Random Text to File

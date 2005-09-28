@@ -43,7 +43,7 @@ uses
     procedure Action(msg: string);
     procedure Kick(who: string);
     procedure Mode (who: string; mode : char; enable : boolean);
-    procedure dosomething(user, line, command, data: string; inchannel : boolean);
+    procedure DoSomething(user, line, command, data: string; inchannel : boolean);
 
 type
   TForm1 = class(TForm)
@@ -71,10 +71,10 @@ type
     wait2: TTimer;
     TimeoutTimer: TTimer;
     ShoutCastInfo: TTcpClient;
+
     procedure GoClick(Sender: TObject);
     procedure pingTimer(Sender: TObject);
     procedure StopClick(Sender: TObject);
-
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button4Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -123,8 +123,8 @@ var
   pongcount     : integer;
   convert       : variant;
   lastjoined    : string;
-  kicktime      : boolean;
-
+//  kicktime      : boolean;
+  quotefile     : textfile;
 // from the crash code
 //  Adminsfile    : TextFile;
 //  AdminCounter  : Integer;
@@ -137,7 +137,7 @@ implementation
 {$R *.dfm}
 
 
-procedure savesettings();
+procedure SaveSettings();
   var
   settingfile : textfile;
     begin
@@ -161,12 +161,14 @@ procedure savesettings();
 
 
 
-procedure restoresettings();
+procedure RestoreSettings();
   var
   settingfile : textfile;
   temp         : char;
   data         : string;
 
+//testing the quote function
+  tempfile    : textfile;
     begin
     // put the file thing in here, doesn;t want to
     // work in a form1.something
@@ -220,11 +222,42 @@ procedure restoresettings();
 
 
         closefile(settingfile);
-        ready := true; //
+//        ready := true; //
         //    preventing the change to activate the
         //    savesettings
 
+        // try this
+//        assign(quotefile,'quotefile');
+//        rewrite (quotefile);
+//
+//quote
+   assign(tempfile, 'temp');
+   rewrite (tempfile);
+   assign(quotefile, 'quotefile');
+   reset (quotefile);
 
+      while not eof(quotefile) do
+      begin
+      read (quotefile, temp);
+      write (tempfile, temp);
+      end;
+      closefile(quotefile);
+      closefile(tempfile);
+
+   assign(tempfile, 'temp');
+   reset (tempfile);
+   assign(quotefile, 'quotefile');
+   rewrite (quotefile);
+
+      while not eof(tempfile) do
+      begin
+      read (tempfile, temp);
+      write (quotefile, temp);
+      end;
+   closefile(tempfile);
+      //write (quotefile, char(13));
+// quote
+ready := true;
 
     end;
 
@@ -324,7 +357,7 @@ procedure RemoveAdmin(name:string);
 
 
 
-procedure listadmin();
+procedure ListAdmin();
     var
     adminfile : textfile;
     temp      : char;
@@ -357,7 +390,7 @@ procedure listadmin();
 
 
 
-function isadmin  (name: string) : boolean;
+function IsAdmin  (name: string) : boolean;
     var
     adminfile : textfile;
     temp      : char;
@@ -383,7 +416,7 @@ function isadmin  (name: string) : boolean;
     end;
 
 //blaat
-procedure musicplaying();
+procedure MusicPlaying();
     var
     musicfile : textfile;
     temp      : char;
@@ -566,7 +599,7 @@ end;
 
 
 
-procedure dice();
+procedure Dice();
 var
 die1, die2 : integer;
 temp, temp2: string;
@@ -652,12 +685,14 @@ end; // end check for valid data
 
 end;
 
-procedure dosomething(user, line, command, data: string; inchannel : boolean);
+procedure DoSomething(user, line, command, data: string; inchannel : boolean);
 var
 number     : integer;
 //IsAdmin    : boolean;
 //Counter    : integer;
 begin
+writeln(quotefile, user + ' : ' + line);
+
 if not (contains(user,'serv')) then begin
 // to prevent reacting on  *serv
 // say in private to rejoin the channel, ( when it is kicked ? )
@@ -692,9 +727,9 @@ lastjoined := user;    //reuse,flood protect
 end;
 
 // blaat
-if ( command = '!time') then kicktime := true;
-if ( command ='!notime') then kicktime:=false;
-if ( kicktime and (AnsiLowerCase(user) = 'nuky') and (contains(line,'time')) ) then kick('nuky');
+//if ( command = '!time') then kicktime := true;
+//if ( command ='!notime') then kicktime:=false;
+//if ( kicktime and (AnsiLowerCase(user) = 'nuky') and (contains(line,'time')) ) then kick('nuky');
 
 
 //if contains(line,form1.Nick.text) then say('Typ !help '+ form1.Nick.text);
@@ -819,6 +854,7 @@ if data[1]='#' then
   form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
   // add check for succesfull join.
   // check how to do so ...
+  // add check for illegal signs in channel name
   end else
 say ('Channels should begin with # ');
 end;
@@ -901,7 +937,7 @@ end else result :='no data'; //data
 end;
 
 
-procedure readdata(data: string);
+procedure ReadData(data: string);
 var
 temp    : char;
 counter : integer;
