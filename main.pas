@@ -1,4 +1,4 @@
-// dGC IRC BOT
+// BlaatSchaao IRC BOT
 // by André van Schoubroeck
 // http://www.sf.net/projects/dgcshell
 // code is under zlib licence
@@ -47,30 +47,34 @@ uses
 
 type
   TForm1 = class(TForm)
-    TcpClient: TTcpClient;
-    ping: TTimer;
+    Panel2: TPanel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label9: TLabel;
+    status: TLabel;
     Go: TButton;
     server: TEdit;
     channel: TEdit;
     port: TEdit;
     Nick: TEdit;
     Stop: TButton;
-    Label4: TLabel;
-    Label5: TLabel;
-    Label6: TLabel;
-    Label7: TLabel;
     Panel1: TPanel;
-    Updater: TTimer;
     ChanPass: TEdit;
     ChanServID: TCheckBox;
-    Label9: TLabel;
-    status: TLabel;
+    TcpClient: TTcpClient;
+    ping: TTimer;
+    Updater: TTimer;
     reconnect: TTimer;
     reconnect2: TTimer;
     wait1: TTimer;
     wait2: TTimer;
     TimeoutTimer: TTimer;
     ShoutCastInfo: TTcpClient;
+    Panel3: TPanel;
+    EditCommands: TEdit;
+    MemoOutput: TMemo;
 
     procedure GoClick(Sender: TObject);
     procedure pingTimer(Sender: TObject);
@@ -92,6 +96,7 @@ type
     procedure wait1Timer(Sender: TObject);
     procedure wait2Timer(Sender: TObject);
     procedure TimeoutTimerTimer(Sender: TObject);
+    procedure EditCommandsKeyPress(Sender: TObject; var Key: Char);
 
 
   end;
@@ -474,7 +479,7 @@ procedure MusicPlaying();
     if Form1.SHoutcastINfo.Connect then
         begin
         FOrm1.ShoutCastInfo.Sendln('GET /7 HTTP/1.0');
-        form1.ShoutCastInfo.Sendln('User-Agent: Mozilla (Compatible, dgcbot)');
+        form1.ShoutCastInfo.Sendln('User-Agent: Mozilla (Compatible, BlaatSchaap IRC Bot)');
         form1.ShoutCastInfo.Sendln('');
         tempstring := form1.Shoutcastinfo.Receiveln();
         tempstring := form1.Shoutcastinfo.Receiveln();
@@ -557,7 +562,9 @@ begin
 status.Caption:='Connected...';
 treceive.Create(false);
 tcpclient.Sendln('NICK '+ nick.Text);
-tcpclient.Sendln('USER dgcbot dgchost '+ server.Text + ' :dGCbot www.sf.net/projects/dgcshell');
+//tcpclient.Sendln('USER dgcbot dgchost '+ server.Text + ' :dGCbot www.sf.net/projects/dgcshell');
+// got kiced in #Skyos
+tcpclient.Sendln('USER blaatbot blaathost '+ server.Text + ' :Blaatschaap Bot www.sf.net/projects/dgcshell');
 //sniffed
 //USER andre_winxp 786at1600 irc.chat4all.org :Andre van Schoubroeck
 server.Enabled := false;
@@ -692,7 +699,7 @@ number     : integer;
 //Counter    : integer;
 begin
 writeln(quotefile, user + ' : ' + line);
-
+if (command[1]='!') then Form1.MemoOutput.Lines.Add(user + ' : ' + command + ' ' + data);
 if not (contains(user,'serv')) then begin
 // to prevent reacting on  *serv
 // say in private to rejoin the channel, ( when it is kicked ? )
@@ -703,7 +710,7 @@ if (inchannel = false) and contains(line,'rejoin') then form1.TcpClient.Sendln('
 
 if (inchannel = false) and (line = ( CHR(1) +'VERSION' + CHR(1))) then
 //received a CTCP version
-form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ CHR($01) + 'VERSION dCGbot bèta ' + CHR($01))
+form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ CHR($01) + 'VERSION BlaatSchaap Bot' + CHR($01))
 else
 if inchannel = false then
 begin
@@ -753,7 +760,7 @@ if command = '!dice' then dice;
 if (inchannel = true ) and ( command = '!info' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) }then
 begin
 announce('I am '+ form1.Nick.Text);
-announce('I am running dGCbot bèta');
+announce('I am running BlaatSchaap Bot bèta');
 announce('My Source Code is avaiable at sourceforge');
 announce('It is under the zlib licence');
 announce('Check http://www.deGekkenClub.tk for more info');
@@ -1281,7 +1288,7 @@ if command='376 ' then
 // ready to log in
 begin
 form1.TimeoutTimer.Enabled:=false;
-form1.status.Caption:='dGCbot Ready...';
+form1.status.Caption:='BlaatSchaap Bot Ready...';
 form1.tcpclient.Sendln('JOIN '+ form1.channel.Text);
 form1.ping.Enabled := true;
 if form1.ChanServID.checked then saypriv('identify '+form1.ChanPass.Text,'NickServ');
@@ -1552,6 +1559,17 @@ end;
 procedure TForm1.TimeoutTimerTimer(Sender: TObject);
 begin
 timeout := true;
+end;
+
+procedure TForm1.EditCommandsKeyPress(Sender: TObject; var Key: Char);
+begin
+if Key = chr(13) then
+begin
+// insert code
+MemoOutput.Lines.Add('Not Implented...')   ;
+//
+EditCommands.Clear;
+end;
 end;
 
 end.
