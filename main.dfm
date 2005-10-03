@@ -177,7 +177,7 @@ object Form1: TForm1
     object ChanServID: TCheckBox
       Left = 8
       Top = 104
-      Width = 217
+      Width = 209
       Height = 17
       Caption = 'Enable Chanserv Identify'
       Font.Charset = DEFAULT_CHARSET

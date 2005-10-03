@@ -1426,6 +1426,7 @@ procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
 tcpclient.Disconnect;
 closefile(logfile);
+closefile(quotefile);
 end;
 
 
@@ -1562,11 +1563,35 @@ timeout := true;
 end;
 
 procedure TForm1.EditCommandsKeyPress(Sender: TObject; var Key: Char);
+var
+temp: char;
+command, data : string;
+count : integer;
 begin
+
 if Key = chr(13) then
+
 begin
+count := 0;
 // insert code
-MemoOutput.Lines.Add('Not Implented...')   ;
+//MemoOutput.Lines.Add('test :')   ;
+repeat
+count := count + 1;
+temp := EditCommands.Text[count];
+if NOT((temp = ' ') or (temp = '')) then command := command + temp;
+until (temp = '' )or (temp = ' ');
+if not (temp= '') then repeat
+count := count + 1;
+temp := EditCommands.Text[count];
+if not (temp = '') then data := data + temp
+until temp = '';
+//MemoOutput.Lines.Add(EditCommands.text);
+//MemoOutput.Lines.Add(command);
+//MemoOutput.Lines.Add(data);
+// command, data
+
+//DoSomething('Admin',EditCommands.Text,command,data,false);
+DoSomething('Admin',EditCommands.Text,command,data,true);
 //
 EditCommands.Clear;
 end;
