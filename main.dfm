@@ -143,7 +143,7 @@ object Form1: TForm1
     object Nick: TEdit
       Left = 104
       Top = 80
-      Width = 121
+      Width = 113
       Height = 21
       TabOrder = 3
       OnChange = NickChange
