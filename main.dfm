@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 250
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'BlaatSchaap IRC Bot'
+  Caption = 'BlaatSchaap IRC BOT'
   ClientHeight = 250
   ClientWidth = 500
   Color = clBtnFace

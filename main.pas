@@ -894,7 +894,7 @@ begin
 
 if command = '!kick'     then
 begin
-if data=user then say ('Do you really want to kick yourself?')
+if AnsiLowerCase(data)=AnsiLowerCase(user) then say ('Do you really want to kick yourself?')
 else kick(data);  end;
 
 if command = '!ban'      then mode(data,'b',true);
