@@ -48,6 +48,7 @@ uses
 
     procedure RestoreSettings();
     procedure SaveSettings();
+    procedure ReQuote();
     procedure Dice();
     procedure ListAdmin();
     procedure AddAdmin(name:string);
@@ -128,6 +129,8 @@ type
 
   var spammer : integer;
 
+
+
 var
   Form1: TForm1;
 
@@ -145,6 +148,7 @@ var
   pingcount     : integer;
   pongcount     : integer;
   convert       : variant;
+  time_now, date_now : string;
   lastjoined    : string;
 //  kicktime      : boolean;
   quotefile     : textfile;
@@ -181,7 +185,42 @@ procedure SaveSettings();
     closefile(settingfile);
     end;
 
+procedure ReQuote();
+var
+tempfile : textfile;
+temp: char;
+begin
+//quote
+try close (quotefile); except end;
+   assign(tempfile, 'temp');
+   rewrite (tempfile);
+   assign(quotefile, 'quotefile');
+   reset (quotefile);
 
+      while not eof(quotefile) do
+      begin
+      read (quotefile, temp);
+      write (tempfile, temp);
+      end;
+      closefile(quotefile);
+      closefile(tempfile);
+
+   assign(tempfile, 'temp');
+   reset (tempfile);
+   assign(quotefile, 'quotefile');
+   rewrite (quotefile);
+
+      while not eof(tempfile) do
+      begin
+      read (tempfile, temp);
+      write (quotefile, temp);
+      end;
+   closefile(tempfile);
+
+
+
+// quote
+end;
 
 
 procedure RestoreSettings();
@@ -253,33 +292,7 @@ procedure RestoreSettings();
 //        assign(quotefile,'quotefile');
 //        rewrite (quotefile);
 //
-//quote
-   assign(tempfile, 'temp');
-   rewrite (tempfile);
-   assign(quotefile, 'quotefile');
-   reset (quotefile);
-
-      while not eof(quotefile) do
-      begin
-      read (quotefile, temp);
-      write (tempfile, temp);
-      end;
-      closefile(quotefile);
-      closefile(tempfile);
-
-   assign(tempfile, 'temp');
-   reset (tempfile);
-   assign(quotefile, 'quotefile');
-   rewrite (quotefile);
-
-      while not eof(tempfile) do
-      begin
-      read (tempfile, temp);
-      write (quotefile, temp);
-      end;
-   closefile(tempfile);
-      //write (quotefile, char(13));
-// quote
+ReQuote;
 ready := true;
 
     end;
@@ -567,6 +580,10 @@ end;
 procedure TForm1.GoClick(Sender: TObject);
 
 begin
+      writeln (quotefile, ' ');
+      writeln (quotefile, 'Logging starts at ' + time_now + ' '+ date_now);
+      writeln (quotefile, ' ');
+
 timeout := false;
 TimeoutTimer.Enabled:=true;
 status.Caption:='Connecting....';
@@ -715,8 +732,18 @@ var
 number     : integer;
 //IsAdmin    : boolean;
 //Counter    : integer;
+quotes : textfile ; //does delphi allow the same file to be opened twice ?
+quoteline : string;
+
+
 begin
-writeln(quotefile, user + ' : ' + line);
+
+if NOT(Contains(line,chr(1))) then
+writeln(quotefile, '['+ date_now + ' ' + time_now + '] <'+user + '>  ' + line)
+else
+writeln(quotefile, '['+ date_now + ' ' + time_now + '] *'+user + '  ' + line);
+// action, still strip the chr(1);
+
 if (command[1]='!') then Form1.MemoOutput.Lines.Add(user + ' : ' + command + ' ' + data);
 if not (contains(user,'serv')) then begin
 // to prevent reacting on  *serv
@@ -745,9 +772,9 @@ if ( number = 5 ) then saypriv('I am only a bot....', user);
 end;
 
 // example how to use the new contains function
-if contains(line,'gek') and (not (user = lastjoined)) then
+if contains(line,'blaat') and (not (user = lastjoined)) then
 begin
-action('is gek ');
+say('Inderdaad, blaat in het kwadraat!');
 lastjoined := user;    //reuse,flood protect
 end;
 
@@ -768,6 +795,21 @@ if command = '!music' then
   musicplaying;
   end;
 
+if command = '!find' then
+begin
+ReQuote;
+assign (quotes,'temp');
+reset ( quotes );
+
+      while not eof(quotes) do
+      begin
+
+      readln ( quotes, quoteline );
+   //   say ( 'DEBUG: ' + quoteline);
+      if contains(quoteline,data) then say (quoteline);
+      end;
+
+end;
 
 if command = '!kill' then action('kills '+data);
 if command = '!dice' then dice;
@@ -781,7 +823,8 @@ announce('I am '+ form1.Nick.Text);
 announce('I am running BlaatSchaap Bot bèta');
 announce('My Source Code is avaiable at sourceforge');
 announce('It is under the zlib licence');
-announce('Check http://www.deGekkenClub.tk for more info');
+announce('Check http://blaatschaap.nukysrealm.net/content.php?content.5 or');
+announce('http://www.sf.net/projects/dgcshell for more info');
 end;
 
 if ( command = '!help' )then
@@ -790,7 +833,7 @@ begin
 // announce
 announce(' ');
 announce(' Current supported user commandos are:');
-announce('   !info    <botnick>     !help    <botnick>');
+announce('   !info                  !help             ');
 announce('   !kill    <username>    !dice');
 announce('   !music                 !porn     ');
 announce(' ');
@@ -1461,6 +1504,14 @@ end;
 
 procedure TForm1.status_uodater(Sender: TObject);
 begin
+
+// Update current time and date.
+convert  := time;
+time_now := convert;
+convert  := date;
+date_now := convert;
+
+
 if timeout then
   begin
   timeout :=false;
