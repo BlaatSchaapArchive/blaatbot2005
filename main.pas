@@ -818,6 +818,12 @@ end;
 if command = '!kill' then action('kills '+data);
 if command = '!nuke' then action('nukes '+data);
 if command = '!dice' then dice;
+if command = '!torture' then action('torture '+data);  // Torture code
+
+// Code meow start here
+if command = '!meow' then say('Cat' + char(39) + 's' + form1.nick.text + ' meow');
+// End code meow
+
 //if command = '!test' then announce('blah blah blah blah');
 //if command = '!test2'then action('blah blah blah');
 
@@ -1457,7 +1463,7 @@ end;
 //if not (pingcount = 2147483647 )then
 // this will never overflow ...
 // 2147483647 * 15 sec = 1021 years
-// i don;t think it will ever run that long :P 
+// i don;t think it will ever run that long :P
 pingcount := pingcount + 1;
 //else pingcount := 1;
 convert := pingcount;
