@@ -192,6 +192,8 @@ temp: char;
 begin
 //quote
 try close (quotefile); except end;
+try close (tempfile) ; except end;
+
    assign(tempfile, 'temp');
    rewrite (tempfile);
    assign(quotefile, 'quotefile');
@@ -752,6 +754,8 @@ if (inchannel = false) and contains(line,'rejoin') then form1.TcpClient.Sendln('
 
 //if (inchannel = false) and contains(line,form1.Nick.edit) then say('I am  '+form1.nick.Text);
 
+// Addoula is the king (NOT!)
+if ( command = '!king') then say(  form1.nick.text + ' makes ' + data + ' the king of the world.');
 
 if (inchannel = false) and (line = ( CHR(1) +'VERSION' + CHR(1))) then
 //received a CTCP version
@@ -812,6 +816,7 @@ reset ( quotes );
 end;
 
 if command = '!kill' then action('kills '+data);
+if command = '!nuke' then action('nukes '+data);
 if command = '!dice' then dice;
 //if command = '!test' then announce('blah blah blah blah');
 //if command = '!test2'then action('blah blah blah');
