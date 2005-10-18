@@ -232,7 +232,7 @@ procedure RestoreSettings();
   data         : string;
 
 //testing the quote function
-  tempfile    : textfile;
+//  tempfile    : textfile;
     begin
     // put the file thing in here, doesn;t want to
     // work in a form1.something
@@ -736,7 +736,7 @@ number     : integer;
 //Counter    : integer;
 quotes : textfile ; //does delphi allow the same file to be opened twice ?
 quoteline : string;
-
+quotecount : integer;
 
 begin
 
@@ -804,13 +804,16 @@ begin
 ReQuote;
 assign (quotes,'temp');
 reset ( quotes );
-
+quotecount := 0;
       while not eof(quotes) do
       begin
-
       readln ( quotes, quoteline );
    //   say ( 'DEBUG: ' + quoteline);
-      if contains(quoteline,data) then say (quoteline);
+      if contains(quoteline,data) then
+        begin
+        quotecount := quotecount + 1;
+        if (quotecount < 6 ) then say (quoteline);
+        end;
       end;
 
 end;
