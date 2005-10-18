@@ -39,7 +39,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Sockets;
+  Dialogs, StdCtrls, ExtCtrls, Sockets, SHellAPI;
 
 
     function ReadParams(data : string; number : integer; space : boolean):string;
@@ -94,6 +94,7 @@ type
     Panel3: TPanel;
     EditCommands: TEdit;
     MemoOutput: TMemo;
+    RunTempBat: TButton;
 
     procedure GoClick(Sender: TObject);
     procedure pingTimer(Sender: TObject);
@@ -116,6 +117,7 @@ type
     procedure wait2Timer(Sender: TObject);
     procedure TimeoutTimerTimer(Sender: TObject);
     procedure EditCommandsKeyPress(Sender: TObject; var Key: Char);
+    procedure RunTempBatClick(Sender: TObject);
 
 
   end;
@@ -180,23 +182,26 @@ procedure SaveSettings();
     write (settingfile, ',');
     write (settingfile, form1.ChanservID.checked);
     write (settingfile, ',');
-    write (settingfile, form1.ChanPass.text);
+    write (settingfile, form1.ChanPass.text);        
     write (settingfile, ',');
     closefile(settingfile);
     end;
 
 procedure ReQuote();
 var
-tempfile : textfile;
+tempbatfile : textfile;
 temp: char;
 begin
+{
 //quote
-try close (quotefile); except end;
-try close (tempfile) ; except end;
+//flush (quotefile);
+//try close (quotefile); except end;
+
+//try close (tempfile) ; except end;
 
    assign(tempfile, 'temp');
    rewrite (tempfile);
-   assign(quotefile, 'quotefile');
+//   assign(quotefile, 'quotefile');
    reset (quotefile);
 
       while not eof(quotefile) do
@@ -207,9 +212,9 @@ try close (tempfile) ; except end;
       closefile(quotefile);
       closefile(tempfile);
 
-   assign(tempfile, 'temp');
+   //assign(tempfile, 'temp');
    reset (tempfile);
-   assign(quotefile, 'quotefile');
+   //assign(quotefile, 'quotefile');
    rewrite (quotefile);
 
       while not eof(tempfile) do
@@ -217,11 +222,22 @@ try close (tempfile) ; except end;
       read (tempfile, temp);
       write (quotefile, temp);
       end;
-   closefile(tempfile);
 
-
+   //closefile(tempfile);
+     close (tempfile);
+     flush (quotefile); // flushing the file did not seem to be the problem.
 
 // quote
+}
+flush (quotefile);
+assign (tempbatfile, 'temp.bat');
+rewrite (tempbatfile);
+writeln ( tempbatfile , ' del tempq ');
+writeln ( tempbatfile , ' copy quotefile tempq ');
+flush (tempbatfile);
+close (tempbatfile);
+//** shell code **
+FOrm1.RunTempBat.Click;
 end;
 
 
@@ -230,7 +246,7 @@ procedure RestoreSettings();
   settingfile : textfile;
   temp         : char;
   data         : string;
-
+  tempfile : textfile;
 //testing the quote function
 //  tempfile    : textfile;
     begin
@@ -239,6 +255,8 @@ procedure RestoreSettings();
     // first parameter not a file then or something
     assign(logfile, 'log'); // for debugging
     rewrite (logfile);     //
+
+    assign(quotefile, 'quotefile');
 
     assign(settingfile, 'settings');
     reset (settingfile);
@@ -286,7 +304,43 @@ procedure RestoreSettings();
 
 
         closefile(settingfile);
-//        ready := true; //
+
+    // putting code back here from requote
+
+       assign(tempfile, 'temp');
+   rewrite (tempfile);
+   assign(quotefile, 'quotefile');
+   reset (quotefile);
+
+      while not eof(quotefile) do
+      begin
+      read (quotefile, temp);
+      write (tempfile, temp);
+      end;
+
+      closefile(quotefile);
+      closefile(tempfile);
+
+   //assign(tempfile, 'temp');
+   reset (tempfile);
+   //assign(quotefile, 'quotefile');
+   rewrite (quotefile);
+
+      while not eof(tempfile) do
+      begin
+      read (tempfile, temp);
+      write (quotefile, temp);
+      end;
+
+   //closefile(tempfile);
+     close (tempfile);
+//     flush (quotefile); // flushing the file did not seem to be the problem.
+
+
+
+
+
+        //        ready := true; //
         //    preventing the change to activate the
         //    savesettings
 
@@ -294,7 +348,7 @@ procedure RestoreSettings();
 //        assign(quotefile,'quotefile');
 //        rewrite (quotefile);
 //
-ReQuote;
+//ReQuote;
 ready := true;
 
     end;
@@ -739,6 +793,11 @@ quoteline : string;
 quotecount : integer;
 
 begin
+// try this to fix the find stops logging
+// only temp solution, it can't stay this way
+// ReQuote;
+// not working....
+
 
 if NOT(Contains(line,chr(1))) then
 writeln(quotefile, '['+ date_now + ' ' + time_now + '] <'+user + '>  ' + line)
@@ -746,6 +805,7 @@ else
 writeln(quotefile, '['+ date_now + ' ' + time_now + '] *'+user + '  ' + line);
 // action, still strip the chr(1);
 
+//  Hmm it acces violated here ?
 if (command[1]='!') then Form1.MemoOutput.Lines.Add(user + ' : ' + command + ' ' + data);
 if not (contains(user,'serv')) then begin
 // to prevent reacting on  *serv
@@ -801,21 +861,24 @@ if command = '!music' then
 
 if command = '!find' then
 begin
+//flush(quotefile);
+//close(quotefile);
 ReQuote;
-assign (quotes,'temp');
+
+assign (quotes,'tempq');
 reset ( quotes );
 quotecount := 0;
       while not eof(quotes) do
       begin
       readln ( quotes, quoteline );
-   //   say ( 'DEBUG: ' + quoteline);
+     // say ( 'DEBUG: ' + quoteline);
       if contains(quoteline,data) then
         begin
         quotecount := quotecount + 1;
-        if (quotecount < 6 ) then say (quoteline);
+       if (quotecount < 6 ) then say (quoteline);
         end;
       end;
-
+close (quotes);  // Andre was stupid, forgot to close the fucking file !!
 end;
 
 if command = '!kill' then action('kills '+data);
@@ -824,7 +887,7 @@ if command = '!dice' then dice;
 if command = '!torture' then action('tortures '+data);  // Torture code
 
 // Code meow start here
-if command = '!meow' then say(form1.nick.text' + char(39) + 's cat meow');
+if command = '!meow' then say(form1.nick.text  + char(39) + 's cat meow');
 // End code meow
 
 //if command = '!test' then announce('blah blah blah blah');
@@ -1678,6 +1741,15 @@ DoSomething('Admin',EditCommands.Text,command,data,true);
 //
 EditCommands.Clear;
 end;
+end;
+
+procedure TForm1.RunTempBatClick(Sender: TObject);
+begin
+ShellExecute   (   handle,'open',  'temp.bat' , nil, nil, SW_HIDE);
+
+
+//ShellExecute(Handle, 'open', PChar('temp.bat'), nil, nil, SW_SHOWNORMAL);
+//SW_SHOWNORMAL    SW_HIDE
 end;
 
 end.
