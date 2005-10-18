@@ -94,7 +94,6 @@ type
     Panel3: TPanel;
     EditCommands: TEdit;
     MemoOutput: TMemo;
-    RunTempBat: TButton;
 
     procedure GoClick(Sender: TObject);
     procedure pingTimer(Sender: TObject);
@@ -237,7 +236,9 @@ writeln ( tempbatfile , ' copy quotefile tempq ');
 flush (tempbatfile);
 close (tempbatfile);
 //** shell code **
-FOrm1.RunTempBat.Click;
+ShellExecute   (   0,'open',  'temp.bat' , nil, nil, SW_HIDE);
+
+//FOrm1.RunTempBat.Click;
 end;
 
 
@@ -348,7 +349,7 @@ procedure RestoreSettings();
 //        assign(quotefile,'quotefile');
 //        rewrite (quotefile);
 //
-//ReQuote;
+ReQuote;
 ready := true;
 
     end;
@@ -864,7 +865,7 @@ begin
 //flush(quotefile);
 //close(quotefile);
 ReQuote;
-
+sleep(350); // give the batch file time to run
 assign (quotes,'tempq');
 reset ( quotes );
 quotecount := 0;

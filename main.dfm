@@ -189,15 +189,6 @@ object Form1: TForm1
       TabOrder = 4
       OnClick = ChanServIDClick
     end
-    object RunTempBat: TButton
-      Left = 0
-      Top = 0
-      Width = 41
-      Height = 25
-      Caption = 'RunTempBat'
-      TabOrder = 9
-      OnClick = RunTempBatClick
-    end
   end
   object Panel3: TPanel
     Left = 256
