@@ -821,10 +821,10 @@ end;
 if command = '!kill' then action('kills '+data);
 if command = '!nuke' then action('nukes '+data);
 if command = '!dice' then dice;
-if command = '!torture' then action('torture '+data);  // Torture code
+if command = '!torture' then action('tortures '+data);  // Torture code
 
 // Code meow start here
-if command = '!meow' then say('Cat' + char(39) + 's' + form1.nick.text + ' meow');
+if command = '!meow' then say(form1.nick.text' + char(39) + 's cat meow');
 // End code meow
 
 //if command = '!test' then announce('blah blah blah blah');
