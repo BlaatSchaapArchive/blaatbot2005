@@ -46,6 +46,7 @@ uses
     function contains (data,what: string) : boolean;
     function  IsAdmin  (name: string) : boolean;
 
+    procedure KickBadWords(line,user: string);
     procedure RestoreSettings();
     procedure SaveSettings();
     procedure ReQuote();
@@ -508,6 +509,15 @@ function IsAdmin  (name: string) : boolean;
 
     end;
 
+
+
+
+
+
+
+
+
+
 //blaat
 procedure MusicPlaying();
     var
@@ -693,6 +703,37 @@ if enable = false then
 form1.TcpClient.Sendln('MODE '+ form1.channel.Text +' -'+mode+' '+who);
 end;
 
+    procedure KickBadWords(line,user: string);
+    var
+    badwordsfile : textfile;
+    temp         : char;
+    badword      : string;
+
+    begin
+    //say('testing for bad words');
+    // try the comma separated text file
+    // like the one i used in the quiz project
+    assign(badwordsfile, 'badwords');
+    reset (badwordsfile);
+    badword := '';
+    while not eof(badwordsfile) do
+      begin
+      badword :='';
+        repeat
+        read (badwordsfile, temp);
+        if not (temp = ',') then badword := badword + temp
+        until temp = ',';
+        //say ('did '+ user+' say '+badword);
+      if contains(line,badword) then
+        begin
+        say('Forbidden word: ' + badword + ', kicking '+user);
+        kick(user);
+        end;
+      //AnsiLowerCase(name) = AnsiLowerCase(badword) then result := true;
+      end;
+      closefile(badwordsfile);
+
+    end;
 
 
 
@@ -800,12 +841,15 @@ begin
 // not working....
 
 
+
 if NOT(Contains(line,chr(1))) then
 writeln(quotefile, '['+ date_now + ' ' + time_now + '] <'+user + '>  ' + line)
 else
 writeln(quotefile, '['+ date_now + ' ' + time_now + '] *'+user + '  ' + line);
 // action, still strip the chr(1);
 
+
+KickBadWords(line,user);
 //  Hmm it acces violated here ?
 if (command[1]='!') then Form1.MemoOutput.Lines.Add(user + ' : ' + command + ' ' + data);
 if not (contains(user,'serv')) then begin
