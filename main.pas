@@ -39,7 +39,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Sockets, SHellAPI;
+  Dialogs, StdCtrls, ExtCtrls, Sockets, ShellAPI, IRCbot_CompileTime;
 
 
     function ReadParams(data : string; number : integer; space : boolean):string;
@@ -932,7 +932,7 @@ if command = '!dice' then dice;
 if command = '!torture' then action('tortures '+data);  // Torture code
 
 // Code meow start here
-if command = '!meow' then say(form1.nick.text  + char(39) + 's cat meow');
+if command = '!meow' then say(form1.nick.text  + char(39) + 's cat: meow');
 // End code meow
 
 //if command = '!test' then announce('blah blah blah blah');
@@ -941,9 +941,9 @@ if command = '!meow' then say(form1.nick.text  + char(39) + 's cat meow');
 
 if (inchannel = true ) and ( command = '!info' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) }then
 begin
-announce('I am '+ form1.Nick.Text);
-announce('I am running BlaatSchaap Bot bèta');
+announce('I am BlaatSchaap Bot bèta');
 announce('My Source Code is avaiable at sourceforge');
+announce('Compile date: ' + DateToStr(CompileTime) + ' ' + TimeToStr(CompileTime) );
 announce('It is under the zlib licence');
 announce('Check http://blaatschaap.nukysrealm.net/content.php?content.5 or');
 announce('http://www.sf.net/projects/dgcshell for more info');
@@ -1665,6 +1665,7 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+Form1.Caption:='BlaatSchaap IRC BOT (Compile Date ' + DateToStr(CompileTime)+' @ '+TimeToStr(CompileTime) +')';
 restoresettings();
 if ChanServID.Checked then ChanPass.Enabled := true else ChanPass.Enabled := false;
 //pongcount := 1; // begin value
