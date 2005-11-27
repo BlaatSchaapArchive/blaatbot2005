@@ -25,12 +25,6 @@
 //
 //
 //
-// Changelog :
-//
-// 26 sept 2005
-// added check for # in channel name on !join command
-// password box now has *
-// password box disabled if chanserv is disabled
 
 
 unit main;
@@ -54,6 +48,9 @@ uses
     procedure ListAdmin();
     procedure AddAdmin(name:string);
     procedure RemoveAdmin(name:string);
+    procedure ListBadWords();
+    procedure AddBadWord(badword:string);
+    procedure RemoveBadWord(badword:string);
     procedure MusicPlaying();
     procedure ReadData(data: string);
     procedure Say(msg: string);
@@ -509,7 +506,134 @@ function IsAdmin  (name: string) : boolean;
 
     end;
 
+// forbidden words stuff
 
+procedure AddBadWord(badword:string);
+    var
+    badwordsfile : textfile;
+    tempfile  : textfile;
+    temp      : char;
+//    admin     : string;
+
+    begin
+   assign(tempfile, 'temp');
+   rewrite (tempfile);
+   assign(badwordsfile, 'badwords');
+   reset (badwordsfile);
+
+      while not eof(badwordsfile) do
+      begin
+      read (badwordsfile, temp);
+      write (tempfile, temp);
+      end;
+      closefile(badwordsfile);
+      closefile(tempfile);
+
+   assign(tempfile, 'temp');
+   reset (tempfile);
+   assign(badwordsfile, 'badwords');
+   rewrite (badwordsfile);
+
+      while not eof(tempfile) do
+      begin
+      read (tempfile, temp);
+      write (badwordsfile, temp);
+      end;
+   closefile(tempfile);
+   write (badwordsfile, AnsiLowerCase(badword));
+   write (badwordsfile, ',');
+   closefile(badwordsfile);
+   end;
+
+
+
+procedure RemoveBadWord(badword:string);
+    var
+    badwordsfile : textfile;
+    tempfile  : textfile;
+    temp      : char;
+    badwordinfile : string;
+
+    begin
+   assign(tempfile, 'temp');
+   rewrite (tempfile);
+   assign(badwordsfile, 'badwords');
+   reset (badwordsfile);
+
+    while not eof(badwordsfile) do
+      begin
+      badwordinfile :='';
+        repeat
+        read (badwordsfile, temp);
+        if not (temp = ',') then badwordinfile := badwordinfile + temp
+        until temp = ',';
+        if NOT (badword = badwordinfile) then
+        begin
+        write (tempfile, badwordinfile);
+        write (tempfile,',');
+        end;
+      end;
+
+//      while not eof(adminfile) do
+//      begin
+//      read (adminfile, temp);
+//      write (tempfile, temp);
+//      end;
+      closefile(badwordsfile);
+      closefile(tempfile);
+
+   assign(tempfile, 'temp');
+   reset (tempfile);
+   assign(badwordsfile, 'badwords');
+   rewrite (badwordsfile);
+
+      while not eof(tempfile) do
+      begin
+      read (tempfile, temp);
+      write (badwordsfile, temp);
+      end;
+   closefile(tempfile);
+   closefile(badwordsfile);
+   end;
+
+
+
+
+
+
+
+procedure ListBadWords();
+    var
+    badwordsfile : textfile;
+    temp      : char;
+    badword     : string;
+
+    begin
+     say('The Bad Words list: ');
+     say(' ');
+    // try the comma separated text file
+    // like the one i used in the quiz project
+    assign(badwordsfile, 'badwords');
+    reset (badwordsfile);
+    badword := '';
+    while not eof(badwordsfile) do
+      begin
+      badword :='';
+        repeat
+        read (badwordsfile, temp);
+        if not (temp = ',') then badword := badword + temp
+        until temp = ',';
+        say (badword);
+      end;
+      closefile(badwordsfile);
+
+    end;
+
+
+
+
+
+// end of forbidden words stuff
 
 
 
@@ -851,7 +975,10 @@ writeln(quotefile, '['+ date_now + ' ' + time_now + '] *'+user + '  ' + line);
 
 KickBadWords(line,user);
 //  Hmm it acces violated here ?
+if not (command='') then 
 if (command[1]='!') then Form1.MemoOutput.Lines.Add(user + ' : ' + command + ' ' + data);
+
+
 if not (contains(user,'serv')) then begin
 // to prevent reacting on  *serv
 // say in private to rejoin the channel, ( when it is kicked ? )
@@ -869,8 +996,8 @@ else
 if inchannel = false then
 begin
 randomize;
-//number := 7;//disable
-number := random(6);
+number := 7; //disable
+//number := random(6);
 // put strings in a file ?
 if ( number = 0 ) then saypriv('I am '+ form1.Nick.Text, user);
 if ( number = 1 ) then saypriv(user, user);
@@ -1021,6 +1148,7 @@ announce(user + ' added '+ (ReadParams(data,1,false)) + ' to the admin list.')
 end else say('who?');
 end;
 
+
 if (command = '!admin') and (ReadParams(data,0,false)= 'remove') then
 begin
 if NOT ((ReadParams(data,1,false)) = '') then
@@ -1028,6 +1156,30 @@ begin
 RemoveAdmin(ReadParams(data,1,false));
 announce(user + ' removed '+ (ReadParams(data,1,false)) + ' from the admin list.')
 end else announce('who?');
+end;
+
+
+
+if (command = '!badword') and (ReadParams(data,0,false)= 'list')  then
+listbadwords();
+
+if (command = '!badword') and (ReadParams(data,0,false)= 'add') then
+begin
+if NOT ((ReadParams(data,1,false)) = '') then
+begin
+AddBadWord(ReadParams(data,1,false));
+announce(user + ' added '+ (ReadParams(data,1,false)) + ' to the bad word list.')
+end else announce('no word to add');
+end;
+
+
+if (command = '!badword') and (ReadParams(data,0,false)= 'remove') then
+begin
+if NOT ((ReadParams(data,1,false)) = '') then
+begin
+RemoveBadword(ReadParams(data,1,false));
+announce(user + ' removed '+ (ReadParams(data,1,false)) + ' from the bad word list.')
+end else announce('no word to remove');
 end;
 
 

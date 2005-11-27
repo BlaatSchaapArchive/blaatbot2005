@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 255
-  Top = 250
+  Left = 195
+  Top = 137
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'BlaatSchaap IRC BOT'
