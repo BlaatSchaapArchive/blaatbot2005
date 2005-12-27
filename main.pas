@@ -52,6 +52,9 @@ uses
     procedure AddBadWord(badword:string);
     procedure RemoveBadWord(badword:string);
     procedure MusicPlaying();
+    procedure AddStation(name,server,port:string);
+    procedure RemoveStation(name:string);
+    procedure ListStations();
     procedure ReadData(data: string);
     procedure Say(msg: string);
     procedure SayPriv(msg,user: string);
@@ -161,7 +164,56 @@ var
 implementation
 
 {$R *.dfm}
+    procedure AddStation(name,server,port:string);
+    begin end; // not implemented
 
+    procedure RemoveStation(name:string);
+    begin end; // not implemented
+
+    procedure ListStations();
+// copy paste musicplaying ...
+    var
+    musicfile : textfile;
+    temp      : char;
+    server    : string;
+    port      : string;
+
+    station   : string;
+
+    begin
+    assign(musicfile, 'music');
+    reset (musicfile);
+    //say ( 'DEBUG : MUSIC : Reading data file ');
+    while not eof(musicfile) do
+
+      begin
+      station :='';
+      repeat
+      read (musicfile, temp);
+      if not (temp = ',') then station := station + temp
+      until temp = ',';
+      //say ( 'DEBUG : STATION NAME IS '+ station );
+
+      server :='';
+      repeat
+      read (musicfile, temp);
+      if not (temp = ',') then server := server + temp
+      until temp = ',';
+      //say ( 'DEBUG : SERVER IS '+ server );
+      port :='';
+      repeat
+      read (musicfile, temp);
+      if not (temp = ',') then port := port + temp
+      until temp = ',';
+      //say ( 'DEBUG : PORT IS '+ port );
+      // infochecker
+
+      say ( station + ' ' + server + ' ' + port );
+      form1.MemoOutput.lines.Add( station + ' ' + server + ' ' + port )
+     end;
+
+
+    end; // not implemented
 
 procedure SaveSettings();
   var
@@ -973,7 +1025,7 @@ writeln(quotefile, '['+ date_now + ' ' + time_now + '] *'+user + '  ' + line);
 // action, still strip the chr(1);
 
 
-KickBadWords(line,user);
+
 //  Hmm it acces violated here ?
 if not (command='') then 
 if (command[1]='!') then Form1.MemoOutput.Lines.Add(user + ' : ' + command + ' ' + data);
@@ -1025,11 +1077,29 @@ end;
 //command is the first word,
 //data is the rest
 
-if command = '!music' then
+if (command = '!music') and (data ='') then
   begin
   //say ( 'DEBUG : MUSIC' );
   musicplaying;
   end;
+
+if ( command = '!music' ) and (ReadParams(data,0,false) ='add') then
+  begin
+  AddStation( ReadParams(data,1,false) ,  //name
+              ReadParams(data,2,false) ,  //server
+              ReadParams(data,3,false) ); //port
+  end;
+
+if ( command = '!music' ) and (ReadParams(data,0,false) ='remove') then
+  begin
+  RemoveStation( ReadParams(data,1,false) );  //name
+  end;
+
+if ( command = '!music' ) and (ReadParams(data,0,false) ='list') then
+  begin
+  ListStations();
+  end;
+
 
 if command = '!find' then
 begin
@@ -1223,6 +1293,7 @@ if command = '!dehop'    then mode(data,'h',false);
 if command = '!voice'    then mode(data,'v',true);
 if command = '!devoice'  then mode(data,'v',false);
 end; // don't do that to itself
+KickBadWords(line,user);
 end;
 
 end; // end of *serv detection

@@ -1,5 +1,16 @@
 				TODO LIST
 
+
+*		REWRITE stuff
+
+			little cleanup, since the function ReadParams is added
+			a lot of the code could be replaced by using the ReadParams
+			
+*		ADD Support for ChatNet server style,
+
+			the server sends more lines in a packet or something
+			slitter code needs to be added
+
 *		Add/Remove music trough IRC commands
 
 *		ADD check for illegal sings in nick
@@ -26,15 +37,6 @@
 			or something like that
 
 
-*		REWRITE stuff
 
-			little cleanup, since the function ReadParams is added
-			a lot of the code could be replaced by using the ReadParams
-			
-*		ADD Support for ChatNet server style,
-
-			the server sends more lines in a packet or something
-			slitter code needs to be added
-			
 									
 			
