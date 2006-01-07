@@ -64,6 +64,7 @@ uses
     procedure Kick(who: string);
     procedure Mode (who: string; mode : char; enable : boolean);
     procedure DoSomething(user, line, command, data: string; inchannel : boolean);
+    procedure DoConvert(data : string);
 
 type
   TForm1 = class(TForm)
@@ -150,6 +151,7 @@ var
   pingcount     : integer;
   pongcount     : integer;
   convert       : variant;
+  time_convert  : variant;
   time_now, date_now : string;
   lastjoined    : string;
 //  kicktime      : boolean;
@@ -231,7 +233,7 @@ procedure SaveSettings();
     write (settingfile, ',');
     write (settingfile, form1.ChanservID.checked);
     write (settingfile, ',');
-    write (settingfile, form1.ChanPass.text);        
+    write (settingfile, form1.ChanPass.text);
     write (settingfile, ',');
     closefile(settingfile);
     end;
@@ -239,7 +241,7 @@ procedure SaveSettings();
 procedure ReQuote();
 var
 tempbatfile : textfile;
-temp: char;
+//temp: char;
 begin
 {
 //quote
@@ -689,7 +691,46 @@ procedure ListBadWords();
 
 
 
+procedure DoConvert(data : string);
+var
+temp0 : variant;
+temp1,temp2,temp3,temp4 : integer;
+temp5, temp6 : string;
+begin
+//say ( 'converting not implemented yet') ;
 
+if ( readparams(data,0,false)) = 'T' then // temperature conversions
+begin
+    if ( readparams(data,1,false) = 'C') and  ( readparams(data,2,false) = 'F') then
+    begin
+    temp0 := ( readparams(data,3,false));
+    temp1:= temp0 ;
+    temp2 := ((temp1 * 9 div 5 ) + 32);
+    temp0 := temp1;
+    temp5 := temp0;
+    temp0 := temp2;
+    temp6 := temp0;
+    say ( temp5 + '* C is '+ temp6 + '* F ');
+    end;
+    if ( readparams(data,1,false) = 'F') and  ( readparams(data,2,false) = 'C') then
+    begin
+    temp0 := ( readparams(data,3,false));
+    temp1:= temp0 ;
+    temp2 := ((temp1 - 32 ) * 5 div 9 );
+    temp0 := temp1;
+    temp5 := temp0;
+    temp0 := temp2;
+    temp6 := temp0;
+    say ( temp5 + '* F is '+ temp6 + '* C ');
+    end;
+end;
+
+
+
+
+
+
+end;
 
 
 
@@ -754,6 +795,7 @@ procedure MusicPlaying();
         begin
         FOrm1.ShoutCastInfo.Sendln('GET /7 HTTP/1.0');
         form1.ShoutCastInfo.Sendln('User-Agent: Mozilla (Compatible, BlaatSchaap IRC Bot)');
+        form1.ShoutCastInfo.Sendln('Client-Version : '+ Form1.Caption);
         form1.ShoutCastInfo.Sendln('');
         tempstring := form1.Shoutcastinfo.Receiveln();
         tempstring := form1.Shoutcastinfo.Receiveln();
@@ -1026,8 +1068,8 @@ writeln(quotefile, '['+ date_now + ' ' + time_now + '] *'+user + '  ' + line);
 
 
 
-//  Hmm it acces violated here ?
-if not (command='') then 
+
+if not (command='') then
 if (command[1]='!') then Form1.MemoOutput.Lines.Add(user + ' : ' + command + ' ' + data);
 
 
@@ -1038,13 +1080,11 @@ if (inchannel = false) and contains(line,'rejoin') then form1.TcpClient.Sendln('
 
 //if (inchannel = false) and contains(line,form1.Nick.edit) then say('I am  '+form1.nick.Text);
 
-// Addoula is the king (NOT!)
-if ( command = '!king') then say(  form1.nick.text + ' makes ' + data + ' the king of the world.');
-
 if (inchannel = false) and (line = ( CHR(1) +'VERSION' + CHR(1))) then
 //received a CTCP version
-form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ CHR($01) + 'VERSION BlaatSchaap Bot' + CHR($01))
+form1.TcpClient.Sendln('NOTICE ' + user + ' :'+ CHR($01) + 'VERSION '+ Form1.Caption + CHR($01))
 else
+
 if inchannel = false then
 begin
 randomize;
@@ -1054,7 +1094,7 @@ number := 7; //disable
 if ( number = 0 ) then saypriv('I am '+ form1.Nick.Text, user);
 if ( number = 1 ) then saypriv(user, user);
 if ( number = 2 ) then saypriv('You must be bored', user);
-if ( number = 3 ) then saypriv('www.deGekkenClub.tk', user);
+if ( number = 3 ) then saypriv('blaatschaap.nukysrealm.net', user);
 if ( number = 4 ) then saypriv('Wat moet je ? ', user);
 if ( number = 5 ) then saypriv('I am only a bot....', user);
 end;
@@ -1066,22 +1106,15 @@ say('Inderdaad, blaat in het kwadraat!');
 lastjoined := user;    //reuse,flood protect
 end;
 
-// blaat
-//if ( command = '!time') then kicktime := true;
-//if ( command ='!notime') then kicktime:=false;
-//if ( kicktime and (AnsiLowerCase(user) = 'nuky') and (contains(line,'time')) ) then kick('nuky');
 
-
-//if contains(line,form1.Nick.text) then say('Typ !help '+ form1.Nick.text);
-// line is the full line,
-//command is the first word,
-//data is the rest
+if ( command = '!convert' ) then DoConvert(data);
 
 if (command = '!music') and (data ='') then
   begin
   //say ( 'DEBUG : MUSIC' );
   musicplaying;
   end;
+
 
 if ( command = '!music' ) and (ReadParams(data,0,false) ='add') then
   begin
@@ -1132,8 +1165,10 @@ if command = '!torture' then action('tortures '+data);  // Torture code
 if command = '!meow' then say(form1.nick.text  + char(39) + 's cat: meow');
 // End code meow
 
-//if command = '!test' then announce('blah blah blah blah');
-//if command = '!test2'then action('blah blah blah');
+if command = '!woof' then begin
+say ( 'Sorry, no dogs allowed in here ');
+kick (user);
+end;
 
 
 if (inchannel = true ) and ( command = '!info' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) }then
@@ -1149,20 +1184,22 @@ end;
 if ( command = '!help' )then
 begin
 
-// announce
-announce(' ');
-announce(' Current supported user commandos are:');
-announce('   !info                  !help             ');
-announce('   !kill    <username>    !dice');
-announce('   !music                 !porn     ');
-announce(' ');
-announce(' Current supported admin commandos are:');
-announce('   !op      <username>    !deop    <username>');
-announce('   !hop     <username>    !dehop   <username>');
-announce('   !voice   <username>    !devoice <username>');
-announce('   !ban     <username>    !unban   <username>');
-announce('   !nick    <newbotnick>  !join    <channel>');
-announce(' ');
+
+say(' ');
+say(' Current supported user commandos are:');
+say('   !info                  !help             ');
+say('   !kill    <username>    !dice');
+say('   !music                 !porn     ');
+say('   !nuke                  !torture   ');
+say('   !meow                  !woof ');
+say(' ');
+say(' Current supported admin commandos are:');
+say('   !op      <username>    !deop    <username>');
+say('   !hop     <username>    !dehop   <username>');
+say('   !voice   <username>    !devoice <username>');
+say('   !ban     <username>    !unban   <username>');
+say('   !nick    <newbotnick>  !join    <channel>');
+say(' ');
 end;
 
 if ( command = '!porn' ) then
@@ -1173,6 +1210,7 @@ repeat
 saypriv ( 'You want porn ? now you will be SPAMMED',user);
 spammer := spammer + 1;
 until (spammer = 25);
+say ( 'No porn in here, get out '+user+' !!!!');
 kick(user);
 end;
 
@@ -1237,7 +1275,7 @@ if (command = '!badword') and (ReadParams(data,0,false)= 'add') then
 begin
 if NOT ((ReadParams(data,1,false)) = '') then
 begin
-AddBadWord(ReadParams(data,1,false));
+AddBadWord(ReadParams(data,1,true));
 announce(user + ' added '+ (ReadParams(data,1,false)) + ' to the bad word list.')
 end else announce('no word to add');
 end;
@@ -1247,8 +1285,8 @@ if (command = '!badword') and (ReadParams(data,0,false)= 'remove') then
 begin
 if NOT ((ReadParams(data,1,false)) = '') then
 begin
-RemoveBadword(ReadParams(data,1,false));
-announce(user + ' removed '+ (ReadParams(data,1,false)) + ' from the bad word list.')
+RemoveBadword(ReadParams(data,1,true));
+announce(user + ' removed '+ (ReadParams(data,1,true)) + ' from the bad word list.')
 end else announce('no word to remove');
 end;
 
@@ -1745,6 +1783,8 @@ end;
 
 
 
+
+
 procedure TReceive.Execute;
 begin
 
@@ -1851,10 +1891,14 @@ procedure TForm1.status_uodater(Sender: TObject);
 begin
 
 // Update current time and date.
-convert  := time;
-time_now := convert;
-convert  := date;
-date_now := convert;
+
+
+time_convert  := time;
+time_now := time_convert;
+time_convert  := date;
+date_now := time_convert;
+
+
 
 
 if timeout then
@@ -1888,6 +1932,12 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+// set date and time formats
+TimeSeparator   := ':';
+DateSeparator   := '-';
+ShortDateFormat := 'dd/mm/yyyy' ;
+LongTimeFormat  := 'hh:nn:ss'   ;
+
 Form1.Caption:='BlaatSchaap IRC BOT (Compile Date ' + DateToStr(CompileTime)+' @ '+TimeToStr(CompileTime) +')';
 restoresettings();
 if ChanServID.Checked then ChanPass.Enabled := true else ChanPass.Enabled := false;
