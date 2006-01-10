@@ -74,7 +74,6 @@ type
     Label6: TLabel;
     Label7: TLabel;
     Label9: TLabel;
-    status: TLabel;
     Go: TButton;
     server: TEdit;
     channel: TEdit;
@@ -96,6 +95,11 @@ type
     Panel3: TPanel;
     EditCommands: TEdit;
     MemoOutput: TMemo;
+    TcpClient_Update: TTcpClient;
+    Timer_doupgrade: TTimer;
+    status: TLabel;
+    autoconnect: TCheckBox;
+    longwait: TCheckBox;
 
     procedure GoClick(Sender: TObject);
     procedure pingTimer(Sender: TObject);
@@ -119,6 +123,7 @@ type
     procedure TimeoutTimerTimer(Sender: TObject);
     procedure EditCommandsKeyPress(Sender: TObject; var Key: Char);
     procedure RunTempBatClick(Sender: TObject);
+    procedure Timer_doupgradeTimer(Sender: TObject);
 
 
   end;
@@ -139,6 +144,7 @@ var
 
   logfile : textfile; //debug
   timeout      : boolean;
+  currentversion : string;
 
   receiveddata : string  ;
 //  loginsleep : integer;
@@ -166,6 +172,76 @@ var
 implementation
 
 {$R *.dfm}
+
+
+
+ procedure CheckForUpdate();
+ var
+temp: string;
+temp2: string;
+doorgaan,upgrade : boolean;
+newversion : string;
+
+cur_m, cur_d, cur_y, new_m, new_d, new_y: integer;
+myvariant : variant;
+begin
+
+form1.TcpClient_Update.RemoteHost:='blaatschaap.nukysrealm.net';
+form1.TcpClient_Update.RemotePort:='80';
+if form1.TcpClient_Update.Connect then
+  begin
+  form1.TcpClient_Update.Sendln('GET /blaatbot/update.txt HTTP/1.1');   ;
+  form1.TcpClient_Update.Sendln('user-agent: ' + form1.caption);
+  form1.TcpClient_Update.Sendln('host: '+ form1.TcpClient_Update.RemoteHost );
+  form1.TcpClient_Update.Sendln('connection: close');
+  form1.TcpClient_Update.Sendln('');
+  doorgaan := false;
+  temp:=form1.TcpClient_Update.Receiveln();
+
+  temp2 := temp[10]+temp[11]+temp[12]+temp[13]+temp[14]+temp[15];
+  if temp2 = '200 OK' then doorgaan := true ;
+  repeat
+  temp:=form1.TcpClient_Update.Receiveln();
+  until temp =''; // header
+  if doorgaan then
+      begin
+      newversion:=form1.TcpClient_Update.Receiveln();
+      form1.TcpClient_Update.Disconnect;
+     // if not ( newversion = currentversion ) then begin //upgrade
+     // new upgrade checker code //
+
+     myvariant := currentversion[1] + currentversion[2];
+     cur_d := myvariant;
+     myvariant := currentversion[4] + currentversion[5];
+     cur_m := myvariant;
+     myvariant := currentversion[7] + currentversion[8]+currentversion[9] + currentversion[10];
+     cur_y := myvariant;
+
+     myvariant := newversion[1] + newversion[2];
+     new_d := myvariant;
+     myvariant := newversion[4] + newversion[5];
+     new_m := myvariant;
+     myvariant := newversion[7] + newversion[8]+ newversion[9] + newversion[10];
+     new_y := myvariant;
+
+     upgrade := false;
+
+     if (new_d > cur_d) and (new_m = cur_m) and (new_y = cur_y) then upgrade := true;
+     if (new_m > cur_m) and (new_y = cur_y) then upgrade := true;
+     if (new_y > cur_y) then upgrade:=true;
+
+      if upgrade then begin
+      say ('Current version '+ currentversion);
+      say ('New version '+newversion);
+      say ('brb ... upgrading ...');
+      form1.timer_doupgrade.Enabled:=true;
+
+      end else say ('Current version = '+ currentversion+' New version = '+newversion  );
+      say ('Not Upgrading');
+      end;
+  end;
+end;
+
     procedure AddStation(name,server,port:string);
     begin end; // not implemented
 
@@ -234,6 +310,8 @@ procedure SaveSettings();
     write (settingfile, form1.ChanservID.checked);
     write (settingfile, ',');
     write (settingfile, form1.ChanPass.text);
+    write (settingfile, ',');
+    write (settingfile, form1.AutoConnect.checked);
     write (settingfile, ',');
     closefile(settingfile);
     end;
@@ -347,7 +425,6 @@ procedure RestoreSettings();
         form1.ChanServID.checked := convert;
         data :='';
 
-
         repeat
         read (settingfile, temp);
         if not (temp = ',') then data := data + temp
@@ -355,6 +432,13 @@ procedure RestoreSettings();
         form1.ChanPass.text := data;
         data :='';
 
+        repeat
+        read (settingfile, temp);
+        if not (temp = ',') then data := data + temp
+        until temp = ',';
+        convert := data;
+        form1.AutoConnect.checked := convert;
+        data :='';
 
         closefile(settingfile);
 
@@ -703,6 +787,7 @@ if ( readparams(data,0,false)) = 'T' then // temperature conversions
 begin
     if ( readparams(data,1,false) = 'C') and  ( readparams(data,2,false) = 'F') then
     begin
+          try
     temp0 := ( readparams(data,3,false));
     temp1:= temp0 ;
     temp2 := ((temp1 * 9 div 5 ) + 32);
@@ -711,9 +796,11 @@ begin
     temp0 := temp2;
     temp6 := temp0;
     say ( temp5 + '* C is '+ temp6 + '* F ');
+      except say ('Error: Input not correct'); end
     end;
     if ( readparams(data,1,false) = 'F') and  ( readparams(data,2,false) = 'C') then
     begin
+          try
     temp0 := ( readparams(data,3,false));
     temp1:= temp0 ;
     temp2 := ((temp1 - 32 ) * 5 div 9 );
@@ -722,8 +809,14 @@ begin
     temp0 := temp2;
     temp6 := temp0;
     say ( temp5 + '* F is '+ temp6 + '* C ');
+      except say ('Error: Input not correct'); end
     end;
-end;
+end else begin
+         say ('!convert <1 2 3 params>');
+         say ('1  =  T  for temperature');
+         say ('2 and 3 = C or F for Celcius and Fahrenheit');
+         end;
+
 
 
 
@@ -880,6 +973,7 @@ tcpclient.RemotePort := port.Text;
 if tcpclient.Connect then
 begin
 status.Caption:='Connected...';
+status.Repaint;
 treceive.Create(false);
 tcpclient.Sendln('NICK '+ nick.Text);
 //tcpclient.Sendln('USER dgcbot dgchost '+ server.Text + ' :dGCbot www.sf.net/projects/dgcshell');
@@ -894,6 +988,7 @@ channel.Enabled := false;
 ChanservID.Enabled:=false;
 ChanPass.Enabled := false;
 status.Caption:='Waiting for server...';
+status.Repaint;
 // found the code to detect when the server is ready
 // moving login code to readdata
 
@@ -902,6 +997,7 @@ status.Caption:='Waiting for server...';
 end else
 begin
 status.Caption:='Server did not respond';
+status.Repaint;
 if (reconnect2.Enabled= true) then
 wait1.Enabled:= true else wait2.Enabled:= true;
 end;
@@ -1100,11 +1196,14 @@ if ( number = 5 ) then saypriv('I am only a bot....', user);
 end;
 
 // example how to use the new contains function
-if contains(line,'blaat') and (not (user = lastjoined)) then
-begin
-say('Inderdaad, blaat in het kwadraat!');
-lastjoined := user;    //reuse,flood protect
-end;
+// it's annyoing
+//if contains(line,'blaat') and (not (user = lastjoined)) then
+//begin
+//say('Inderdaad, blaat in het kwadraat!');
+//lastjoined := user;    //reuse,flood protect
+//end;
+
+
 
 
 if ( command = '!convert' ) then DoConvert(data);
@@ -1160,21 +1259,35 @@ if command = '!kill' then action('kills '+data);
 if command = '!nuke' then action('nukes '+data);
 if command = '!dice' then dice;
 if command = '!torture' then action('tortures '+data);  // Torture code
+if command = '!strangle' then action('strangles '+data);
+if command = '!stab' then action('stabs '+data);
+if command = '!slice' then action('slices '+data);
+if command = '!cut' then action('cuts '+data);
+
+if command = '!pie' then action('gives '+ user+' a peice of '+data+' pie.');
+if command = '!beer' then action('gives '+ user+' a glass of '+data+' beer.');
+if command = '!cola' then action('gives '+ user+' a glass of '+data+' cola.');
+
+if command = '!give' then action('gives ' + data );
+
 
 // Code meow start here
 if command = '!meow' then say(form1.nick.text  + char(39) + 's cat: meow');
 // End code meow
 
+if (command = '!pet') and ( data = 'turtle' ) then say(form1.nick.text  + char(39) + 's turtle: roar');
+if (command = '!pet') and ( data = 'cat' ) then say(form1.nick.text  + char(39) + 's cat: meow');
 if command = '!woof' then begin
 say ( 'Sorry, no dogs allowed in here ');
 kick (user);
 end;
 
 
+
 if (inchannel = true ) and ( command = '!info' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) }then
 begin
 announce('I am BlaatSchaap Bot bèta');
-announce('My Source Code is avaiable at sourceforge');
+announce('My Source Code is available at sourceforge');
 announce('Compile date: ' + DateToStr(CompileTime) + ' ' + TimeToStr(CompileTime) );
 announce('It is under the zlib licence');
 announce('Check http://blaatschaap.nukysrealm.net/content.php?content.5 or');
@@ -1188,9 +1301,11 @@ begin
 say(' ');
 say(' Current supported user commandos are:');
 say('   !info                  !help             ');
-say('   !kill    <username>    !dice');
 say('   !music                 !porn     ');
+say('   !dice                  !cut');
 say('   !nuke                  !torture   ');
+say('   !kill                  !strangle   ');
+say('   !stab                  !slice   ');
 say('   !meow                  !woof ');
 say(' ');
 say(' Current supported admin commandos are:');
@@ -1199,6 +1314,7 @@ say('   !hop     <username>    !dehop   <username>');
 say('   !voice   <username>    !devoice <username>');
 say('   !ban     <username>    !unban   <username>');
 say('   !nick    <newbotnick>  !join    <channel>');
+say('   !update');
 say(' ');
 end;
 
@@ -1244,6 +1360,9 @@ end;
 if isadmin(user) then
 begin
 // command to the bots
+if command = '!update' then CheckForUpdate();
+if command = '!raw' then Form1.TcpClient.Sendln(data);
+
 if (command = '!admin') and (ReadParams(data,0,false)= 'list')  then
 listadmin();
 
@@ -1271,14 +1390,7 @@ end;
 if (command = '!badword') and (ReadParams(data,0,false)= 'list')  then
 listbadwords();
 
-if (command = '!badword') and (ReadParams(data,0,false)= 'add') then
-begin
-if NOT ((ReadParams(data,1,false)) = '') then
-begin
-AddBadWord(ReadParams(data,1,true));
-announce(user + ' added '+ (ReadParams(data,1,false)) + ' to the bad word list.')
-end else announce('no word to add');
-end;
+
 
 
 if (command = '!badword') and (ReadParams(data,0,false)= 'remove') then
@@ -1289,6 +1401,18 @@ RemoveBadword(ReadParams(data,1,true));
 announce(user + ' removed '+ (ReadParams(data,1,true)) + ' from the bad word list.')
 end else announce('no word to remove');
 end;
+
+KickBadWords(line,user);
+
+if (command = '!badword') and (ReadParams(data,0,false)= 'add') then
+begin
+if NOT ((ReadParams(data,1,false)) = '') then
+begin
+AddBadWord(ReadParams(data,1,true));
+announce(user + ' added '+ (ReadParams(data,1,false)) + ' to the bad word list.')
+end else announce('no word to add');
+end;
+
 
 
 // add check for illegal signs in nick ..
@@ -1331,7 +1455,7 @@ if command = '!dehop'    then mode(data,'h',false);
 if command = '!voice'    then mode(data,'v',true);
 if command = '!devoice'  then mode(data,'v',false);
 end; // don't do that to itself
-KickBadWords(line,user);
+
 end;
 
 end; // end of *serv detection
@@ -1733,6 +1857,7 @@ if command='376 ' then
 begin
 form1.TimeoutTimer.Enabled:=false;
 form1.status.Caption:='BlaatSchaap Bot Ready...';
+form1.status.Repaint;
 form1.tcpclient.Sendln('JOIN '+ form1.channel.Text);
 form1.ping.Enabled := true;
 if form1.ChanServID.checked then saypriv('identify '+form1.ChanPass.Text,'NickServ');
@@ -1826,6 +1951,7 @@ if NOT (pingcount = pongcount) then
 // PING TIMEOUT //
 begin
 status.Caption := 'PING TIMEOUT : Reconnect';
+status.Repaint;
 reconnect.Enabled := true;
 write (logfile,'PING TIMEOUT: PING ');
 write (logfile,pingcount);
@@ -1856,6 +1982,7 @@ timeouttimer.enabled:=false;
 ping.Enabled := false;
 
 status.Caption:='Disconnected';
+status.Repaint;
 ChanservID.Enabled:=true;
 ChanPass.Enabled := true;
 server.Enabled := true;
@@ -1889,15 +2016,16 @@ end;
 
 procedure TForm1.status_uodater(Sender: TObject);
 begin
-
+if longwait.Checked then begin timeouttimer.Interval:=3000000000; end else timeouttimer.Interval:=10000;
 // Update current time and date.
 
 
-time_convert  := time;
-time_now := time_convert;
-time_convert  := date;
-date_now := time_convert;
+//time_convert  := time;
+time_now :=TimeToStr(time);
+//time_convert  := date;
+date_now := DateToStr(date);
 
+if time_now = '03:33:33' then CheckForUpdate();
 
 
 
@@ -1908,20 +2036,21 @@ if timeout then
   //stop.Click;
   tcpclient.Disconnect;
   status.Caption := 'Connected, but no answer';
+  status.Repaint;
      if  (not wait2.Enabled ) or
          (not reconnect.Enabled ) or
          (not reconnect2.enabled) then wait1.enabled := true
 else if  (not wait1.Enabled ) or
          (not reconnect.Enabled ) or
          (not reconnect2.enabled) then wait2.enabled := true
-else status.Caption := 'timeout / reconnect bug';
+else status.Caption := 'timeout / reconnect bug';status.Repaint;
 
   end;
 
 if form1.tcpclient.Connected = false then panel1.Color := clred else
 if receivingdata = true then panel1.Color := clgreen else
 if receivingdata = false then panel1.Color := clgray;
-if ( form1.TcpClient.Connected = false ) AND (form1.ping.Enabled = true) then  form1.Status.Caption := 'Server dropped connection'
+if ( form1.TcpClient.Connected = false ) AND (form1.ping.Enabled = true) then  form1.Status.Caption := 'Server dropped connection';form1.status.Repaint;
 end;
 
 procedure TForm1.joinerTimer(Sender: TObject);
@@ -1937,11 +2066,12 @@ TimeSeparator   := ':';
 DateSeparator   := '-';
 ShortDateFormat := 'dd/mm/yyyy' ;
 LongTimeFormat  := 'hh:nn:ss'   ;
-
+currentversion := DateToStr(CompileTime);
 Form1.Caption:='BlaatSchaap IRC BOT (Compile Date ' + DateToStr(CompileTime)+' @ '+TimeToStr(CompileTime) +')';
 restoresettings();
 if ChanServID.Checked then ChanPass.Enabled := true else ChanPass.Enabled := false;
 //pongcount := 1; // begin value
+if autoconnect.Checked then go.Click;
 end;
 
 procedure TForm1.serverChange(Sender: TObject);
@@ -1978,7 +2108,7 @@ end;
 procedure TForm1.reconnectTimer(Sender: TObject);
 begin
 write (logfile, 'Reconnecting.....' + chr(13));
-status.Caption:='Reconnecting.....';
+status.Caption:='Reconnecting.....';status.Repaint;
 //stop.Click;
 tcpclient.Disconnect;
 go.click;
@@ -1989,7 +2119,7 @@ procedure TForm1.reconnect2Timer(Sender: TObject);
 begin
 reconnect.Enabled:=false;
 write (logfile, 'Reconnecting.....' + chr(13));
-status.Caption:='Reconnecting.....';
+status.Caption:='Reconnecting.....';status.Repaint;
 //stop.Click;
 tcpclient.Disconnect;
 go.click;
@@ -2001,7 +2131,7 @@ begin
 if wait2.Enabled = true then
 begin
 // this may not happen
-status.Caption := 'Reconnect timer bug';
+status.Caption := 'Reconnect timer bug';status.Repaint;
 write(logfile,'Reconnect timer bug : 1 nog actief' + chr(13));
 end;
 
@@ -2014,7 +2144,7 @@ begin
 if wait1.Enabled = true then
 begin
 // this may not happen
-status.Caption := 'Reconnect timer bug';
+status.Caption := 'Reconnect timer bug';status.Repaint;
 write(logfile,'Reconnect timer bug : 1 nog actief' + chr(13));
 end;
 
@@ -2069,6 +2199,13 @@ ShellExecute   (   handle,'open',  'temp.bat' , nil, nil, SW_HIDE);
 
 //ShellExecute(Handle, 'open', PChar('temp.bat'), nil, nil, SW_SHOWNORMAL);
 //SW_SHOWNORMAL    SW_HIDE
+end;
+
+procedure TForm1.Timer_doupgradeTimer(Sender: TObject);
+begin
+timer_doupgrade.Enabled:=false;
+      ShellExecute(Handle, 'open', PChar('Updater.exe'), nil, nil, SW_SHOWNORMAL);
+      form1.close;
 end;
 
 end.

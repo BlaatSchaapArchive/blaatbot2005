@@ -93,19 +93,6 @@ object Form1: TForm1
       Font.Style = []
       ParentFont = False
     end
-    object status: TLabel
-      Left = 8
-      Top = 152
-      Width = 146
-      Height = 20
-      Caption = 'Click [Go] to connect'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -16
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-    end
     object Go: TButton
       Left = 80
       Top = 176
@@ -189,6 +176,28 @@ object Form1: TForm1
       TabOrder = 4
       OnClick = ChanServIDClick
     end
+    object autoconnect: TCheckBox
+      Left = 8
+      Top = 152
+      Width = 209
+      Height = 17
+      Caption = 'Enable Auto-Connect'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 9
+      OnClick = ChanServIDClick
+    end
+    object longwait: TCheckBox
+      Left = 8
+      Top = 8
+      Width = 33
+      Height = 41
+      TabOrder = 10
+    end
   end
   object Panel3: TPanel
     Left = 256
@@ -196,6 +205,19 @@ object Form1: TForm1
     Width = 225
     Height = 225
     TabOrder = 1
+    object status: TLabel
+      Left = 32
+      Top = 192
+      Width = 146
+      Height = 20
+      Caption = 'Click [Go] to connect'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
     object EditCommands: TEdit
       Left = 8
       Top = 16
@@ -208,7 +230,7 @@ object Form1: TForm1
       Left = 8
       Top = 48
       Width = 209
-      Height = 153
+      Height = 137
       ReadOnly = True
       TabOrder = 1
     end
@@ -225,7 +247,7 @@ object Form1: TForm1
     Top = 72
   end
   object Updater: TTimer
-    Interval = 1
+    Interval = 500
     OnTimer = status_uodater
     Left = 304
     Top = 72
@@ -266,5 +288,16 @@ object Form1: TForm1
   object ShoutCastInfo: TTcpClient
     Left = 336
     Top = 136
+  end
+  object TcpClient_Update: TTcpClient
+    Left = 272
+    Top = 168
+  end
+  object Timer_doupgrade: TTimer
+    Enabled = False
+    Interval = 1
+    OnTimer = Timer_doupgradeTimer
+    Left = 304
+    Top = 168
   end
 end
