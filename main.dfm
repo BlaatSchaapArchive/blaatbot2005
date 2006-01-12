@@ -1,10 +1,10 @@
 object Form1: TForm1
-  Left = 195
-  Top = 137
+  Left = 194
+  Top = 136
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'BlaatSchaap IRC BOT'
-  ClientHeight = 250
+  ClientHeight = 300
   ClientWidth = 500
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,7 +21,7 @@ object Form1: TForm1
     Left = 16
     Top = 16
     Width = 225
-    Height = 225
+    Height = 273
     TabOrder = 0
     object Label4: TLabel
       Left = 49
@@ -95,7 +95,7 @@ object Form1: TForm1
     end
     object Go: TButton
       Left = 80
-      Top = 176
+      Top = 224
       Width = 65
       Height = 41
       Caption = 'Go'
@@ -137,7 +137,7 @@ object Form1: TForm1
     end
     object Stop: TButton
       Left = 152
-      Top = 176
+      Top = 224
       Width = 65
       Height = 41
       Caption = 'Stop'
@@ -147,7 +147,7 @@ object Form1: TForm1
     end
     object Panel1: TPanel
       Left = 16
-      Top = 176
+      Top = 224
       Width = 41
       Height = 41
       TabOrder = 7
@@ -193,9 +193,16 @@ object Form1: TForm1
     end
     object longwait: TCheckBox
       Left = 8
-      Top = 8
-      Width = 33
-      Height = 41
+      Top = 176
+      Width = 193
+      Height = 25
+      Caption = 'First time on this server'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 10
     end
   end
@@ -203,11 +210,11 @@ object Form1: TForm1
     Left = 256
     Top = 16
     Width = 225
-    Height = 225
+    Height = 273
     TabOrder = 1
     object status: TLabel
       Left = 32
-      Top = 192
+      Top = 240
       Width = 146
       Height = 20
       Caption = 'Click [Go] to connect'
@@ -218,9 +225,22 @@ object Form1: TForm1
       Font.Style = []
       ParentFont = False
     end
+    object Label1: TLabel
+      Left = 8
+      Top = 8
+      Width = 197
+      Height = 20
+      Caption = 'Enter commands to the bot:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
     object EditCommands: TEdit
       Left = 8
-      Top = 16
+      Top = 32
       Width = 209
       Height = 21
       TabOrder = 0
@@ -228,9 +248,9 @@ object Form1: TForm1
     end
     object MemoOutput: TMemo
       Left = 8
-      Top = 48
+      Top = 64
       Width = 209
-      Height = 137
+      Height = 169
       ReadOnly = True
       TabOrder = 1
     end
@@ -247,7 +267,6 @@ object Form1: TForm1
     Top = 72
   end
   object Updater: TTimer
-    Interval = 500
     OnTimer = status_uodater
     Left = 304
     Top = 72

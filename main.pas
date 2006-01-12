@@ -33,13 +33,14 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Sockets, ShellAPI, IRCbot_CompileTime;
+  Dialogs, StdCtrls, ExtCtrls, Sockets, ShellAPI, IRCbot_CompileTime, OSinfo;
 
 
     function ReadParams(data : string; number : integer; space : boolean):string;
     function contains (data,what: string) : boolean;
     function  IsAdmin  (name: string) : boolean;
 
+    procedure GetStats();
     procedure KickBadWords(line,user: string);
     procedure RestoreSettings();
     procedure SaveSettings();
@@ -100,6 +101,7 @@ type
     status: TLabel;
     autoconnect: TCheckBox;
     longwait: TCheckBox;
+    Label1: TLabel;
 
     procedure GoClick(Sender: TObject);
     procedure pingTimer(Sender: TObject);
@@ -160,6 +162,7 @@ var
   time_convert  : variant;
   time_now, date_now : string;
   lastjoined    : string;
+  uptime : integer;
 //  kicktime      : boolean;
   quotefile     : textfile;
 // from the crash code
@@ -174,6 +177,18 @@ implementation
 {$R *.dfm}
 
 
+ procedure GetStats();
+var convert : variant;
+temp : string;
+ begin
+
+say (Form1.Caption);
+say ('Running on : '+ GetOSNAME() +
+      ' ( '+ GetOSTYPE() + ' ' + GetOSVERSION() + ' ' + GetOSSP() + ' )');
+convert := uptime;
+temp := convert;
+say ('Uptime : '+temp+ ' sec.');
+end;
 
  procedure CheckForUpdate();
  var
@@ -236,8 +251,8 @@ if form1.TcpClient_Update.Connect then
       say ('brb ... upgrading ...');
       form1.timer_doupgrade.Enabled:=true;
 
-      end else say ('Current version = '+ currentversion+' New version = '+newversion  );
-      say ('Not Upgrading');
+      end else begin say ('Current version = '+ currentversion+' New version = '+newversion  );
+      say ('Not Upgrading');end;
       end;
   end;
 end;
@@ -392,6 +407,8 @@ procedure RestoreSettings();
     assign(settingfile, 'settings');
     reset (settingfile);
         data :='';
+if (not eof(settingfile)) then begin
+
         repeat
         read (settingfile, temp);
         if not (temp = ',') then data := data + temp
@@ -485,6 +502,7 @@ procedure RestoreSettings();
 //        assign(quotefile,'quotefile');
 //        rewrite (quotefile);
 //
+end; // check for file //
 ReQuote;
 ready := true;
 
@@ -1204,6 +1222,8 @@ end;
 //end;
 
 
+if ( command = '!stat' ) then GetStats();
+
 
 
 if ( command = '!convert' ) then DoConvert(data);
@@ -1294,28 +1314,37 @@ announce('Check http://blaatschaap.nukysrealm.net/content.php?content.5 or');
 announce('http://www.sf.net/projects/dgcshell for more info');
 end;
 
-if ( command = '!help' )then
 begin
 
-
+if ( command = '!help' ) and (data = 'user')then begin
 say(' ');
 say(' Current supported user commandos are:');
-say('   !info                  !help             ');
-say('   !music                 !porn     ');
-say('   !dice                  !cut');
-say('   !nuke                  !torture   ');
-say('   !kill                  !strangle   ');
-say('   !stab                  !slice   ');
-say('   !meow                  !woof ');
+say('   !info                   !help                 ');
+say('   !music                  !porn                 ');
+say('   !dice                   !cut      <name>      ');
+say('   !nuke     <name>        !torture  <name>      ');
+say('   !kill     <name>        !strangle <name>      ');
+say('   !stab     <name>        !slice    <name>      ');
+say('   !meow                   !woof                 ');
+end else
+if ( command = '!help' ) and (data = 'admin')then begin
 say(' ');
 say(' Current supported admin commandos are:');
-say('   !op      <username>    !deop    <username>');
-say('   !hop     <username>    !dehop   <username>');
-say('   !voice   <username>    !devoice <username>');
-say('   !ban     <username>    !unban   <username>');
-say('   !nick    <newbotnick>  !join    <channel>');
-say('   !update');
-say(' ');
+say('   !op       <username>    !deop     <username>   ');
+say('   !hop      <username>    !dehop    <username>   ');
+say('   !voice    <username>    !devoice  <username>   ');
+say('   !ban      <username>    !unban    <username>   ');
+say('   !nick     <newbotnick>  !join     <channel>    ');
+say('   !update                 !raw      <data>       ');
+say('   !say      <text>        !saypriv  <nick> <text>');
+say('   !announce <text>        !action   <data>       ');
+end else
+if ( command = '!help' )then
+begin say ('!help <commands>');
+      say ('user');
+      say ('admin'); end;
+
+
 end;
 
 if ( command = '!porn' ) then
@@ -1360,8 +1389,15 @@ end;
 if isadmin(user) then
 begin
 // command to the bots
-if command = '!update' then CheckForUpdate();
-if command = '!raw' then Form1.TcpClient.Sendln(data);
+if command = '!update'   then CheckForUpdate();
+if command = '!raw'      then Form1.TcpClient.Sendln(data);
+if command = '!id'       then saypriv('identify '+form1.ChanPass.Text,'NickServ');
+if command = '!action'   then action(data);
+if command = '!say'      then say(data);
+if command = '!saypriv'  then saypriv(readparams(data,1,true),readparams(data,0,false));
+if command = '!announce' then announce(data);
+if command = '!rejoin'   then   form1.TcpClient.Sendln('JOIN '+ form1.channel.Text);
+
 
 if (command = '!admin') and (ReadParams(data,0,false)= 'list')  then
 listadmin();
@@ -2016,6 +2052,7 @@ end;
 
 procedure TForm1.status_uodater(Sender: TObject);
 begin
+uptime := uptime + 1 ;
 if longwait.Checked then begin timeouttimer.Interval:=3000000000; end else timeouttimer.Interval:=10000;
 // Update current time and date.
 
