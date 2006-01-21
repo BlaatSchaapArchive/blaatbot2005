@@ -25,27 +25,54 @@
 //
 //
 //
-program IRCbot;
+unit strings;
 
-uses
-  Forms,
-  main in 'main.pas' {Form1},
-  IRCbot_CompileTime in 'IRCbot_CompileTime.pas',
-  OSinfo in 'OSinfo.pas',
-  general_codes in 'general_codes.pas',
-  irc_protocol in 'irc_protocol.pas',
-  bot_commands in 'bot_commands.pas',
-  network_stuff_copy in 'network_stuff_copy.pas',
-  system_code in 'system_code.pas' {Form2},
-  strings in 'strings.pas',
-  irc_protocol2 in 'irc_protocol2.pas';
+interface
 
-{$R *.res}
+var
+irc_server,irc_port,irc_channel,irc_nick,irc_nickpass : string;
+irc_nickserv, irc_live : boolean;
+http_server,http_port                    : string;
+sc_server,sc_port                        : string;
+bot_version : string;
 
-begin
-  Application.Initialize;
-  Application.Title := 'BlaatSchaap IRC Bot';
-  Application.CreateForm(TForm1, Form1);
-  Application.CreateForm(TForm2, Form2);
-  Application.Run;
+bot_status : string;
+
+randomnumber : integer;
+
+// from main
+
+  logfile : textfile; //debug
+  timeout      : boolean;
+  currentversion : string;
+
+  receiveddata : string  ;
+//  loginsleep : integer;
+
+// converting procedures into functions
+
+  receivednick : string  ;
+  receivedchan : string  ;
+  receivingdata : boolean;
+  pingcount     : integer;
+  pongcount     : integer;
+  convert       : variant;
+  time_convert  : variant;
+  time_now, date_now : string;
+  lastjoined    : string;
+  uptime : integer;
+  spammer : integer;
+//  kicktime      : boolean;
+//  quotefile     : textfile;
+// from the crash code
+//  Adminsfile    : TextFile;
+//  AdminCounter  : Integer;
+//  Admins : array [1..10]of String; // try it
+
+
+  ready : boolean ;
+
+
+implementation
+
 end.

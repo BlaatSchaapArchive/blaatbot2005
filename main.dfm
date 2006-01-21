@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 194
-  Top = 136
+  Left = 166
+  Top = 127
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'BlaatSchaap IRC BOT'
@@ -195,8 +195,8 @@ object Form1: TForm1
       Left = 8
       Top = 176
       Width = 193
-      Height = 25
-      Caption = 'First time on this server'
+      Height = 17
+      Caption = 'Long timeout for login'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
@@ -213,11 +213,10 @@ object Form1: TForm1
     Height = 273
     TabOrder = 1
     object status: TLabel
-      Left = 32
+      Left = 8
       Top = 240
-      Width = 146
+      Width = 4
       Height = 20
-      Caption = 'Click [Go] to connect'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
@@ -255,68 +254,22 @@ object Form1: TForm1
       TabOrder = 1
     end
   end
-  object TcpClient: TTcpClient
+  object Time_Timer: TTimer
+    OnTimer = Time_TimerTimer
     Left = 272
-    Top = 72
+    Top = 88
   end
-  object ping: TTimer
+  object AutoConnect_Timer: TTimer
     Enabled = False
-    Interval = 60000
-    OnTimer = pingTimer
-    Left = 336
-    Top = 72
-  end
-  object Updater: TTimer
-    OnTimer = status_uodater
+    OnTimer = AutoConnect_TimerTimer
     Left = 304
-    Top = 72
+    Top = 88
   end
-  object reconnect: TTimer
-    Enabled = False
-    Interval = 5000
-    OnTimer = reconnectTimer
-    Left = 272
-    Top = 104
-  end
-  object reconnect2: TTimer
-    Enabled = False
-    Interval = 5000
-    OnTimer = reconnect2Timer
-    Left = 304
-    Top = 104
-  end
-  object wait1: TTimer
-    Enabled = False
-    OnTimer = wait1Timer
-    Left = 336
-    Top = 104
-  end
-  object wait2: TTimer
-    Enabled = False
-    OnTimer = wait2Timer
-    Left = 272
-    Top = 136
-  end
-  object TimeoutTimer: TTimer
-    Enabled = False
-    Interval = 10000
-    OnTimer = TimeoutTimerTimer
-    Left = 304
-    Top = 136
-  end
-  object ShoutCastInfo: TTcpClient
-    Left = 336
-    Top = 136
-  end
-  object TcpClient_Update: TTcpClient
-    Left = 272
-    Top = 168
-  end
-  object Timer_doupgrade: TTimer
+  object timer_doupgrade: TTimer
     Enabled = False
     Interval = 1
-    OnTimer = Timer_doupgradeTimer
-    Left = 304
-    Top = 168
+    OnTimer = timer_doupgradeTimer
+    Left = 272
+    Top = 120
   end
 end
