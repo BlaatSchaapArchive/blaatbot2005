@@ -6,3 +6,15 @@ irc.rar
 main.~ddp
 IRCbot.exe
 log
+main.dcu
+network_stuff.dcu
+network_stuff_copy.dcu
+OSinfo.dcu
+strings.dcu
+system_code.dcu
+bot_commands.dcu
+general_codes.dcu
+irc_protocol2.dcu
+irc_protocol.dcu
+IRCbot_CompileTime.dcu
+Updater.exe
