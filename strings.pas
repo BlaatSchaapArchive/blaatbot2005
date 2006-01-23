@@ -39,6 +39,7 @@ bot_version : string;
 bot_status : string;
 
 randomnumber : integer;
+silence_timer: integer;
 
 // from main
 

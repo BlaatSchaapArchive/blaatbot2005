@@ -24,7 +24,7 @@ unit IRCbot_CompileTime;
 
 interface
 
-const CompileTime: TDateTime = 38738.9837706134; { 21-1-2006 23:36:37 }
+const CompileTime: TDateTime = 38739.6029381829; { 22-1-2006 14:28:13 }
 const CompileProject = 'C:\Program Files\Borland\Delphi7\Projects\irc\IRCbot.dpr';
 const CompileUnits = 13;
 const CompileForms = 2;

@@ -21,7 +21,7 @@ begin
 // ReQuote;
 // not working....
 
-
+silence_timer:=0;
 
 if NOT(Contains(line,chr(1))) then
 writeln(quotefile, '['+ date_now + ' ' + time_now + '] <'+user + '>  ' + line)

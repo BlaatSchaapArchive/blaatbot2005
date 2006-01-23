@@ -709,7 +709,7 @@ end;
 
 procedure TForm1.Time_TimerTimer(Sender: TObject);
 begin
-
+silence_timer:=silence_timer+1;
  form1.server.text        :=    irc_server    ;
  form1.port.text          :=    irc_port      ;
  form1.channel.text       :=    irc_channel   ;
@@ -739,10 +739,10 @@ panel1.color:=clred;
 if time_now = '03:33:33' then CheckForUpdate();
 
 
-if ((time_now[4]  = '0') or (time_now[4]  = '3'))and (time_now[5] = '0')
-then begin
+if silence_timer = 666 then begin
 randomize;
 randomnumber := random(30)+1 ;
+silence_timer:=0;
 
 if randomnumber = 1 then say('"I am weird and I am proud of it"');
 
@@ -788,21 +788,21 @@ if randomnumber = 21 then say('"I am NOT suffering from insanity... I happen to 
 
 if randomnumber = 22 then say('"4 out of 5 voices in my head say go back to sleep"');
 
-if randomnumber = 23 then say('"I smile because I have no idea what'+ char(39) +'s going on."');
+if randomnumber = 23 then say('"I smile because I have no idea what''s going on."');
 
 if randomnumber = 24 then say('"We are born naked, wet and hungry. Then things get worse"');
 
-if randomnumber = 25 then say('"Laugh and the world thinks you'+ char(39) +'re an idiot. Laugh and the world laughs with you. Cry and the world laughs louder. "');
+if randomnumber = 25 then say('"Laugh and the world thinks you''re an idiot. Laugh and the world laughs with you. Cry and the world laughs louder. "');
 
-if randomnumber = 26 then say('"It is not the fall that kills you. it+ char(39) +''s the sudden stop at the end."');
+if randomnumber = 26 then say('"It is not the fall that kills you. it''s the sudden stop at the end."');
 
 if randomnumber = 27 then say('"I try to take one day at a time, but sometimes several days attack me at once. "');
 
 if randomnumber = 28 then say('"Sure, the truth hurts, but so does a machete."');
 
-if randomnumber = 29 then say('"Love goes as deep as you'+ char(39) +'re willing to dig the pit."');
+if randomnumber = 29 then say('"Love goes as deep as you''re willing to dig the pit."');
 
-if randomnumber = 30 then say('"I don'+ char(39) +'t suffer from insanity, I enjoy every minute of it"');
+if randomnumber = 30 then say('"I don''t suffer from insanity, I enjoy every minute of it"');
 
 end;
 
