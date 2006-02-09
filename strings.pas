@@ -29,6 +29,30 @@ unit strings;
 
 interface
 
+const
+// colors
+
+White      : string = '0';
+Black      : string = '1';
+DBlue      : string = '2';
+DGreen     : string = '3';
+Red        : string = '4';
+Brown      : string = '5';
+DPurple    : string = '6';
+Orange     : string = '7';
+Yellow     : string = '8';
+Green      : string = '9';
+DCyan      : string = '10';
+Cyan       : string = '11';
+Blue       : string = '12';
+Purple     : string = '13';
+Dgray      : string = '14';
+Gray       : string = '15';
+
+
+
+
+
 var
 irc_server,irc_port,irc_channel,irc_nick,irc_nickpass : string;
 irc_nickserv, irc_live : boolean;

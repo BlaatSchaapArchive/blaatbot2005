@@ -390,6 +390,7 @@ ready := true;
 procedure TForm1.GoClick(Sender: TObject);
 
 begin
+uptime :=0;
 irc_live := true;
       writeln (quotefile, ' ');
       writeln (quotefile, 'Logging starts at ' + time_now + ' '+ date_now);
@@ -477,6 +478,10 @@ form1.Panel1.Color := clred;
 uptime :=0;
 //form1.Stop.click;
 irc_Disconnect;
+
+pingcount:=0; // fix for the ping timeout bug
+pongcount:=0; // on lost connection
+
 form1.AutoConnect_Timer.Interval:=10000;
 form1.AutoConnect_Timer.Enabled:=true;
 
@@ -627,6 +632,7 @@ irc_nickpass := chanpass.text;
 
 if ChanServID.Checked then ChanPass.Enabled := true else ChanPass.Enabled := false;
 //pongcount := 1; // begin value
+irc_live:=AutoConnect.Checked;
 AutoConnect_Timer.Enabled:=AutoConnect.Checked;
 end;
 
@@ -740,70 +746,8 @@ if time_now = '03:33:33' then CheckForUpdate();
 
 
 if silence_timer = 666 then begin
-randomize;
-randomnumber := random(30)+1 ;
 silence_timer:=0;
-
-if randomnumber = 1 then say('"I am weird and I am proud of it"');
-
-if randomnumber = 2 then say('"Good and evil walk hand in hand.. they will never seperate."');
-
-if randomnumber = 3 then say('"You laugh at me because I'+ char(39) +'m different, I laugh at you because you'+ char(39) +'re all the same."');
-
-if randomnumber = 4 then say('"Nothing is truly good, nothing is truly evil."');
-
-if randomnumber = 5 then say('"Think Different"');
-
-if randomnumber = 6 then say('"Being insane is not a disease, it is a way of life."');
-
-if randomnumber = 7 then say('"Everybody wants to be the sun in your life... but I would rather be the moon that shines on you in your darkest times"');
-
-if randomnumber = 8 then say('"Everybody tells me I'+ char(39) +'m smart, and then I laugh about their stupidity."');
-
-if randomnumber = 9 then say('"When telepathy is the norm, we will have an entirely wireless community."');
-
-if randomnumber = 10 then say('"Where there is darkness there is light, where there is light there is shadow."');
-
-if randomnumber = 11 then say('"A light can only shine in the dark"');
-
-if randomnumber = 12 then say('"Life is like an onion: you peel off layer after layer, then you find there is nothing in it."');
-
-if randomnumber = 13 then say('"I think the only reason I waste my breath on you is that being dead I don'+ char(39) +'t have any other use for it."');
-
-if randomnumber = 14 then say('"If life was a box of chocolates, it'+ char(39) +'d be pretty empty. "');
-
-if randomnumber = 15 then say('"Consciousness: that annoying time between naps."');
-
-if randomnumber = 16 then say('"Why doesn'+ char(39) +'t DOS ever say: EXCELLENT command or filename?"');
-
-if randomnumber = 17 then say('"Live life to the fullest...think of all the people on the Titanic who passed up chocolate dessert."');
-
-if randomnumber = 18 then say('"If you can'+ char(39) +'t say anything nice...come sit by us."');
-
-if randomnumber = 19 then say('"It'+ char(39) +'s not that I don'+ char(39) +'t want to clean my room its just that I have this theory that everything is balanced just right and if I attempt to move anything the whole structure of the house will come down like a house of cards."');
-
-if randomnumber = 20 then say('"If you must choose between two evils, pick the one you'+ char(39) +'ve never tried before."');
-
-if randomnumber = 21 then say('"I am NOT suffering from insanity... I happen to be enjoying myself! "');
-
-if randomnumber = 22 then say('"4 out of 5 voices in my head say go back to sleep"');
-
-if randomnumber = 23 then say('"I smile because I have no idea what''s going on."');
-
-if randomnumber = 24 then say('"We are born naked, wet and hungry. Then things get worse"');
-
-if randomnumber = 25 then say('"Laugh and the world thinks you''re an idiot. Laugh and the world laughs with you. Cry and the world laughs louder. "');
-
-if randomnumber = 26 then say('"It is not the fall that kills you. it''s the sudden stop at the end."');
-
-if randomnumber = 27 then say('"I try to take one day at a time, but sometimes several days attack me at once. "');
-
-if randomnumber = 28 then say('"Sure, the truth hurts, but so does a machete."');
-
-if randomnumber = 29 then say('"Love goes as deep as you''re willing to dig the pit."');
-
-if randomnumber = 30 then say('"I don''t suffer from insanity, I enjoy every minute of it"');
-
+randomquote();
 end;
 
 

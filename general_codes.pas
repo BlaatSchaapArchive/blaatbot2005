@@ -38,6 +38,7 @@ uses
   var
     quotefile     : textfile;
 
+procedure randomquote();
   procedure ReQuote();
   procedure RemoveAdmin(name:string);
   procedure AddAdmin(name:string);
@@ -658,6 +659,41 @@ if (tempstring = what) then Result := true else Result := false;
 end; // end of check for datalenght > whatlenght
 end; // end check for valid data
 
+
+end;
+
+
+procedure randomquote();
+var
+
+myfile:textfile;
+tempchar : char;
+tempstring : string;
+qcounter, randomI : integer;
+result : string;
+begin
+randomize;
+
+randomI:=random(100);
+qcounter:=0;
+assign (myfile,'quotes');
+reset (myfile);
+repeat
+
+while (not eof(myfile)) and (qcounter < randomI) do begin
+
+read (myfile, tempchar);
+tempstring := tempstring + tempchar;
+if ( tempchar = #$0D ) then begin
+qcounter := qcounter +1;
+read (myfile, tempchar);
+result := tempstring;
+tempstring:='' end;
+end;
+if eof(myfile) then reset(myfile);
+qcounter := qcounter +1;
+until qcounter > randomI;
+say(result);
 
 end;
 
