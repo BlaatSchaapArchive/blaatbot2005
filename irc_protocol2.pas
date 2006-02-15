@@ -2,7 +2,8 @@ unit irc_protocol2;
 
 interface
 
-uses Dialogs, SysUtils, general_codes, strings,bot_commands, network_stuff, irc_protocol, system_code;
+uses Dialogs, SysUtils, general_codes, strings,bot_commands,
+network_stuff, irc_protocol, system_code;
 procedure ReadData(data: string);
 implementation
 

@@ -35,7 +35,7 @@ uses
   general_codes in 'general_codes.pas',
   irc_protocol in 'irc_protocol.pas',
   bot_commands in 'bot_commands.pas',
-  network_stuff_copy in 'network_stuff_copy.pas',
+//  network_stuff_copy in 'network_stuff_copy.pas',
   system_code in 'system_code.pas' {Form2},
   strings in 'strings.pas',
   irc_protocol2 in 'irc_protocol2.pas';

@@ -88,9 +88,10 @@ begin
      IF OS = 'ReactOS' then begin
      osname := 'ReactOS';
      osversion := '';
+     osname := osname + ' ';
      readrosver := 23  ;
      repeat
-     osversion := osversion + version.szCSDVersion[readrosver];
+     osname := osname + version.szCSDVersion[readrosver];
      readrosver := readrosver + 1;
      ossp := '';
      until version.szCSDVersion[readrosver]='';//readrosver = 127  ;
