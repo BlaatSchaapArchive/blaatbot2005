@@ -394,6 +394,7 @@ uptime :=0;
 irc_live := true;
       writeln (quotefile, ' ');
       writeln (quotefile, 'Logging starts at ' + time_now + ' '+ date_now);
+      writeln (quotefile, 'Joining '+ irc_channel);
       writeln (quotefile, ' ');
 
 timeout := false;
@@ -743,6 +744,8 @@ panel1.color:=clred;
 
 
 if time_now = '03:33:33' then CheckForUpdate();
+if time_now = '11:11:11' then ; // do something ... add something crazy here
+if time_now = '06:06:06' then ; // do something ... add something EVIL  here 
 
 
 if silence_timer = 666 then begin

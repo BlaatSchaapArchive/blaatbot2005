@@ -283,7 +283,12 @@ if command = '!action'   then action(data);
 if command = '!say'      then say(data);
 if command = '!saypriv'  then saypriv(readparams(data,1,true),readparams(data,0,false));
 if command = '!announce' then announce(data);
-if command = '!rejoin'   then   irc_sendln('JOIN '+ irc_channel);
+if command = '!rejoin'   then
+  begin  irc_sendln('JOIN '+ irc_channel);
+      writeln (quotefile, ' ');
+  writeln (quotefile, 'Joining '+ irc_channel);
+      writeln (quotefile, ' '); end;
+
 
 
 if (command = '!admin') and (ReadParams(data,0,false)= 'list')  then
@@ -351,6 +356,10 @@ if data[1]='#' then
   irc_Sendln('PART '+ irc_channel + ' Moving to ' + data);
   irc_channel := data;
   irc_Sendln('JOIN '+ irc_channel);
+  writeln (quotefile, ' ');
+  writeln (quotefile, 'Joining '+ irc_channel);
+  writeln (quotefile, ' '); 
+
 
   // add check for succesfull join.
   // check how to do so ...
