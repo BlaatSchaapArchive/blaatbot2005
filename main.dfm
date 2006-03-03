@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 166
-  Top = 127
+  Left = 265
+  Top = 150
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'BlaatSchaap IRC BOT'
@@ -13,6 +13,7 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96

@@ -170,6 +170,7 @@ if command = '!shoot' then action('shoots '+data);
 if command = '!pie' then action('gives '+ user+' a piece of '+data+' pie.');
 if command = '!beer' then action('gives '+ user+' a glass of '+data+' beer.');
 if command = '!cola' then action('gives '+ user+' a glass of '+data+' cola.');
+if command = '!coffee' then action('gives '+ user+' a cup of '+data+' coffee.');
 
 if command = '!give' then action('gives ' + data );
 
@@ -181,12 +182,13 @@ if command = '!meow' then say(irc_nick  + char(39) + 's cat: meow');
 
 if (command = '!pet') and ( data = 'turtle' ) then say(irc_nick  + char(39) + 's turtle: roar');
 if (command = '!pet') and ( data = 'cat' ) then say(irc_nick  + char(39) + 's cat: meow');
-if command = '!woof' then begin
+
+if (command = '!woof') or ( (command = '!pet') and ( data = 'dog' ) ) then begin
 say ( 'Sorry, no dogs allowed in here ');
 kick (user);
 end;
 
-
+if ( command = '!randomquote' ) then randomquote();
 
 if ( command = '!info' ){and  (AnsiLowerCase(data) = AnsiLowerCase(form1.Nick.text)) }then
 begin
@@ -319,7 +321,7 @@ if (command = '!badword') and (ReadParams(data,0,false)= 'list')  then
 listbadwords();
 
 
-if ( command = '!randomquote' ) then randomquote();
+
 
 if (command = '!badword') and (ReadParams(data,0,false)= 'remove') then
 begin

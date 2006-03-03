@@ -5,7 +5,7 @@
 
 			little cleanup, since the function ReadParams is added
 			a lot of the code could be replaced by using the ReadParams
-			
+
 *		ADD Support for ChatNet server style,
 
 			the server sends more lines in a packet or something
@@ -14,8 +14,6 @@
 *		Add/Remove music trough IRC commands
 
 *		ADD check for illegal sings in nick
-
-*               MOVE Random Text to File
 
 *               Don;t send random text when a command is given
 
@@ -38,5 +36,4 @@
 
 
 
-									
-			
+
