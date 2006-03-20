@@ -127,10 +127,19 @@ result := form2.TcpClient.Connected;
 end;
 
 function irc_receiveln()  : string;
+var receiveddata : string;
+temp : char;
 begin
-result := form2.TcpClient.Receiveln();
-end;
+//result := form2.TcpClient.Receiveln();
 
+repeat
+Form2.TcpClient.ReceiveBuf(temp,1);
+if not ( (temp = #$0 ) or (temp = #$A) )then receiveddata := receiveddata + temp;
+until (temp = #$0 )or (temp = #$A) ;
+
+   result := receiveddata;
+
+end;
 {
 function sc_connect()    : boolean;
 begin

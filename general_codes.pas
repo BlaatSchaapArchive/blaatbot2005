@@ -694,6 +694,7 @@ if eof(myfile) then reset(myfile);
 qcounter := qcounter +1;
 until qcounter > randomI;
 say(result);
+close(myfile);
 
 end;
 

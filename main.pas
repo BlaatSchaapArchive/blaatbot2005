@@ -526,7 +526,7 @@ end;
 procedure TForm1.StopClick(Sender: TObject);
 begin
 AutoConnect_Timer.Enabled:=false;
-irc_Sendln('PART '+ irc_channel +' BlaatBot Disconnecting');
+irc_Sendln('QUIT '+ irc_channel +' BlaatBot Disconnecting');
 irc_live:=false;
 //reconnect.enabled := false;
 //reconnect2.enabled:=false;

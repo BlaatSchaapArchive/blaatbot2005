@@ -224,11 +224,8 @@ if (command = 'JOIN ' ) then begin
 if (not (username = irc_nick)) and (not (username = lastjoined)) then
 begin
 lastjoined := username;
-say('Heey, ' +  username + ', welcome to ' + irc_channel);
-if ( date_now = '26-02-2006' )or( date_now = '27-02-2006' ) or
-( date_now = '28-02-2006' ) then say ('Happy' +red +'Car'+ yellow + 'na'
-  + green + 'val');
-
+//say('Heey, ' +  username + ', welcome to ' + irc_channel);
+announcepriv('Heey, ' +  username + ', welcome to ' + irc_channel,username);
 
 end;
 mode (username,'v',true);
