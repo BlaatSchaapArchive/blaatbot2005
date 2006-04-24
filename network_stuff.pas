@@ -134,8 +134,8 @@ begin
 
 repeat
 Form2.TcpClient.ReceiveBuf(temp,1);
-if not ( (temp = #$0 ) or (temp = #$A) )then receiveddata := receiveddata + temp;
-until (temp = #$0 )or (temp = #$A) ;
+if not ( (temp = #$D ) or (temp = #$A) or (temp = #$D))then receiveddata := receiveddata + temp;
+until (temp = #$0 )or (temp = #$A)or (temp = #$D) ;
 
    result := receiveddata;
 

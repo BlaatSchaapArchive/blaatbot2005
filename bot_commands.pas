@@ -171,6 +171,7 @@ if command = '!pie' then action('gives '+ user+' a piece of '+data+' pie.');
 if command = '!beer' then action('gives '+ user+' a glass of '+data+' beer.');
 if command = '!cola' then action('gives '+ user+' a glass of '+data+' cola.');
 if command = '!coffee' then action('gives '+ user+' a cup of '+data+' coffee.');
+if command = '!tea' then action('gives '+ user+' a cup of '+data+' tea.');
 
 if command = '!give' then action('gives ' + data );
 

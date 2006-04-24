@@ -181,7 +181,7 @@ repeat
 mCount := mCount + 1;
 temp := Message[mCount];
 mData := mData + temp;
-until mcount = dcount;
+until mcount = dcount; 
 end; // read the data
 
 
@@ -299,7 +299,7 @@ until (temp = '') or (temp =CHR($01));
 ////
     mcount := counter;
     counter := 0;
-    mcount := mcount - 1;
+//    mcount := mcount - 1;
     repeat
    counter := counter + 1;
     temp := pinger[counter];
