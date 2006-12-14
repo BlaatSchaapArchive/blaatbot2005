@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Sockets, ShellAPI, IRC_CompileTime, OSinfo,
+  Dialogs, StdCtrls, ExtCtrls, Sockets, ShellAPI, IRCbot_CompileTime, OSinfo,
   general_codes,network_stuff,irc_protocol, irc_protocol2, strings, bot_commands;
 
 //    function ReadParams(data : string; number : integer; space : boolean):string;
@@ -701,6 +701,7 @@ until temp = '';
 DoSomething('брµнс',EditCommands.Text,command,data,false);
 //DoSomething('Admin',EditCommands.Text,command,data,true);
 //
+Key := #0;
 EditCommands.Clear;
 end;
 end;
@@ -745,12 +746,12 @@ panel1.color:=clred;
 
 if time_now = '03:33:33' then CheckForUpdate();
 if time_now = '11:11:11' then say('Lalalalalala'); // do something ... add something crazy here
-if time_now = '06:06:06' then say('Muhahahahaha'); // do something ... add something EVIL  here 
+if time_now = '06:06:06' then say('Muhahahahaha'); // do something ... add something EVIL  here
 
 
-if silence_timer = 6666 then begin    // sut that stupid bot
+if silence_timer = 666 then begin    // sut that stupid bot
 silence_timer:=0;
-randomquote();
+if SPAM then randomquote();
 end;
 
 

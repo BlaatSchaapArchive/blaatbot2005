@@ -38,7 +38,7 @@ uses
   system_code in 'system_code.pas' {Form2},
   strings in 'strings.pas',
   irc_protocol2 in 'irc_protocol2.pas',
-  irc_CompileTime in 'irc_CompileTime.pas';
+  Time in 'Time.pas';
 
 {$R *.res}
 

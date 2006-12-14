@@ -220,7 +220,16 @@ begin
 irc_Sendln('JOIN '+ irc_channel);
 say('Ouch .... '+username+', stop kicking me, it hurts.' );
 end;
+
 if (command = 'JOIN ' ) then begin
+if (AnsiLowercase ( username ) = 'zijjia' ) then begin
+say ('Welcome by bot friend');
+action('hugs  '+ username ) end else
+
+if (AnsiLowercase ( username ) = 'gracie' ) then say('Weeemooo');
+if (AnsiLowercase ( username ) = 'gracefulwing' ) then say('Weeemooo');
+  // greet the bitch 
+
 if (not (username = irc_nick)) and (not (username = lastjoined)) then
 begin
 lastjoined := username;
@@ -365,7 +374,7 @@ bot_status:='BlaatSchaap Bot Ready...';
 
 irc_Sendln('JOIN '+ irc_channel);
 form2.ping.Enabled := true;
-mode(irc_nick,'B',true);// some servers support mode B for BOTS
+mode('','B',true);// some servers support mode B for BOTS
 if irc_nickserv then saypriv('identify '+irc_nickpass,'NickServ');
 //ok ... move that shit
 // add check if password is accepted ?

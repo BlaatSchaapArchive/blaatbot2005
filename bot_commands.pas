@@ -333,7 +333,8 @@ announce(user + ' removed '+ (ReadParams(data,1,true)) + ' from the bad word lis
 end else announce('no word to remove');
 end;
 
-
+if (command = '!spamon') then SPAM := true;
+if (command = '!spamoff') then SPAM := false;
 
 if (command = '!badword') and (ReadParams(data,0,false)= 'add') then
 begin

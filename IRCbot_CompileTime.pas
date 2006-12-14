@@ -7,7 +7,7 @@ unit IRCbot_CompileTime;
 {                                                                              }
 { **************************************************************************** }
 {                                                                              }
-{    C:\Program Files\Borland\Delphi7\Projects\irc\IRCbot_CompileTime.pas      }
+{    H:\d\irc\IRCbot_CompileTime.pas                                           }
 {                                                                              }
 { **************************************************************************** }
 {                                                                              }
@@ -24,14 +24,14 @@ unit IRCbot_CompileTime;
 
 interface
 
-const CompileTime: TDateTime = 38798.3756987847; { 22-3-2006 9:01:00 }
-const CompileProject = 'C:\Program Files\Borland\Delphi7\Projects\irc\IRCbot.dpr';
-const CompileUnits = 12;
+const CompileTime: TDateTime = 39038.7902768634; { 17-11-2006 18:57:59 }
+const CompileProject = 'H:\d\irc\IRCbot.dpr';
+const CompileUnits = 13;
 const CompileForms = 2;
-const CompileBy = 'TheDarkness'; { Compiled by user }
-const CompileEMail = 'the_darkness@xs4all.nl'; { Contact email }
-const CompileURL = 'http://blaatschaap.nukysrealm.net'; { Contact url }
-const CompilePC = 'FLAPPIE'; { Compiled at computer }
+const CompileBy = 'Andre'; { Compiled by user }
+const CompileEMail = ''; { Contact email }
+const CompileURL = ''; { Contact url }
+const CompilePC = 'FLAPPI'; { Compiled at computer }
 const CompileOS = 'Windows NT v5.1 build 2600'; { Compiled with OS }
 
 implementation

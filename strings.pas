@@ -60,6 +60,8 @@ http_server,http_port                    : string;
 sc_server,sc_port                        : string;
 bot_version : string;
 
+SPAM : boolean; // nuky stfu
+
 bot_status : string;
 
 randomnumber : integer;
