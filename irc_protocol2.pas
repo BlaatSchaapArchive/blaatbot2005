@@ -226,9 +226,9 @@ if (AnsiLowercase ( username ) = 'zijjia' ) then begin
 say ('Welcome by bot friend');
 action('hugs  '+ username ) end else
 
-if (AnsiLowercase ( username ) = 'gracie' ) then say('Weeemooo');
-if (AnsiLowercase ( username ) = 'gracefulwing' ) then say('Weeemooo');
-  // greet the bitch 
+if (AnsiLowercase ( username ) = 'bludwyn' ) then say('WeeeMooo');
+  // greet the bitch
+
 
 if (not (username = irc_nick)) and (not (username = lastjoined)) then
 begin

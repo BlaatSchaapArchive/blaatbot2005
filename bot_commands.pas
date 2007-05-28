@@ -238,13 +238,14 @@ end;
 
 if ( command = '!porn' ) then
 
+
 begin
 spammer := 0;
 repeat
-saypriv ( 'You want porn ? now you will be SPAMMED',user);
+saypriv ( ' now you will be SPAMMED',user);
 spammer := spammer + 1;
-until (spammer = 25);
-say ( 'No porn in here, get out '+user+' !!!!');
+until (spammer = 5);
+say ( 'de bot kickt '+user+' !!!!');
 kick(user);
 end;
 
