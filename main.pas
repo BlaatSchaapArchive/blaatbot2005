@@ -73,10 +73,7 @@ type
         procedure pingTimer(Sender: TObject);
         procedure StopClick(Sender: TObject);
         procedure FormClose(Sender: TObject; var Action: TCloseAction);
-        procedure Button4Click(Sender: TObject);
-        procedure Button3Click(Sender: TObject);
         procedure status_uodater(Sender: TObject);
-        procedure joinerTimer(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure serverChange(Sender: TObject);
         procedure portChange(Sender: TObject);
@@ -88,9 +85,6 @@ type
         procedure RunTempBatClick(Sender: TObject);
         procedure Time_TimerTimer(Sender: TObject);
         procedure AutoConnect_TimerTimer(Sender: TObject);
-
-
-
     end;
 type
     TReceive = class(TThread)
@@ -100,10 +94,6 @@ type
         procedure Execute; override;
     end;
 
-
-
-
-
 var
     Form1: TForm1;
 
@@ -112,8 +102,6 @@ implementation
 uses system_code;
 
 {$R *.dfm}
-
-
 
 procedure AddStation(name,server,port:string);
     begin end; // not implemented

@@ -700,7 +700,7 @@ procedure randomquote();
     begin
         randomize;
 
-        randomI:=random(100);
+        randomI:=random(1000);
         qcounter:=0;
         assign (myfile,'quotes');
         reset (myfile);

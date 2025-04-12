@@ -37,33 +37,22 @@ procedure ReadData(data: string);
         mcommand :='';
         mdata := '';
 
-// now we have the ReadParams ,
-// a lot of this code could be replaced
-//
-// the code could be like this then
+        // now we have the ReadParams ,
+        // a lot of this code could be replaced
+        //
+        // the code could be like this then
         if ReadParams(data,1,false) = 'PONG' then
             begin
             convert := ReadParams(data,4,false);
-//form1.status.caption := convert;
             pongcount := convert;
-//write (logfile,'PONG ');
-//write (logfile,pingcount);
-//write (logfile, chr(13));
             end;
-
-
-
-
-// not sure what this does, but that is how xchat reacted
-// if  (contains(data,'MODE')) and (contains(data,'+i'))  then form1.TcpClient.Sendln('USERHOST '+form1.Nick.Text);
-
 
         if NOT (data = '') then // check if there is data
             begin
-//form1.Label4.Caption := '' ;
+
             if NOT (data[1] = 'P') then
                 begin counter := counter + 1 end; // ignoring the first letter :
-// leave the P of PING
+                // leave the P of PING
 
             repeat
                 counter := counter + 1;
@@ -71,7 +60,7 @@ procedure ReadData(data: string);
                 temp := data[counter];
                 usertemp := usertemp + temp ;
             until (temp = '!') or (temp = ' ');
-//username must be the !
+            //username must be the !
 
             if temp = '!' then
                 begin
@@ -80,17 +69,12 @@ procedure ReadData(data: string);
                     counter2 := counter2 + 1;
                     username := username + usertemp[counter2];
                 until counter2 = namelen -1;
-// remove the ! from the name
-
+                // remove the ! from the name
 
                 repeat
                     counter := counter + 1;
                     temp := data[counter];
-//form1.Label4.Caption := form1.Label4.Caption + temp
                 until temp = ' ';
-
-
-
 
                 repeat
                     counter := counter + 1;
@@ -98,10 +82,6 @@ procedure ReadData(data: string);
                     command := command + temp;
                 until temp = ' ';
 
-//form1.Label1.Caption := command; // debug command
-
-
-// try moving it if command = 'PRIVMSG ' then
                     begin
                     repeat
                         counter := counter + 1;
@@ -109,19 +89,15 @@ procedure ReadData(data: string);
                         target := target + temp;
                     until (temp = ' ') or (temp='');
 
-
-//     showmessage(target);
-//form1.Label2.Caption := target; // debug the target
-
                     if AnsiLowerCase(target) = AnsiLowerCase(irc_channel + ' ') then
-// message in the channel
+                        // message in the channel
                         begin
                         ok := true;
                         inchannel := true;
                         end;
 
                     if AnsiLowerCase(target) = AnsiLowerCase((irc_nick + ' ')) then
-//message in private
+                        //message in private
                         begin
                         ok := true;
                         inchannel := false;
@@ -133,8 +109,6 @@ procedure ReadData(data: string);
                         if command = 'PRIVMSG ' then
                             begin counter := counter + 1 end;   // ignore the ':'
                         temp := data[counter];
-
-
 
                         mcount := 0;
                         repeat
