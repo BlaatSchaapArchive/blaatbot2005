@@ -381,16 +381,21 @@ procedure ReadData(data: string);
 //form1.Label8.Caption := target;
 
 
-                if command='376 ' then
-// ready to log in
+                if (command = '376 ') or (command = '422 ') then
+                    // Received 376 (RPL_ENDOFMOTD) or 422 (ERR_NOMOTD)
+                    // We are ready to log in.
                     begin
                     bot_status:='BlaatSchaap Bot Ready...';
-// update status code
-//form1.status.Repaint;
-
-                    irc_Sendln('JOIN '+ irc_channel);
+                    // update status code
+                    irc_Sendln('JOIN '+ irc_channel);     // Join Channel
                     form2.ping.Enabled := true;
-                    mode('','B',true);// some servers support mode B for BOTS
+                    //mode('','B',true);// some servers support mode B for BOTS
+                    // Back in 2005, setting BOT mode on myself would work like
+                    // that, but it does not work in 2025
+                    // Seems I was sending mode +B to the channel???
+                    // How could that ever have worked??? Did it even work???
+                    irc_Sendln('MODE '+ irc_nick + ' +B');
+
                     if irc_nickserv then
                         begin saypriv('identify '+irc_nickpass,'NickServ') end;
 //ok ... move that shit

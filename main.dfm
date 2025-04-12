@@ -266,11 +266,4 @@ object Form1: TForm1
     Left = 304
     Top = 88
   end
-  object timer_doupgrade: TTimer
-    Enabled = False
-    Interval = 1
-    OnTimer = timer_doupgradeTimer
-    Left = 272
-    Top = 120
-  end
 end

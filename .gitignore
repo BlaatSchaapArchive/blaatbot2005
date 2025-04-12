@@ -1,0 +1,7 @@
+IRCbot_CompileTime.pas
+*.dcu
+*.~*
+log
+quotefile
+temp*
+IRCbot.exe

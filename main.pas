@@ -36,36 +36,11 @@ uses
     Dialogs, StdCtrls, ExtCtrls, Sockets, ShellAPI, IRCBot_CompileTime, OSinfo,
     general_codes,network_stuff,irc_protocol, irc_protocol2, strings, bot_commands;
 
-//    function ReadParams(data : string; number : integer; space : boolean):string;
-//    function contains (data,what: string) : boolean;
-//    function  IsAdmin  (name: string) : boolean;
-
-//    procedure GetStats();
-//    procedure KickBadWords(line,user: string);
 procedure RestoreSettings();
 procedure SaveSettings();
-//    procedure ReQuote();
-//    procedure Dice();
-//    procedure ListAdmin();
-//    procedure AddAdmin(name:string);
-//    procedure RemoveAdmin(name:string);
-//    procedure ListBadWords();
-//    procedure AddBadWord(badword:string);
-//    procedure RemoveBadWord(badword:string);
-//    procedure MusicPlaying();
 procedure AddStation(name,server,port:string);
 procedure RemoveStation(name:string);
 procedure ListStations();
-//    procedure ReadData(data: string);
-//    procedure Say(msg: string);
-//    procedure SayPriv(msg,user: string);
-//    procedure Announce(msg: string);
-//    procedure AnnouncePriv(msg,user: string);
-//    procedure Action(msg: string);
-//    procedure Kick(who: string);
-//    procedure Mode (who: string; mode : char; enable : boolean);
-//    procedure DoSomething(user, line, command, data: string; inchannel : boolean);
-//    procedure DoConvert(data : string);
 
 type
     TForm1 = class(TForm)
@@ -93,7 +68,6 @@ type
         Label1: TLabel;
         Time_Timer: TTimer;
         AutoConnect_Timer: TTimer;
-        timer_doupgrade: TTimer;
 
         procedure GoClick(Sender: TObject);
         procedure pingTimer(Sender: TObject);
@@ -114,7 +88,7 @@ type
         procedure RunTempBatClick(Sender: TObject);
         procedure Time_TimerTimer(Sender: TObject);
         procedure AutoConnect_TimerTimer(Sender: TObject);
-        procedure timer_doupgradeTimer(Sender: TObject);
+
 
 
     end;
@@ -363,41 +337,6 @@ procedure RestoreSettings();
     end;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// end of forbidden words stuff
-
-
-
-
-
-
-
-
-
-
-//end;
-
-
-
-
-//blaat
 procedure TForm1.GoClick(Sender: TObject);
 
     begin
@@ -425,11 +364,11 @@ procedure TForm1.GoClick(Sender: TObject);
             status.Repaint;
             treceive.Create(false);
             irc_sendln('NICK '+ nick.Text);
-//tcpclient.Sendln('USER dgcbot dgchost '+ server.Text + ' :dGCbot www.sf.net/projects/dgcshell');
-// got kiced in #Skyos
-            irc_Sendln('USER blaatbot blaathost '+ server.Text + ' :Blaatschaap Bot www.sf.net/projects/dgcshell');
-//sniffed
-//USER andre_winxp 786at1600 irc.chat4all.org :Andre van Schoubroeck
+
+            //sniffed
+            //USER andre_winxp 786at1600 irc.chat4all.org :Andre van Schoubroeck
+            irc_Sendln('USER blaatbot2005 localhost '+ server.Text + ' :' + bot_version);
+
             server.Enabled := false;
             port.Enabled := false;
             nick.Enabled := false;
@@ -437,12 +376,6 @@ procedure TForm1.GoClick(Sender: TObject);
             ChanservID.Enabled:=false;
             ChanPass.Enabled := false;
             bot_status:='Waiting for server...';
-//status.Repaint;
-// found the code to detect when the server is ready
-// moving login code to readdata
-
-
-
             end
         else
             begin
@@ -455,36 +388,17 @@ procedure TForm1.GoClick(Sender: TObject);
             end;
     end;
 
-
-
-
-
-// procedure contains(data,what: string);
-
-
-
-
-
-
 procedure TReceive.Execute;
     begin
-
         repeat
 
             sleep (1); // sleep for 1 ms to keep the cpu usage low
             if  form2.TcpClient.WaitForData() then
                 begin
-
                 receivingdata := true;
                 receiveddata := irc_Receiveln();
-
-//bebug, should start log a file ?
-//form1.memo1.Text := form1.memo1.Text  + receiveddata  ;
                 readdata(receiveddata);
-// and now read the received data
                 receiveddata :='';
-// and get rid of it
-
                 end
             else
                 begin receivingdata := false end;;
@@ -492,7 +406,6 @@ procedure TReceive.Execute;
         until (irc_Connected = false);
         form1.Panel1.Color := clred;
         uptime :=0;
-//form1.Stop.click;
         irc_Disconnect;
 
         pingcount:=0; // fix for the ping timeout bug
@@ -511,15 +424,10 @@ procedure TForm1.pingTimer(Sender: TObject);
     var
         tempstring : string;
     begin
-//write (logfile,'PING ');
-//write (logfile,pingcount);
-//write (logfile, chr(13));
         if NOT (pingcount = pongcount) then
-// PING TIMEOUT //
             begin
             status.Caption := 'PING TIMEOUT : Reconnect';
             status.Repaint;
-//reconnect.Enabled := true;
             write (logfile,'PING TIMEOUT: PING ');
             write (logfile,pingcount);
             write (logfile,'  PONG ');
@@ -527,12 +435,7 @@ procedure TForm1.pingTimer(Sender: TObject);
             write (logfile, chr(13));
             end;
 
-//if not (pingcount = 2147483647 )then
-// this will never overflow ...
-// 2147483647 * 15 sec = 1021 years
-// i don;t think it will ever run that long :P
         pingcount := pingcount + 1;
-//else pingcount := 1;
         convert := pingcount;
         tempstring := convert;
         irc_Sendln('PING : '+tempstring)  ;
@@ -543,13 +446,7 @@ procedure TForm1.StopClick(Sender: TObject);
         AutoConnect_Timer.Enabled:=false;
         irc_Sendln('QUIT '+ irc_channel +' BlaatBot Disconnecting');
         irc_live:=false;
-//reconnect.enabled := false;
-//reconnect2.enabled:=false;
-//wait1.enabled := false;
-//wait2.enabled := false;
-//timeouttimer.enabled:=false;
         form2.ping.Enabled := false;
-
         status.Caption:='Disconnected';
         status.Repaint;
         ChanservID.Enabled:=true;
@@ -571,8 +468,7 @@ procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
         closefile(quotefile);
     end;
 
-
-
+    {
 procedure TForm1.Button4Click(Sender: TObject);
     begin
         dice;
@@ -582,6 +478,7 @@ procedure TForm1.Button3Click(Sender: TObject);
     begin
         restoresettings();
     end;
+     }
 
 procedure TForm1.status_uodater(Sender: TObject);
     begin
@@ -591,35 +488,21 @@ procedure TForm1.status_uodater(Sender: TObject);
             begin form2.timeouttimer.Interval:=3000000000; end
         else
             begin form2.timeouttimer.Interval:=10000 end;
-// Update current time and date.
+        // Update current time and date.
 
-
-//time_convert  := time;
         time_now :=TimeToStr(time);
-//time_convert  := date;
         date_now := DateToStr(date);
 
         if time_now = '03:33:33' then
             begin CheckForUpdate() end;
 
-
-
         if timeout then
             begin
             timeout :=false;
             write (logfile,'Login Timeout' + chr(13) );
-  //stop.Click;
             irc_Disconnect;
             status.Caption := 'Connected, but no answer';
             status.Repaint;
-{     if  (not wait2.Enabled ) or
-         (not reconnect.Enabled ) or
-         (not reconnect2.enabled) then wait1.enabled := true
-else if  (not wait1.Enabled ) or
-         (not reconnect.Enabled ) or
-         (not reconnect2.enabled) then wait2.enabled := true
-else status.Caption := 'timeout / reconnect bug';status.Repaint;
-}
             end;
 
         if irc_Connected = false then
@@ -634,22 +517,16 @@ else status.Caption := 'timeout / reconnect bug';status.Repaint;
             begin form1.Status.Caption := 'Server dropped connection' end;form1.status.Repaint;
     end;
 
-procedure TForm1.joinerTimer(Sender: TObject);
-    begin
-//tcpclient.Sendln('JOIN '+ channel.Text)  ;
-
-    end;
-
 procedure TForm1.FormCreate(Sender: TObject);
     begin
-// set date and time formats
+        // set date and time formats
         TimeSeparator   := ':';
         DateSeparator   := '-';
         ShortDateFormat := 'dd/mm/yyyy' ;
         LongTimeFormat  := 'hh:nn:ss'   ;
         currentversion := DateToStr(CompileTime);
         bot_status :='Click [Go] to connect';
-        bot_version:='BlaatSchaap IRC BOT (Compile Date ' + DateToStr(CompileTime)+' @ '+TimeToStr(CompileTime) +')';
+        bot_version:='BlaatBot2005 (Compile Date ' + DateToStr(CompileTime)+' @ '+TimeToStr(CompileTime) +')';
         Form1.Caption:=bot_version;
         restoresettings();
 
@@ -661,7 +538,6 @@ procedure TForm1.FormCreate(Sender: TObject);
             begin ChanPass.Enabled := true end
         else
             begin ChanPass.Enabled := false end;
-//pongcount := 1; // begin value
         irc_live:=AutoConnect.Checked;
         AutoConnect_Timer.Enabled:=AutoConnect.Checked;
     end;
@@ -670,7 +546,6 @@ procedure TForm1.serverChange(Sender: TObject);
     begin
         if ready then
             begin savesettings() end;
-
     end;
 
 procedure TForm1.portChange(Sender: TObject);
@@ -719,8 +594,7 @@ procedure TForm1.EditCommandsKeyPress(Sender: TObject; var Key: Char);
 
             begin
             count := 0;
-// insert code
-//MemoOutput.Lines.Add('test :')   ;
+
             repeat
                 count := count + 1;
                 temp := EditCommands.Text[count];
@@ -734,14 +608,7 @@ procedure TForm1.EditCommandsKeyPress(Sender: TObject; var Key: Char);
                     if not (temp = '') then
                         begin data := data + temp end
                 until temp = '' end;
-//MemoOutput.Lines.Add(EditCommands.text);
-//MemoOutput.Lines.Add(command);
-//MemoOutput.Lines.Add(data);
-// command, data
-
             DoSomething('брµнс',EditCommands.Text,command,data,false);
-//DoSomething('Admin',EditCommands.Text,command,data,true);
-//
             Key := #0;
             EditCommands.Clear;
             end;
@@ -750,10 +617,6 @@ procedure TForm1.EditCommandsKeyPress(Sender: TObject; var Key: Char);
 procedure TForm1.RunTempBatClick(Sender: TObject);
     begin
         ShellExecute   (   handle,'open',  'temp.bat' , nil, nil, SW_HIDE);
-
-
-//ShellExecute(Handle, 'open', PChar('temp.bat'), nil, nil, SW_SHOWNORMAL);
-//SW_SHOWNORMAL    SW_HIDE
     end;
 
 procedure TForm1.Time_TimerTimer(Sender: TObject);
@@ -771,14 +634,10 @@ procedure TForm1.Time_TimerTimer(Sender: TObject);
         ShortDateFormat := 'dd/mm/yyyy' ;
         LongTimeFormat  := 'hh:nn:ss'   ;
 
-
         status.Caption := bot_status;
         uptime := uptime +1;
-//time_convert  := time;
         time_now :=TimeToStr(time);
-//time_convert  := date;
         date_now := DateToStr(date);
-
 
         if irc_connected then
             begin if receivingdata then
@@ -803,11 +662,6 @@ procedure TForm1.Time_TimerTimer(Sender: TObject);
             if SPAM then
                 begin randomquote() end;
             end;
-
-
-
-
-
     end;
 
 procedure TForm1.AutoConnect_TimerTimer(Sender: TObject);
@@ -815,15 +669,6 @@ procedure TForm1.AutoConnect_TimerTimer(Sender: TObject);
         AutoConnect_Timer.Enabled:=false;
         if irc_live then
             begin go.Click end;
-
-    end;
-
-procedure TForm1.timer_doupgradeTimer(Sender: TObject);
-    begin
-        timer_doupgrade.Enabled:=false;
-        ShellExecute(Handle, 'open', PChar('Updater.exe'), nil, nil, SW_SHOWNORMAL);
-        form1.close;
-
     end;
 
 end.
