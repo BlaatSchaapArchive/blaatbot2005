@@ -69,19 +69,19 @@ function http_receiveln() : string;
 implementation
 
 procedure irc_setserver   (data:string);
-begin
-form2.TcpClient.RemoteHost:=data;
-end;
+    begin
+        form2.TcpClient.RemoteHost:=data;
+    end;
 
 procedure irc_setport     (data:string);
-begin
-form2.TcpClient.RemotePort:=data;
-end;
+    begin
+        form2.TcpClient.RemotePort:=data;
+    end;
 
 procedure irc_sendln      (data:string);
-begin
-form2.TcpClient.Sendln(data);
-end;
+    begin
+        form2.TcpClient.Sendln(data);
+    end;
 
 {
 procedure sc_setserver   (data:string);
@@ -101,45 +101,46 @@ end;
 
 }
 procedure http_setserver   (data:string);
-begin
-form2.TcpClient_Update.RemoteHost:=data;
-end;
+    begin
+        form2.TcpClient_Update.RemoteHost:=data;
+    end;
 
 procedure http_setport     (data:string);
-begin
-form2.TcpClient_Update.RemotePort:=data;
-end;
+    begin
+        form2.TcpClient_Update.RemotePort:=data;
+    end;
 
 procedure http_sendln      (data:string);
-begin
-form2.TcpClient_Update.Sendln(data);
-end;
+    begin
+        form2.TcpClient_Update.Sendln(data);
+    end;
 
 
 function irc_connect()    : boolean;
-begin
-result := form2.TcpClient.Connect;
-end;
+    begin
+        result := form2.TcpClient.Connect;
+    end;
 
 function irc_connected()  : boolean;
-begin
-result := form2.TcpClient.Connected;
-end;
+    begin
+        result := form2.TcpClient.Connected;
+    end;
 
 function irc_receiveln()  : string;
-var receiveddata : string;
-temp : char;
-begin
+    var receiveddata : string;
+        temp : char;
+    begin
 //result := form2.TcpClient.Receiveln();
 
-repeat
-Form2.TcpClient.ReceiveBuf(temp,1);
-if not ( (temp = #$D ) or (temp = #$A) or (temp = #$D))then receiveddata := receiveddata + temp;
-until (temp = #$0 )or (temp = #$A)or (temp = #$D) ;
+        repeat
+            Form2.TcpClient.ReceiveBuf(temp,1);
+            if not ( (temp = #$D ) or (temp = #$A) or (temp = #$D))then
+                begin receiveddata := receiveddata + temp end;
+        until (temp = #$0 )or (temp = #$A)or (temp = #$D) ;
 
-   result := receiveddata;
+        result := receiveddata;
 
-end;
+    end;
 {
 function sc_connect()    : boolean;
 begin
@@ -158,24 +159,24 @@ end;
 }
 
 function http_connect()     : boolean;
-begin
-result := form2.TcpClient_Update.Connect;
-end;
+    begin
+        result := form2.TcpClient_Update.Connect;
+    end;
 
 function http_connected()  : boolean;
-begin
-result := form2.TcpClient_Update.Connected;
-end;
+    begin
+        result := form2.TcpClient_Update.Connected;
+    end;
 
 function http_receiveln()  : string;
-begin
-result := form2.TcpClient_Update.Receiveln();
-end;
+    begin
+        result := form2.TcpClient_Update.Receiveln();
+    end;
 
 procedure irc_disconnect  ();
-begin
-form2.TcpClient.Disconnect
-end;
+    begin
+        form2.TcpClient.Disconnect
+    end;
 {
 procedure sc_disconnect  ();
 begin
@@ -183,8 +184,8 @@ form2.ShoutCastInfo.Disconnect
 end;
 }
 procedure http_disconnect  ();
-begin
-form2.TcpClient_Update.Disconnect
-end;
+    begin
+        form2.TcpClient_Update.Disconnect
+    end;
 
 end.

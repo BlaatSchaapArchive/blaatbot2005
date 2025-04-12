@@ -1,4 +1,4 @@
-unit IRCbot_CompileTime;
+unit IRCBot_CompileTime;
 { **************************************************************************** }
 {                                                                              }
 {    This is a generated file;                                                 }
@@ -7,14 +7,14 @@ unit IRCbot_CompileTime;
 {                                                                              }
 { **************************************************************************** }
 {                                                                              }
-{    H:\d\irc\IRCbot_CompileTime.pas                                           }
+{    C:\Documents and Settings\andre\My Documents\Delphi Projects\BlaatBot2005\IRCBot_CompileTime.pas                        }
 {                                                                              }
 { **************************************************************************** }
 {                                                                              }
 {    Copyright    (c)2002 Marco Wobben                                         }
 {    EMail        marcow@bcp-software.nl                                       }
 {    Website      www.bcp-software.nl                                          }
-{    CompileTime  10 sep 2002 - 10:07:27                                       }
+{    CompileTime  10 Sep 2002 - 10:07:27                                       }
 {                                                                              }
 {    To enable the compiler optimizer every line                               }
 {    has it's own const so unused const values                                 }
@@ -24,14 +24,14 @@ unit IRCbot_CompileTime;
 
 interface
 
-const CompileTime: TDateTime = 39038.7902768634; { 17-11-2006 18:57:59 }
-const CompileProject = 'H:\d\irc\IRCbot.dpr';
+const CompileTime: TDateTime = 45759.8182129745; { 4/12/2025 7:38:13 PM }
+const CompileProject = 'C:\Documents and Settings\andre\My Documents\Delphi Projects\BlaatBot2005\IRCbot.dpr';
 const CompileUnits = 13;
 const CompileForms = 2;
-const CompileBy = 'Andre'; { Compiled by user }
+const CompileBy = 'andre'; { Compiled by user }
 const CompileEMail = ''; { Contact email }
 const CompileURL = ''; { Contact url }
-const CompilePC = 'FLAPPI'; { Compiled at computer }
+const CompilePC = 'BLAATKONIJN'; { Compiled at computer }
 const CompileOS = 'Windows NT v5.1 build 2600'; { Compiled with OS }
 
 implementation

@@ -31,31 +31,31 @@ unit system_code;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Sockets, ExtCtrls, ShellAPI, strings;
+    Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+    Dialogs, Sockets, ExtCtrls, ShellAPI, strings;
 
 type
-  TForm2 = class(TForm)
-    Updater: TTimer;
-    TimeoutTimer: TTimer;
-    TcpClient_Update: TTcpClient;
-    TcpClient: TTcpClient;
-    ping: TTimer;
-    timer_doupgrade: TTimer;
-    procedure reconnectTimer(Sender: TObject);
-    procedure reconnect2Timer(Sender: TObject);
-    procedure UpdaterTimer(Sender: TObject);
-    procedure TimeoutTimerTimer(Sender: TObject);
-    procedure pingTimer(Sender: TObject);
-    procedure timer_doupgradeTimer(Sender: TObject);
-  private
+    TForm2 = class(TForm)
+        Updater: TTimer;
+        TimeoutTimer: TTimer;
+        TcpClient_Update: TTcpClient;
+        TcpClient: TTcpClient;
+        ping: TTimer;
+        timer_doupgrade: TTimer;
+        procedure reconnectTimer(Sender: TObject);
+        procedure reconnect2Timer(Sender: TObject);
+        procedure UpdaterTimer(Sender: TObject);
+        procedure TimeoutTimerTimer(Sender: TObject);
+        procedure pingTimer(Sender: TObject);
+        procedure timer_doupgradeTimer(Sender: TObject);
+    private
     { Private declarations }
-  public
+    public
     { Public declarations }
-  end;
+    end;
 
 var
-  Form2: TForm2;
+    Form2: TForm2;
 
 implementation
 
@@ -64,102 +64,111 @@ uses main;
 {$R *.dfm}
 
 procedure TForm2.reconnectTimer(Sender: TObject);
-begin
-write (logfile, 'Reconnecting.....' + chr(13));
-form1.status.Caption:='Reconnecting.....';form1.status.Repaint;
+    begin
+        write (logfile, 'Reconnecting.....' + chr(13));
+        form1.status.Caption:='Reconnecting.....';form1.status.Repaint;
 //stop.Click;
-tcpclient.Disconnect;
-form1.go.click;
+        tcpclient.Disconnect;
+        form1.go.click;
 //reconnect.Enabled:=false;
 
-end;
+    end;
 
 
 procedure TForm2.reconnect2Timer(Sender: TObject);
-begin
+    begin
 //reconnect.Enabled:=false;
-write (logfile, 'Reconnecting.....' + chr(13));
-form1.status.Caption:='Reconnecting.....';form1.status.Repaint;
+        write (logfile, 'Reconnecting.....' + chr(13));
+        form1.status.Caption:='Reconnecting.....';form1.status.Repaint;
 //stop.Click;
-tcpclient.Disconnect;
-form1.go.click;
+        tcpclient.Disconnect;
+        form1.go.click;
 //reconnect2.Enabled:=false;
 
-end;
+    end;
 
 procedure TForm2.UpdaterTimer(Sender: TObject);
-begin
-If Tcpclient.Connected then uptime := uptime + 1 ;
-if form1.longwait.Checked then begin timeouttimer.Interval:=3000000000; end else timeouttimer.Interval:=10000;
+    begin
+        If Tcpclient.Connected then
+            begin uptime := uptime + 1 end ;
+        if form1.longwait.Checked then
+            begin timeouttimer.Interval:=3000000000; end
+        else
+            begin timeouttimer.Interval:=10000 end;
 // Update current time and date.
 
 
 
 
 
-if timeout then
-  begin
-  timeout :=false;
-  write (logfile,'Login Timeout' + chr(13) );
+        if timeout then
+            begin
+            timeout :=false;
+            write (logfile,'Login Timeout' + chr(13) );
   //stop.Click;
-  tcpclient.Disconnect;
-  form1.status.Caption := 'Connected, but no answer';
-  form1.status.Repaint;
-  end;
+            tcpclient.Disconnect;
+            form1.status.Caption := 'Connected, but no answer';
+            form1.status.Repaint;
+            end;
 
-if tcpclient.Connected = false then form1.panel1.Color := clred else
-if receivingdata = true then form1.panel1.Color := clgreen else
-if receivingdata = false then form1.panel1.Color := clgray;
+        if tcpclient.Connected = false then
+            begin form1.panel1.Color := clred end
+        else
+            if receivingdata = true then
+                begin form1.panel1.Color := clgreen end
+            else
+                if receivingdata = false then
+                    begin form1.panel1.Color := clgray end;
 
 //if ( irc_Connected = false ) AND (form1.ping.Enabled = true) then  form1.Status.Caption := 'Server dropped connection';form1.status.Repaint;
 // *** ping online ?
-end;
+    end;
 
 procedure TForm2.TimeoutTimerTimer(Sender: TObject);
-begin
-timeout := true;
+    begin
+        timeout := true;
 
-end;
+    end;
 
 procedure TForm2.pingTimer(Sender: TObject);
 
-var
-tempstring : string;
-begin
+    var
+        tempstring : string;
+    begin
 //write (logfile,'PING ');
 //write (logfile,pingcount);
 //write (logfile, chr(13));
-if NOT (pingcount = pongcount) then
+        if NOT (pingcount = pongcount) then
 // PING TIMEOUT //
-begin
-bot_status:= 'PING TIMEOUT : Reconnect';
-  tcpclient.Sendln('PART '+ irc_channel +' Ping Timeout, Disconnecting...');
-  tcpclient.Disconnect;
+            begin
+            bot_status:= 'PING TIMEOUT : Reconnect';
+            tcpclient.Sendln('PART '+ irc_channel +' Ping Timeout, Disconnecting...');
+            tcpclient.Disconnect;
 //reconnect.Enabled := true;
-write (logfile,'PING TIMEOUT: PING ');
-write (logfile,pingcount);
-write (logfile,'  PONG ');
-write (logfile,pongcount);
-write (logfile, chr(13));
-end;
+            write (logfile,'PING TIMEOUT: PING ');
+            write (logfile,pingcount);
+            write (logfile,'  PONG ');
+            write (logfile,pongcount);
+            write (logfile, chr(13));
+            end;
 
 //if not (pingcount = 2147483647 )then
 // this will never overflow ...
 // 2147483647 * 15 sec = 1021 years
 // i don;t think it will ever run that long :P
-pingcount := pingcount + 1;
+        pingcount := pingcount + 1;
 //else pingcount := 1;
-convert := pingcount;
-tempstring := convert;
-tcpclient.Sendln('PING : '+tempstring)  ;
+        convert := pingcount;
+        tempstring := convert;
+        tcpclient.Sendln('PING : '+tempstring)  ;
 
-end;
+    end;
 
 procedure TForm2.timer_doupgradeTimer(Sender: TObject);
-begin
-timer_doupgrade.Enabled:=false;
-      ShellExecute(Handle, 'open', PChar('Updater.exe'), nil, nil, SW_SHOWNORMAL);
-      form1.close;
-end;
+    begin
+        timer_doupgrade.Enabled:=false;
+        ShellExecute(Handle, 'open', PChar('Updater.exe'), nil, nil, SW_SHOWNORMAL);
+        form1.close;
+    end;
 
 end.

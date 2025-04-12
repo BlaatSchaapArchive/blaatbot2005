@@ -5,8 +5,8 @@ unit OSinfo;
 
 interface
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls;
+    Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+    Dialogs, StdCtrls;
 
 procedure  GetOSINFO    ();
 function   GetOSNAME    () : String;
@@ -16,109 +16,113 @@ function   GetOSVERSION () : String;
 
 var
 
-osname,osversion,ostype,ossp : string;
+    osname,osversion,ostype,ossp : string;
 
 
 { vars from winverdet }
-  Version: TOSVersionInfo;
-  lbRetVal: Boolean;
-  Result:boolean;
-  convert : variant ;
-  OS : string;
-  readrosver : integer;
-  winver : string;
-  temp : string;
+    Version: TOSVersionInfo;
+    lbRetVal: Boolean;
+    Result:boolean;
+    convert : variant ;
+    OS : string;
+    readrosver : integer;
+    winver : string;
+    temp : string;
 
 
 implementation
 
 
 procedure  GetOSINFO  ();
-begin
+    begin
   { prepare }
-  Version.dwOSVersionInfoSize := SizeOf(Version);
-  lbRetVal := GetVersionEx(Version);
+        Version.dwOSVersionInfoSize := SizeOf(Version);
+        lbRetVal := GetVersionEx(Version);
 
   { windows type detection }
-  if (Version.dwPlatformId = 0) then ostype:='Win32S';
-  if (Version.dwPlatformId = 1) then ostype:='Windows 95';
-  if (Version.dwPlatformId = 2) then ostype:='Windows NT';
+        if (Version.dwPlatformId = 0) then
+            begin ostype:='Win32S' end;
+        if (Version.dwPlatformId = 1) then
+            begin ostype:='Windows 95' end;
+        if (Version.dwPlatformId = 2) then
+            begin ostype:='Windows NT' end;
 
 
-    convert:=  version.dwMajorVersion;
-    temp := convert;
-    osversion := temp + '.';
-    convert:=  version.dwMinorVersion;
-    temp := convert;
-    osversion:= osversion + temp + '.';
-    convert:= version.dwBuildNumber;
-    temp := convert;
-    osversion := osversion + temp ;
+        convert:=  version.dwMajorVersion;
+        temp := convert;
+        osversion := temp + '.';
+        convert:=  version.dwMinorVersion;
+        temp := convert;
+        osversion:= osversion + temp + '.';
+        convert:= version.dwBuildNumber;
+        temp := convert;
+        osversion := osversion + temp ;
 
-    osname:='Unknown';// inital value
+        osname:='Unknown';// inital value
 
-    if (Version.dwPlatformId = 1) and (version.dwMajorVersion = 4) and (version.dwMinorVersion = 0) then
-    osname := 'Windows 95';
-    if (Version.dwPlatformId = 1) and (version.dwMajorVersion = 4) and (version.dwMinorVersion = 10) then
-    osname := 'Windows 98';
-    if (Version.dwPlatformId = 1) and (version.dwMajorVersion = 4) and (version.dwMinorVersion = 95) then
-    osname := 'Windows ME';
-    if (Version.dwPlatformId = 2) and (version.dwMajorVersion = 4) and (version.dwMinorVersion = 0) then
-    osname := 'Windows NT 4.0';
-    if (Version.dwPlatformId = 2) and (version.dwMajorVersion = 5) and (version.dwMinorVersion = 0) then
-    osname := 'Windows 2000';
-    if (Version.dwPlatformId = 2) and (version.dwMajorVersion = 5) and (version.dwMinorVersion = 1) then
-    osname := 'Windows XP';
-    if (Version.dwPlatformId = 2) and (version.dwMajorVersion = 5) and (version.dwMinorVersion = 2) then
-    osname := 'Windows 2003';
-    if (Version.dwPlatformId = 2) and (version.dwMajorVersion = 6) and (version.dwMinorVersion = 0) then
-    osname := 'Windows Vista';
+        if (Version.dwPlatformId = 1) and (version.dwMajorVersion = 4) and (version.dwMinorVersion = 0) then
+            begin osname := 'Windows 95' end;
+        if (Version.dwPlatformId = 1) and (version.dwMajorVersion = 4) and (version.dwMinorVersion = 10) then
+            begin osname := 'Windows 98' end;
+        if (Version.dwPlatformId = 1) and (version.dwMajorVersion = 4) and (version.dwMinorVersion = 95) then
+            begin osname := 'Windows ME' end;
+        if (Version.dwPlatformId = 2) and (version.dwMajorVersion = 4) and (version.dwMinorVersion = 0) then
+            begin osname := 'Windows NT 4.0' end;
+        if (Version.dwPlatformId = 2) and (version.dwMajorVersion = 5) and (version.dwMinorVersion = 0) then
+            begin osname := 'Windows 2000' end;
+        if (Version.dwPlatformId = 2) and (version.dwMajorVersion = 5) and (version.dwMinorVersion = 1) then
+            begin osname := 'Windows XP' end;
+        if (Version.dwPlatformId = 2) and (version.dwMajorVersion = 5) and (version.dwMinorVersion = 2) then
+            begin osname := 'Windows 2003' end;
+        if (Version.dwPlatformId = 2) and (version.dwMajorVersion = 6) and (version.dwMinorVersion = 0) then
+            begin osname := 'Windows Vista' end;
 
-    ossp :=  Version.szCSDVersion;
-
-
+        ossp :=  Version.szCSDVersion;
 
 
-     readrosver := 15  ;
-     repeat
-     OS := OS + version.szCSDVersion[readrosver];
-     readrosver := readrosver + 1;
-     until readrosver = 22  ;
 
-     IF OS = 'ReactOS' then begin
-     osname := 'ReactOS';
-     osversion := '';
-     osname := osname + ' ';
-     readrosver := 23  ;
-     repeat
-     osname := osname + version.szCSDVersion[readrosver];
-     readrosver := readrosver + 1;
-     ossp := '';
-     until version.szCSDVersion[readrosver]='';//readrosver = 127  ;
-     end;
-end;
+
+        readrosver := 15  ;
+        repeat
+            OS := OS + version.szCSDVersion[readrosver];
+            readrosver := readrosver + 1;
+        until readrosver = 22  ;
+
+        IF OS = 'ReactOS' then
+            begin
+            osname := 'ReactOS';
+            osversion := '';
+            osname := osname + ' ';
+            readrosver := 23  ;
+            repeat
+                osname := osname + version.szCSDVersion[readrosver];
+                readrosver := readrosver + 1;
+                ossp := '';
+            until version.szCSDVersion[readrosver]='';//readrosver = 127  ;
+            end;
+    end;
 
 function   GetOSNAME () : String;
-begin
-GetOSINFO ();
-result:= OSNAME;
-end;
+    begin
+        GetOSINFO ();
+        result:= OSNAME;
+    end;
 function   GetOSTYPE () : String;
-begin
-GetOSINFO ();
-result:= OSTYPE;
-end;
+    begin
+        GetOSINFO ();
+        result:= OSTYPE;
+    end;
 function   GetOSSP   () : String;
-begin
-GetOSINFO ();
-result:= OSSP;
-end;
+    begin
+        GetOSINFO ();
+        result:= OSSP;
+    end;
 
 function   GetOSVERSION   () : String;
-begin
-GetOSINFO ();
-result:= OSVERSION;
-end;
+    begin
+        GetOSINFO ();
+        result:= OSVERSION;
+    end;
 
 
 

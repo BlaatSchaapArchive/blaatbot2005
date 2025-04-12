@@ -28,24 +28,24 @@
 program IRCbot;
 
 uses
-  Forms,
-  main in 'main.pas' {Form1},
-  IRCbot_CompileTime in 'IRCbot_CompileTime.pas',
-  OSinfo in 'OSinfo.pas',
-  general_codes in 'general_codes.pas',
-  irc_protocol in 'irc_protocol.pas',
-  bot_commands in 'bot_commands.pas',
-  system_code in 'system_code.pas' {Form2},
-  strings in 'strings.pas',
-  irc_protocol2 in 'irc_protocol2.pas',
-  Time in 'Time.pas';
+    Forms,
+    main in 'main.pas' {Form1},
+    IRCbot_CompileTime in 'IRCbot_CompileTime.pas',
+    OSinfo in 'OSinfo.pas',
+    general_codes in 'general_codes.pas',
+    irc_protocol in 'irc_protocol.pas',
+    bot_commands in 'bot_commands.pas',
+    system_code in 'system_code.pas' {Form2},
+    strings in 'strings.pas',
+    irc_protocol2 in 'irc_protocol2.pas',
+    Time in 'Time.pas';
 
 {$R *.res}
 
 begin
-  Application.Initialize;
-  Application.Title := 'BlaatSchaap IRC Bot';
-  Application.CreateForm(TForm1, Form1);
-  Application.CreateForm(TForm2, Form2);
-  Application.Run;
+    Application.Initialize;
+    Application.Title := 'BlaatSchaap IRC Bot';
+    Application.CreateForm(TForm1, Form1);
+    Application.CreateForm(TForm2, Form2);
+    Application.Run;
 end.

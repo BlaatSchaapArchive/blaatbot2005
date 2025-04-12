@@ -52,45 +52,45 @@ implementation
 
 
 procedure SayPriv(msg,user: string);
-begin
-irc_sendln('PRIVMSG ' + user + ' :'+ msg);
-end;
+    begin
+        irc_sendln('PRIVMSG ' + user + ' :'+ msg);
+    end;
 
 procedure Say(msg: string);
-begin
-irc_sendln('PRIVMSG ' + irc_channel + ' :'+ msg);
-end;
+    begin
+        irc_sendln('PRIVMSG ' + irc_channel + ' :'+ msg);
+    end;
 
 procedure Announce(msg: string);
-begin
- irc_sendln('NOTICE ' + irc_channel + ' :'+ msg);
-end;
+    begin
+        irc_sendln('NOTICE ' + irc_channel + ' :'+ msg);
+    end;
 
 procedure AnnouncePriv(msg,user: string);
-begin
- irc_sendln('NOTICE ' + user + ' :'+ msg);
-end;
+    begin
+        irc_sendln('NOTICE ' + user + ' :'+ msg);
+    end;
 
 
 
 procedure Action(msg: string);
-begin
-irc_sendln('PRIVMSG ' + irc_channel + ' :'+ CHR($01) + 'ACTION '+ msg+ CHR($01));
-end;
+    begin
+        irc_sendln('PRIVMSG ' + irc_channel + ' :'+ CHR($01) + 'ACTION '+ msg+ CHR($01));
+    end;
 
 
 procedure Kick(who: string);
-begin
-irc_sendln('KICK ' + irc_channel + ' ' + who);
-end;
+    begin
+        irc_sendln('KICK ' + irc_channel + ' ' + who);
+    end;
 
 procedure Mode (who: string; mode : char; enable : boolean);
-begin
-if enable = true then
-irc_sendln('MODE '+ irc_channel +' +'+mode+' '+who);
-if enable = false then
-irc_sendln('MODE '+ irc_channel +' -'+mode+' '+who);
-end;
+    begin
+        if enable = true then
+            begin irc_sendln('MODE '+ irc_channel +' +'+mode+' '+who) end;
+        if enable = false then
+            begin irc_sendln('MODE '+ irc_channel +' -'+mode+' '+who) end;
+    end;
 
 
 
